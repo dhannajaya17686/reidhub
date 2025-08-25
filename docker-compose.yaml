@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reidhub_php
+    volumes:
+      - .:/var/www/html
+    working_dir: /var/www/html
+    expose:
+      - "9000"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    container_name: reidhub_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  db:
+    image: mysql:latest
+    container_name: reidhub_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: reidhub
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: reidhubuser
+      MYSQL_PASSWORD: reidhubpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: reidhub_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  dbdata:

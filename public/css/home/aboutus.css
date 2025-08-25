@@ -1,0 +1,50 @@
+/* About Us Section */
+.about-us {
+    padding: 4rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.about-us .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.about-us h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.about-us p {
+    font-size: 1.8rem; /* Slightly larger font size for readability */
+    line-height: 1.8; /* Increase line height for better readability */
+    color: var(--text-color); /* Use the text color */
+    margin: 0; /* Remove default margin */
+}
+
+@keyframes typing {
+    from {
+        width: 0; /* Start with no text visible */
+    }
+    to {
+        width: 100%; /* Reveal the full text */
+    }
+}
+
+@keyframes blink {
+    from {
+        border-right-color: var(--secondary-color); /* Cursor visible */
+    }
+    to {
+        border-right-color: transparent; /* Cursor hidden */
+    }
+}

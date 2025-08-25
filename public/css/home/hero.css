@@ -1,0 +1,55 @@
+.hero {
+    background-image: url('/assets/images/hero.png');
+    background-size: cover; /* Ensure the image covers the entire section */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    height: 100vh; /* Make the hero section take up the full viewport height */
+    display: flex; /* Center content inside the hero section */
+    flex-direction: column;
+    justify-content: flex-start; /* Align content to the top */
+    align-items: center;
+    position: relative; /* Position the hero section properly */
+    z-index: 1; /* Ensure it stays below the navbar */
+    padding-top: 5rem; /* Add padding to push content down slightly */
+}
+
+.hero-content {
+    text-align: center; /* Center the text */
+    color: var(--secondary-color); /* Use primary color for text */
+    padding: 0 2rem; /* Add some padding for better readability */
+}
+
+.hero-title {
+    position: relative;
+    font-size: 3.5rem; /* Large title */
+    font-weight: 700; /* Bold title */
+    margin-bottom: 1rem; /* Space below the title */
+    margin-top: 4rem;
+    font-size: 5rem;
+    color: var(--secondary-color);
+}
+
+.hero-subtitle {
+    font-size: 1.8rem; /* Subtitle size */
+    font-weight: 500; /* Medium weight */
+    margin-bottom: 2rem; /* Space below the subtitle */
+    color: var(--accent-color); /* Use text color for subtitle */
+}
+
+.hero-title,
+.hero-subtitle {
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start slightly below */
+    animation: fadeInUpText 1s ease-out forwards; /* Animation on page load */
+}
+
+@keyframes fadeInUpText {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(10px);
+    }
+}

@@ -1,0 +1,25 @@
+:root {
+    --primary-color: #fff;         /* white */
+    --secondary-color: #0466C8;    /* blue */
+    --ternary-color: #E8EDF5;      /* light blue-grey */
+    --accent-color: #0466C8;       /* using secondary for accents */
+    --text-color: #222;
+    --heading-font: 'Inter', Arial, sans-serif;
+    --body-font: 'Inter', Arial, sans-serif;
+    --border-radius: 50px;
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --transition-fast: 0.2s;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: var(--body-font);
+    color: var(--text-color);
+    min-height: 100vh;
+  }
+  
+  
