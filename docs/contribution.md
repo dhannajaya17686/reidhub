@@ -1,7 +1,3 @@
-# 🎟️ TicketPool
-
-TicketPool is a collaborative issue tracking and management system built with Next.js, PostgreSQL, and Drizzle ORM.
-
 ## 📦 Branching Strategy
 
 This repository follows a structured Git branching model to ensure code quality and a smooth deployment process.
