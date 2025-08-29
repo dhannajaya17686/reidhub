@@ -15,7 +15,9 @@ ReidHub is an all-in-one platform built for campus communities, featuring market
 
 Here is a comprehensive documentation for the codebase and guides on how to set up dev environment 
 
-
+- [Setting Up Development Environment](./docs/dev-set-up.md)
+- [Contribution Guide](./docs/contribution.md)
+- [Development Issues and Troubleshooting Guide](./docs/dev-troubleshoot.md)
 
 ---
 
