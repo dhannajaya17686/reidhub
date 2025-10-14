@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReidHub - Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/css/app/admin/globals.css">
+    <link rel="stylesheet" href="../../../public/css/app/admin/marketplace.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">R</div>
+                <span>ReidHub</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" onclick="switchNav('seller-requests', event)">Seller Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchNav('buyer-requests', event)">Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" onclick="switchNav('seller-chat', event)">Seller Chat Portal</a>
+                </li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <header class="top-header">
+                <div class="nav-tabs">
+                    <a class="nav-tab" onclick="switchModule('edu-video', event)">Edu Video</a>
+                    <a class="nav-tab" onclick="switchModule('community', event)">Community & Social</a>
+                    <a class="nav-tab active" onclick="switchModule('marketplace', event)">UCSC Marketplace</a>
+                    <a class="nav-tab" onclick="switchModule('lost-found', event)">Lost & Found</a>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="search-box" placeholder="Search">
+                    <div class="notification-icon">🔔</div>
+                    <div class="profile-icon">👤</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Product Detail View -->
+                <div class="content-section" id="product-detail">
+                    <div class="breadcrumb">
+                        <a onclick="backToSellerRequests()">Seller Requests</a> / <span id="product-breadcrumb">UCSC T-Shirt</span>
+                    </div>
+                    <div class="product-container">
+                        <div class="product-images">
+                            <div class="main-image" id="product-main-image"></div>
+                            <div class="thumbnail-container" id="product-thumbnails">
+                                <div class="thumbnail"></div>
+                                <div class="thumbnail"></div>
+                                <div class="thumbnail"></div>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h1 id="product-title">UCSC T-Shirt</h1>
+                            <div class="price-stock">
+                                <span class="price" id="product-price">Rs.2000</span>
+                                <span class="stock-status" id="product-stock">In Stock</span>
+                            </div>
+                            <p class="product-description" id="product-description">
+                                University of Colombo School of Computing printed tshirt. Made from baby peaque material. Dark blue. Front with curved white lines, collar white borders and hand borders. Premium quality.
+                            </p>
+
+                            <div class="reviews-section">
+                                <div class="reviews-header">Reviews(<span id="review-count">10</span>)</div>
+                                <div class="rating-display">
+                                    <div class="rating-number" id="avg-rating">4.0</div>
+                                    <div class="rating-bars" id="rating-bars">
+                                        <div class="bar"><div class="bar-fill"><div class="bar-fill-inner" style="width: 60%;"></div></div><span>60%</span></div>
+                                        <div class="bar"><div class="bar-fill"><div class="bar-fill-inner" style="width: 30%;"></div></div><span>30%</span></div>
+                                        <div class="bar"><div class="bar-fill"><div class="bar-fill-inner" style="width: 20%;"></div></div><span>20%</span></div>
+                                    </div>
+                                </div>
+                                <div id="reviews-list">
+                                    <div class="review-item">
+                                        <div class="review-author">👤 Student's Union - Nimesha Madushan</div>
+                                        <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                                        <div class="review-text">This tshirt is really amazing, durable and premium quality made.</div>
+                                        <div class="action-buttons">
+                                            <button class="action-btn">👍</button>
+                                            <button class="action-btn">👎</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button class="approve-btn" onclick="handleApproval()">✓ Approve Request</button>
+                                <button class="reject-btn" onclick="handleRejection()">✗ Reject Request</button>
+                            </div>
+                            <button class="contact-seller-btn" onclick="contactSeller()">💬 Contact Seller</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller Requests List -->
+                <div class="content-section active" id="seller-requests">
+                    <div class="requests-container">
+                        <div class="page-title">Seller Requests</div>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" onclick="filterRequests('all')">All Requests</button>
+                            <button class="filter-tab" onclick="filterRequests('pending')">Pending Requests</button>
+                            <button class="filter-tab" onclick="filterRequests('approved')">Accepted Requests</button>
+                            <button class="filter-tab" onclick="filterRequests('rejected')">Declined Requests</button>
+                        </div>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search reports by item name, user, or report ID" id="seller-search">
+                            <button class="filter-btn">Status ▼</button>
+                            <button class="filter-btn">Date ▼</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item ID</th>
+                                    <th>Item</th>
+                                    <th>User</th>
+                                    <th>Date placed</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="seller-requests-table">
+                                <!-- Will be populated by loadSellerRequests() -->
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <span class="page-num">←</span>
+                            <span class="page-num active">1</span>
+                            <span class="page-num">2</span>
+                            <span class="page-num">3</span>
+                            <span class="page-num">→</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports List -->
+                <div class="content-section" id="buyer-requests">
+                    <div class="requests-container">
+                        <div class="page-title">Reports</div>
+                        <div style="margin-bottom: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 600;">Reported Items</h3>
+                        </div>
+                        <div class="search-filter">
+                            <input type="text" class="search-input" placeholder="Search reports by item name, user, or report ID" id="buyer-search">
+                            <button class="filter-btn">Status ▼</button>
+                            <button class="filter-btn">Date ▼</button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item ID</th>
+                                    <th>Item</th>
+                                    <th>User</th>
+                                    <th>Date placed</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="buyer-requests-table">
+                                <!-- Will be populated by loadBuyerRequests() -->
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <span class="page-num">←</span>
+                            <span class="page-num active">1</span>
+                            <span class="page-num">2</span>
+                            <span class="page-num">→</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller Chat Portal -->
+                <div class="content-section" id="seller-chat">
+                    <div class="page-title">Seller Chat Portal</div>
+                    <div class="chat-container">
+                        <div class="messages-list">
+                            <div class="messages-header">Messages<span>⋮</span></div>
+                            <div id="messages-list-container">
+                                <!-- Will be populated by loadChatList() -->
+                            </div>
+                        </div>
+                        <div class="chat-window">
+                            <div class="chat-header">
+                                <div><strong id="chat-user-name">👤 Select a conversation</strong></div>
+                                <div style="display: flex; gap: 12px;">
+                                    <span style="cursor: pointer;">⭐</span>
+                                    <span style="cursor: pointer;">🔍</span>
+                                    <span style="cursor: pointer;">⋮</span>
+                                </div>
+                            </div>
+                            <div class="chat-messages" id="chat-messages-container">
+                                <!-- Will be populated by loadChatMessages() -->
+                            </div>
+                            <div class="chat-input-area">
+                                <div class="chat-icon">😊</div>
+                                <input type="text" class="chat-input" placeholder="Type your message here ..." id="chat-message-input">
+                                <div class="chat-icon" onclick="sendMessage()">⬆</div>
+                                <div class="chat-icon">👍</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../../public/js/app/admin/marketplace.js"></script>
+</body>
+</html>
