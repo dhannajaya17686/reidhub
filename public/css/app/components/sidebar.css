@@ -1,0 +1,106 @@
+/* --------------------------------------------------------------------------
+   Sidebar Brand and Navigation - UNCHANGED
+   -------------------------------------------------------------------------- */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-2xl);
+}
+
+.sidebar-brand-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Add your brand icon as background image */
+  background-image: url('/assets/images/logo-no-text.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Remove the pseudo-elements if you're using a brand icon */
+.sidebar-brand-icon::before,
+.sidebar-brand-icon::after {
+  display: none; /* Hide the white dots when using brand icon */
+}
+
+.sidebar-brand-icon::before {
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.sidebar-brand-icon::after {
+  bottom: 0.75rem;
+  right: 0.75rem;
+}
+
+.sidebar-brand-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sidebar-nav {
+  list-style: none;
+}
+
+.sidebar-nav-item {
+  margin-bottom: var(--space-xs);
+}
+
+.sidebar-nav-link {
+  display: block;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-smooth);
+}
+
+.sidebar-nav-link:hover,
+.sidebar-nav-link.is-active {
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+  text-decoration: none;
+}
+
+.sidebar-toggle-btn {
+  display: none;
+  background: var(--surface-hover);
+  color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--secondary-color);
+  color: white;
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-smooth);
+  z-index: 15;
+}
+
+.sidebar-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}

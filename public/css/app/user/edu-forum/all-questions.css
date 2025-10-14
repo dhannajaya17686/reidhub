@@ -1,0 +1,587 @@
+/* ==========================================================================
+   1) Variables (Page-specific custom properties)
+   --------------------------------------------------------------------------
+   Component-scoped variables for the forum page layout and styling.
+   These work in conjunction with the global design tokens.
+   ========================================================================== */
+:root {
+  /* Forum-specific layout */
+  --forum-sidebar-width: 18rem;
+  --forum-main-padding: clamp(1rem, 0.8rem + 1vw, 2rem);
+  
+  /* Enhanced question card styling */
+  --question-card-padding: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
+  --question-card-gap: var(--space-md);
+  --question-border-left: 0.25rem solid var(--secondary-color);
+  
+  /* Vote/answer counters */
+  --vote-counter-size: clamp(2.5rem, 2.2rem + 0.8vw, 3rem);
+  --vote-counter-font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+  
+  /* Status badge colors */
+  --closed-tag-bg: #FEF2F2;
+  --closed-tag-text: #DC2626;
+  --closed-tag-padding: 0.25rem 0.5rem;
+  
+  /* Enhanced question card variables */
+  --card-hover-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --card-hover-transform: translateY(-4px);
+  --card-border-gradient: linear-gradient(135deg, rgba(4, 102, 200, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+  --card-shine-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+  --stat-badge-bg: rgba(4, 102, 200, 0.08);
+  --stat-badge-border: rgba(4, 102, 200, 0.15);
+  --stat-badge-hover: rgba(4, 102, 200, 0.12);
+  --tag-gradient: linear-gradient(135deg, rgba(4, 102, 200, 0.1) 0%, rgba(29, 78, 216, 0.08) 100%);
+}
+
+
+
+/* ==========================================================================
+   4) Components - OTHER COMPONENTS UNCHANGED
+   ========================================================================== */
+/* Main content area */
+.forum-main {
+  grid-area: main;
+  padding: var(--forum-main-padding);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+/* --------------------------------------------------------------------------
+   Tab Navigation Component - UNCHANGED
+   -------------------------------------------------------------------------- */
+.content-tabs {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+  border-bottom: 1px solid var(--tab-border);
+}
+
+.tab-link {
+  padding: var(--space-md) var(--space-sm);
+  color: var(--text-muted);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-smooth);
+}
+
+.tab-link:hover,
+.tab-link.is-active {
+  color: var(--tab-active-text);
+  border-bottom-color: var(--secondary-color);
+  text-decoration: none;
+}
+
+/* --------------------------------------------------------------------------
+   ENHANCED Question Cards Component
+   --------------------------------------------------------------------------
+   Significantly enhanced question cards with modern design elements,
+   better visual hierarchy, improved interactions, and rich metadata display.
+   -------------------------------------------------------------------------- */
+.questions-section {
+  margin-bottom: var(--space-2xl);
+}
+
+.questions-header {
+  margin-bottom: var(--space-xl);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+/* Enhanced Question Card Base */
+.question-card {
+  background: var(--surface);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle gradient overlay for depth */
+.question-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--card-border-gradient);
+  opacity: 0;
+  transition: opacity var(--transition-smooth);
+}
+
+/* Shine effect on hover */
+.question-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: var(--card-shine-gradient);
+  opacity: 0;
+  transform: rotate(45deg);
+  transition: opacity var(--transition-smooth);
+  pointer-events: none;
+}
+
+.question-card:hover {
+  transform: var(--card-hover-transform);
+  box-shadow: var(--card-hover-shadow);
+  border-color: rgba(4, 102, 200, 0.3);
+}
+
+.question-card:hover::before {
+  opacity: 1;
+}
+
+.question-card:hover::after {
+  opacity: 0.1;
+}
+
+/* Enhanced Question Header */
+.question-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.question-title-group {
+  flex: 1;
+}
+
+.question-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: var(--space-sm);
+}
+
+.question-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-smooth);
+  position: relative;
+}
+
+.question-title a:hover {
+  color: var(--secondary-color);
+}
+
+/* Enhanced Question Tags */
+.question-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.question-tag {
+  background: var(--tag-gradient);
+  color: var(--secondary-color);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(4, 102, 200, 0.15);
+  transition: all var(--transition-smooth);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.question-tag:hover {
+  background: rgba(4, 102, 200, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(4, 102, 200, 0.2);
+}
+
+/* Question Actions */
+.question-actions {
+  display: flex;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.question-action-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  background: rgba(4, 102, 200, 0.05);
+  border: 1px solid rgba(4, 102, 200, 0.1);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-smooth);
+  opacity: 0;
+  transform: translateY(4px);
+}
+
+.question-card:hover .question-action-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.question-action-btn:hover {
+  background: var(--secondary-color);
+  color: white;
+  border-color: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(4, 102, 200, 0.3);
+}
+
+/* Enhanced Closed Badge */
+.closed-badge {
+  background: linear-gradient(135deg, var(--closed-tag-bg) 0%, #FEE2E2 100%);
+  color: var(--closed-tag-text);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-xl);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+  white-space: nowrap;
+  position: relative;
+}
+
+.closed-badge::before {
+  content: '●';
+  margin-right: 0.5rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Enhanced Question Content */
+.question-content {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--space-xl);
+  font-size: 0.95rem;
+  position: relative;
+  padding-left: var(--space-md);
+}
+
+.question-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--secondary-color) 0%, rgba(4, 102, 200, 0.3) 100%);
+  border-radius: 2px;
+}
+
+/* Author Information */
+.question-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(4, 102, 200, 0.03);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(4, 102, 200, 0.08);
+}
+
+.author-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid rgba(4, 102, 200, 0.2);
+  transition: all var(--transition-smooth);
+}
+
+.question-card:hover .author-avatar {
+  border-color: var(--secondary-color);
+  transform: scale(1.05);
+}
+
+.author-info {
+  flex: 1;
+}
+
+.author-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.question-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.author-badge {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Enhanced Question Stats */
+.question-stats {
+  display: flex;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(226, 232, 240, 0.6);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--stat-badge-bg);
+  border: 1px solid var(--stat-badge-border);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all var(--transition-smooth);
+  min-width: fit-content;
+}
+
+.stat-item:hover {
+  background: var(--stat-badge-hover);
+  border-color: rgba(4, 102, 200, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(4, 102, 200, 0.15);
+}
+
+.stat-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--secondary-color);
+  opacity: 0.8;
+}
+
+.stat-number {
+  color: var(--secondary-color);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Special stat items styling */
+.stat-item--votes {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.05) 100%);
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+.stat-item--votes .stat-number {
+  color: #059669;
+}
+
+.stat-item--answers {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(29, 78, 216, 0.05) 100%);
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+.stat-item--answers .stat-number {
+  color: #1D4ED8;
+}
+
+.stat-item--views {
+  background: linear-gradient(135deg, rgba(156, 163, 175, 0.08) 0%, rgba(107, 114, 128, 0.05) 100%);
+  border-color: rgba(156, 163, 175, 0.15);
+}
+
+.stat-item--views .stat-number {
+  color: #6B7280;
+}
+
+/* Reading Time Badge */
+.reading-time {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+  color: #7C3AED;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.reading-time::before {
+  content: '📖';
+  font-size: 0.75rem;
+}
+
+/* Question Difficulty Indicator */
+.difficulty-indicator {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  width: 0.5rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+}
+
+.difficulty-indicator--easy {
+  background: linear-gradient(180deg, #10B981 0%, #059669 100%);
+}
+
+.difficulty-indicator--medium {
+  background: linear-gradient(180deg, #F59E0B 0%, #D97706 100%);
+}
+
+.difficulty-indicator--hard {
+  background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* ==========================================================================
+   5) Utilities (spacing helpers and accessibility) - UNCHANGED
+   ========================================================================== */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   6) Responsive breakpoints - UNCHANGED (except question cards)
+   -------------------------------------------------------------------------- */
+
+
+/* Enhanced responsive design for question cards */
+@media (max-width: 768px) {
+  .app-shell {
+    grid-template-areas: 
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .forum-sidebar {
+    position: fixed;
+    left: -100%;
+    transition: left var(--transition-smooth);
+    z-index: 20;
+  }
+  
+  .forum-sidebar.is-open {
+    left: 0;
+  }
+  
+  .header-content {
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-md);
+  }
+  
+  .header-nav {
+    display: none;
+  }
+  
+  .header-search {
+    min-width: auto;
+    flex: 1;
+  }
+  
+  .content-tabs {
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+  
+  /* Enhanced mobile question cards */
+  .question-card {
+    padding: var(--space-lg);
+    margin: 0 var(--space-xs);
+  }
+  
+  .question-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-md);
+  }
+  
+  .question-actions {
+    align-self: flex-end;
+  }
+  
+  .question-stats {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .stat-item {
+    min-width: auto;
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .question-tags {
+    gap: var(--space-xs);
+  }
+  
+  .question-tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .forum-main {
+    padding: var(--space-2xl);
+  }
+  
+  /* Enhanced large screen question cards */
+  .question-card {
+    padding: var(--space-3xl);
+  }
+  
+  .question-stats {
+    gap: var(--space-lg);
+  }
+  
+  .stat-item {
+    padding: var(--space-md) var(--space-lg);
+  }
+}

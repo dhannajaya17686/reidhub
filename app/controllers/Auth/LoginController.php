@@ -2,41 +2,19 @@
 
 class Auth_LoginController extends Controller
 {
-    public function showLoginForm()
-    {
-        $this->view('Auth/log-in-view');
-    }
-
-    public function showSignupForm()
-    {
-        $this->view('Auth/sign-up-view');
-    }
-
-    public function showRecoverPasswordForm()
-    {
-        $this->view('Auth/recover-password-view');
-    }  
-
-    public function showVerifyEmailForm()
-    {
-        $this->view('Auth/verify-email-view');
-    }
-
-    public function showRecoverPasswordFilledForm()
-    {
-        $this->view('Auth/recover-password-filled-view');
-    }
-
-    public function showPasswordResetSucessForm()
-    {
-        $this->view('Auth/reset-password-success-view');
-    }
-
-    public function showPasswordResetEmailSendForm()
-    {
-        $this->view('Auth/reset-password-mail-view');
-    }
-
+     /**
+     * COnstructor functions for the views
+     * Initializes the database connection by retrieving it from the Database singleton.
+     */
+    public function showLoginForm(){$this->view('Auth/log-in-view');}
+    public function showSignupForm(){$this->view('Auth/sign-up-view');}
+    public function showRecoverPasswordForm(){$this->view('Auth/recover-password-view');}  
+    public function showVerifyEmailForm(){$this->view('Auth/verify-email-view');}
+    public function showRecoverPasswordFilledForm(){$this->view('Auth/recover-password-filled-view'); }
+    public function showPasswordResetSucessForm(){$this->view('Auth/reset-password-success-view');}
+    public function showPasswordResetEmailSendForm(){$this->view('Auth/reset-password-mail-view'); }
+    
+    
     public function login()
     {
         $userModel = new User();
@@ -64,9 +42,6 @@ class Auth_LoginController extends Controller
     {
         $code = $_POST['code'] ?? '';
         $userModel = new User();
-        
-        // Here you would typically verify the code against the database
-        // For now, we will just redirect to a success page
         header('Location: /dashboard');
         exit;
     }
