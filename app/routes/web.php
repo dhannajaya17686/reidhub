@@ -29,6 +29,15 @@ $routes['/logout'] = [
 $routes['/dashboard'] = [
     'GET' => 'User_DashboardController@index'
 ];
+
+// Forum routes
+$routes['/forum'] = [
+    'GET' => 'Forum_ForumController@showAllQuestions'
+];
+$routes['/forum/questions'] = [
+    'GET' => 'Forum_ForumController@showAllQuestions'
+];
+
 $routes['/'] = [
     'GET' => 'Home_HomeController@index'
 ];

@@ -12,10 +12,8 @@ class Model
     {
         // Log the initialization of the Model
         Logger::info("Initializing the Model and establishing a database connection.");
-
         // Get the database connection from the Database singleton
         $this->db = Database::getInstance()->getConnection();
-
         // Log successful database connection assignment
         Logger::info("Database connection successfully assigned to the Model.");
     }

@@ -1,0 +1,47 @@
+/* ==========================================================================
+   2) Base overrides (minimal adjustments to globals)
+   ========================================================================== */
+body {
+  background: var(--bg-page);
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   3) Layout (main app shell structure) - UNCHANGED
+   --------------------------------------------------------------------------
+   Defines the overall layout with sidebar, header, and main content areas.
+   Uses CSS Grid for robust responsive behavior.
+   ========================================================================== */
+.app-shell {
+  display: grid;
+  grid-template-areas: 
+    "sidebar header"
+    "sidebar main";
+  grid-template-columns: var(--forum-sidebar-width) 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+/* Sidebar layout and positioning */
+.forum-sidebar {
+  grid-area: sidebar;
+  background: var(--sidebar-bg);
+  padding: var(--space-lg);
+  border-right: 1px solid var(--sidebar-border);
+  position: fixed;
+  width: var(--forum-sidebar-width);
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Main header with navigation and search */
+.forum-header {
+  grid-area: header;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
