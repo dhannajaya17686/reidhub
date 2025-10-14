@@ -110,3 +110,31 @@
 [2025-10-14 08:52:19][INFO] Calling action: index on controller: Home_HomeController
 [2025-10-14 08:52:19][INFO] Loading view: Home/home-view with data: []
 [2025-10-14 08:52:19][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:31:47][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 09:31:47][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 09:31:47][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 09:31:47][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 09:31:47][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:31:47][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 09:31:47][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 09:31:53][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 09:31:53][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 09:31:53][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 09:31:53][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 09:31:53][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 09:32:03][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 09:32:03][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 09:32:03][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 09:32:03][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 09:32:03][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:32:05][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 09:32:05][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 09:32:05][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 09:32:05][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 09:32:05][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 10:00:17][INFO] Incoming request: URI = /lost-and-found, Method = GET
+[2025-10-14 10:00:17][ERROR] Route not found: URI = /lost-and-found, Method = GET
+[2025-10-14 10:00:30][INFO] Incoming request: URI = /app/lost-and-found, Method = GET
+[2025-10-14 10:00:30][ERROR] Route not found: URI = /app/lost-and-found, Method = GET
+[2025-10-14 11:08:08][INFO] Incoming request: URI = /app/lost-and-found, Method = GET
+[2025-10-14 11:08:08][ERROR] Route not found: URI = /app/lost-and-found, Method = GET
