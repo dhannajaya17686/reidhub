@@ -32,13 +32,12 @@
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="password" id="password" class="form-control" placeholder="New Password" autocomplete="off" required />
-                            <img id="togglePassword" src="assets/icons/hide.png" alt="Toggle Password">
                         </div>
                     </div>
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required />
-                            <img id="togglePassword" src="assets/icons/hide.png" alt="Toggle Password">
+
                         </div>
                     </div>
                     <div class="signup_button">

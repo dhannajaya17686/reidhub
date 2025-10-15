@@ -20,7 +20,7 @@
 /* Right Form Section */
 .form-section {
     min-width:50%;/* Make the form section smaller */
-    padding: 2rem; /* Adjust padding for better spacing */
+    padding: 5rem; /* Adjust padding for better spacing */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,48 +31,60 @@
 .header {
     width: 70%; /* Match the form width */ /* Match the form max-width */
     text-align: center; /* Center the header content */
-    margin-bottom: 1.5rem; /* Add space between header and form */
+    margin-bottom: 0.5rem; /* Add space between header and form */
 }
 
 .header img {
     width: 80px; /* Slightly smaller logo */
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .header p {
     font-size: 1.5rem; /* Slightly smaller text */
     font-weight: 600;
     color: var(--secondary-color, #0466C8);
-    margin-bottom: 1rem; /* Slightly less space below the header text */
+    margin-bottom: 0.2rem; /* Slightly less space below the header text */
 }
 
 /* Form */
 .form {
-    width: 60%; /* Keep the form width consistent */
+    width: 80%; /* Keep the form width consistent */
     text-align: center; /* Center-align the form content */
+    justify-items: center;
 }
 
 .form p {
     font-size: 1rem;
     color: #555;
-    margin-bottom: 2rem; /* Add more space below the introductory text */
+    margin-bottom: 1.5rem; /* Add more space below the introductory text */
 }
 
 .form-name {
     display: flex;
+    justify-content: space-between;
+    min-width: 250px;
     gap: 1.5rem; /* Add spacing between first and last name fields */
-    margin-bottom: 2rem; /* Add more space between rows of input fields */
+    margin-bottom: 0.1rem; /* Add more space between rows of input fields */
+}
+
+.form-username {
+    display: flex;
+    justify-content: space-between;
+    width: 62%;
+    gap: 1.5rem; /* Add spacing between first and last name fields */
+    margin-bottom: 0.1rem; /* Add more space between rows of input fields */
 }
 
 .form-control {
     width: 100%;
+    max-width: 440px;
     padding: 0.8rem 40px 0.8rem 0.8rem; /* Add extra padding on the right for the icon */
     border: 1px solid #ccc;
     border-radius: 25px; /* Rounded inputs */
     font-size: 1rem;
     color: #333;
     background-color: #E8EDF5; /* Light blue-grey background */
-    margin-bottom: 1.5rem; /* Add spacing between individual input fields */
+    margin-bottom: 1rem; /* Add spacing between individual input fields */
 }
 
 .form-control:focus {
@@ -83,9 +95,11 @@
 
 /* Password Fields */
 .form-password {
+    max-width: 440px;
+     min-width: 250px;
     position: relative;
-    margin-bottom: 2rem; /* Add more space between password fields */
-    width: 100%; /* Ensure the container takes full width */
+    margin-bottom: 0.5rem; /* Add more space between password fields */
+    width:100%; /* Ensure the container takes full width */
 }
 
 .form-password img {
@@ -107,13 +121,15 @@
 
 .btn-primary {
     width: 100%;
+    min-width: 250px;
+    max-width: 440px;
     padding: 0.8rem; /* Add padding inside the button */
     font-size: 1rem;
     font-weight: 600;
     color: #fff;
     background-color: var(--secondary-color);
     border: none;
-    border-radius: 5px; /* Slightly rounded button */
+    border-radius: 10px; /* Slightly rounded button */
     cursor: pointer;
     transition: background-color 0.3s ease;
     border-radius: 1.3rem;
@@ -121,4 +137,8 @@
 
 .btn-primary:hover {
     background-color: #034a96;
+}
+
+.forgot{
+    margin-top: 3vw;
 }
