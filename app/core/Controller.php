@@ -46,7 +46,7 @@ class Controller
         extract($data);
         $data['content'] = $content;
         $data['title'] = $title;
-        require_once __DIR__ . '/../views/User/layout.php';
+        require_once __DIR__ . '/../views/layout.php';
 
         // Log that the app view was successfully loaded
         Logger::info("Successfully loaded app view: $view with layout and title: $title");
