@@ -459,26 +459,7 @@
   background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
 }
 
-/* ==========================================================================
-   5) Utilities (spacing helpers and accessibility) - UNCHANGED
-   ========================================================================== */
-.sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
 
-.text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
 /* ==========================================================================
    6) Responsive breakpoints - UNCHANGED (except question cards)
@@ -487,43 +468,6 @@
 
 /* Enhanced responsive design for question cards */
 @media (max-width: 768px) {
-  .app-shell {
-    grid-template-areas: 
-      "header"
-      "main";
-    grid-template-columns: 1fr;
-  }
-  
-  .sidebar-toggle-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .forum-sidebar {
-    position: fixed;
-    left: -100%;
-    transition: left var(--transition-smooth);
-    z-index: 20;
-  }
-  
-  .forum-sidebar.is-open {
-    left: 0;
-  }
-  
-  .header-content {
-    padding: var(--space-sm) var(--space-md);
-    gap: var(--space-md);
-  }
-  
-  .header-nav {
-    display: none;
-  }
-  
-  .header-search {
-    min-width: auto;
-    flex: 1;
-  }
   
   .content-tabs {
     flex-wrap: wrap;
@@ -568,10 +512,6 @@
 }
 
 @media (min-width: 1024px) {
-  .forum-main {
-    padding: var(--space-2xl);
-  }
-  
   /* Enhanced large screen question cards */
   .question-card {
     padding: var(--space-3xl);

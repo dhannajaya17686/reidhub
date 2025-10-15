@@ -1,3 +1,9 @@
+:root{
+  --forum-sidebar-width: 18rem;
+  --forum-main-padding: clamp(1rem, 0.8rem + 1vw, 2rem);
+}
+
+
 /* ==========================================================================
    2) Base overrides (minimal adjustments to globals)
    ========================================================================== */
@@ -12,6 +18,13 @@ body {
    Defines the overall layout with sidebar, header, and main content areas.
    Uses CSS Grid for robust responsive behavior.
    ========================================================================== */
+.forum-main {
+  grid-area: main;
+  padding: var(--forum-main-padding);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .app-shell {
   display: grid;
   grid-template-areas: 
@@ -45,3 +58,70 @@ body {
   z-index: 10;
 }
 
+
+/* ==========================================================================
+   5) Utilities (spacing helpers and accessibility) - UNCHANGED
+   ========================================================================== */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .app-shell {
+    grid-template-areas: 
+      "header"
+      "main";
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .forum-sidebar {
+    position: fixed;
+    left: -100%;
+    transition: left var(--transition-smooth);
+    z-index: 20;
+  }
+  
+  .forum-sidebar.is-open {
+    left: 0;
+  }
+  
+  .header-content {
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-md);
+  }
+  
+  .header-nav {
+    display: none;
+  }
+  
+  .header-search {
+    min-width: auto;
+    flex: 1;
+  }
+}
+
+@media (min-width: 1024px) {
+  .forum-main {
+    padding: var(--space-2xl);
+  }
+}
