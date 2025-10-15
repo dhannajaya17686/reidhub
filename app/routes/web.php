@@ -32,13 +32,13 @@ $routes['/dashboard'] = [
 
 // Forum routes
 $routes['/forum/'] = [
-    'GET' => 'Forum_ForumController@showAllQuestions'
+    'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
 $routes['/forum/question'] = [
-    'GET' => 'Forum_ForumController@showQuestion'
+    'GET' => 'Forum_ForumUserController@showQuestion'
 ];
 $routes['/forum/add'] = [
-    'GET' => 'Forum_ForumController@addQuestion'
+    'GET' => 'Forum_ForumUserController@addQuestion'
 ];
 
 $routes['/'] = [

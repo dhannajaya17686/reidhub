@@ -192,3 +192,17 @@
 [2025-10-15 08:35:49][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
 [2025-10-15 08:35:49][INFO] Incoming request: URI = /favicon.ico, Method = GET
 [2025-10-15 08:35:49][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-15 08:45:13][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 08:45:13][INFO] Calling action: addQuestion on controller: Forum_ForumUserController
+[2025-10-15 08:45:13][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-15 08:45:13][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:45:13][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:13][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:20][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-15 08:45:20][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 08:45:20][INFO] Calling action: showAllQuestions on controller: Forum_ForumUserController
+[2025-10-15 08:45:20][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-15 08:45:20][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub

@@ -1,5 +1,5 @@
 <?php
-class Forum_ForumController extends Controller
+class Forum_ForumUserController extends Controller
 {
     public function showAllQuestions()
     {
