@@ -29,6 +29,6 @@
     <!-- Sidebar overlay for mobile -->
     <div class="sidebar-overlay" data-sidebar-overlay aria-hidden="true"></div>
     <!-- Scripts -->
-    <script type="module" src="/js/app/edu-forum/all-questions.js"></script>
+    <script type="module" src="/js/app/components/sidebar.js"></script>
 </body>
 </html>
