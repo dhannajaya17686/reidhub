@@ -40,6 +40,9 @@ $routes['/forum/question'] = [
 $routes['/forum/add'] = [
     'GET' => 'Forum_ForumUserController@addQuestion'
 ];
+$routes['/forum/admin'] = [
+    'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
+];
 
 $routes['/'] = [
     'GET' => 'Home_HomeController@index'
