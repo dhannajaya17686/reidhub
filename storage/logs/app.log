@@ -256,3 +256,10 @@
 [2025-10-15 09:18:15][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
 [2025-10-15 09:18:15][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
 [2025-10-15 09:18:15][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Incoming request: URI = /forum/admin, Method = GET
+[2025-10-15 09:25:53][INFO] Instantiating controller: Forum_ForumAdminController
+[2025-10-15 09:25:53][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
+[2025-10-15 09:25:53][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 09:25:53][ERROR] Route not found: URI = /favicon.ico, Method = GET
