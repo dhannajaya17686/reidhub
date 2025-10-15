@@ -1,112 +1,265 @@
-[2025-10-14 08:22:26][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:22:26][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:22:26][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:22:26][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:22:26][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:28:07][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:28:07][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:28:07][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:28:07][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:28:07][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:28:07][INFO] Incoming request: URI = /favicon.ico, Method = GET
-[2025-10-14 08:28:07][ERROR] Route not found: URI = /favicon.ico, Method = GET
-[2025-10-14 08:30:29][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:30:29][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:30:29][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:30:29][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:30:29][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:30:29][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:29][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:30][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:30:30][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:30:30][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:30:30][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:30:30][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:30:30][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:30][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:40][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:30:40][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:30:40][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:30:40][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:30:40][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:30:40][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:40][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
-[2025-10-14 08:30:40][INFO] Incoming request: URI = /favicon.ico, Method = GET
-[2025-10-14 08:30:40][ERROR] Route not found: URI = /favicon.ico, Method = GET
-[2025-10-14 08:30:59][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:30:59][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:30:59][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:30:59][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:30:59][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:35:57][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:35:57][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:35:57][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:35:57][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:35:57][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:35:57][INFO] Incoming request: URI = /favicon.ico, Method = GET
-[2025-10-14 08:35:57][ERROR] Route not found: URI = /favicon.ico, Method = GET
-[2025-10-14 08:38:50][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:38:50][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:38:50][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:38:50][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:38:50][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:38:50][INFO] Incoming request: URI = /favicon.ico, Method = GET
-[2025-10-14 08:38:50][ERROR] Route not found: URI = /favicon.ico, Method = GET
-[2025-10-14 08:45:43][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:45:43][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:45:43][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:45:43][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:45:43][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:46:07][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:46:07][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:46:07][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:46:07][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:46:07][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:46:08][INFO] Incoming request: URI = /favicon.ico, Method = GET
-[2025-10-14 08:46:08][ERROR] Route not found: URI = /favicon.ico, Method = GET
-[2025-10-14 08:46:24][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:46:24][INFO] Instantiating controller: Forum_ForumController
-[2025-10-14 08:46:24][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
-[2025-10-14 08:46:24][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
-[2025-10-14 08:46:24][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
-[2025-10-14 08:52:03][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:52:03][ERROR] Route not found: URI = /forum, Method = GET
-[2025-10-14 08:52:05][INFO] Incoming request: URI = /forum, Method = GET
-[2025-10-14 08:52:05][ERROR] Route not found: URI = /forum, Method = GET
-[2025-10-14 08:52:08][INFO] Incoming request: URI = /fprum, Method = GET
-[2025-10-14 08:52:08][ERROR] Route not found: URI = /fprum, Method = GET
-[2025-10-14 08:52:08][INFO] Incoming request: URI = /, Method = GET
-[2025-10-14 08:52:08][INFO] Instantiating controller: Home_HomeController
-[2025-10-14 08:52:08][INFO] Calling action: index on controller: Home_HomeController
-[2025-10-14 08:52:08][INFO] Loading view: Home/home-view with data: []
-[2025-10-14 08:52:08][INFO] Successfully loaded view: Home/home-view
-[2025-10-14 08:52:10][INFO] Incoming request: URI = /, Method = GET
-[2025-10-14 08:52:10][INFO] Instantiating controller: Home_HomeController
-[2025-10-14 08:52:10][INFO] Calling action: index on controller: Home_HomeController
-[2025-10-14 08:52:10][INFO] Loading view: Home/home-view with data: []
-[2025-10-14 08:52:10][INFO] Successfully loaded view: Home/home-view
-[2025-10-14 08:52:11][INFO] Incoming request: URI = /, Method = GET
-[2025-10-14 08:52:11][INFO] Instantiating controller: Home_HomeController
-[2025-10-14 08:52:11][INFO] Calling action: index on controller: Home_HomeController
-[2025-10-14 08:52:11][INFO] Loading view: Home/home-view with data: []
-[2025-10-14 08:52:11][INFO] Successfully loaded view: Home/home-view
-[2025-10-14 08:52:12][INFO] Incoming request: URI = /signup, Method = GET
-[2025-10-14 08:52:12][INFO] Instantiating controller: Auth_LoginController
-[2025-10-14 08:52:12][INFO] Calling action: showSignupForm on controller: Auth_LoginController
-[2025-10-14 08:52:12][INFO] Loading view: Auth/sign-up-view with data: []
-[2025-10-14 08:52:12][INFO] Successfully loaded view: Auth/sign-up-view
-[2025-10-14 08:52:15][INFO] Incoming request: URI = /, Method = GET
-[2025-10-14 08:52:15][INFO] Instantiating controller: Home_HomeController
-[2025-10-14 08:52:15][INFO] Calling action: index on controller: Home_HomeController
-[2025-10-14 08:52:15][INFO] Loading view: Home/home-view with data: []
-[2025-10-14 08:52:15][INFO] Successfully loaded view: Home/home-view
-[2025-10-14 08:52:16][INFO] Incoming request: URI = /login, Method = GET
-[2025-10-14 08:52:16][INFO] Instantiating controller: Auth_LoginController
-[2025-10-14 08:52:16][INFO] Calling action: showLoginForm on controller: Auth_LoginController
-[2025-10-14 08:52:16][INFO] Loading view: Auth/log-in-view with data: []
-[2025-10-14 08:52:16][INFO] Successfully loaded view: Auth/log-in-view
-[2025-10-14 08:52:19][INFO] Incoming request: URI = /, Method = GET
-[2025-10-14 08:52:19][INFO] Instantiating controller: Home_HomeController
-[2025-10-14 08:52:19][INFO] Calling action: index on controller: Home_HomeController
-[2025-10-14 08:52:19][INFO] Loading view: Home/home-view with data: []
-[2025-10-14 08:52:19][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 12:29:22][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-14 12:29:22][ERROR] Route not found: URI = /forum/, Method = GET
+[2025-10-14 12:30:04][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:30:04][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:30:04][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:30:04][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:30:04][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:31:10][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-14 12:31:10][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:31:10][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 12:31:10][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 12:31:10][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 12:52:49][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:52:49][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:52:49][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:52:49][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:52:49][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:52:49][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:52:49][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 12:52:51][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:52:51][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:52:51][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:52:51][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:52:51][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:52:51][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:52:51][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 12:52:56][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:52:56][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:52:56][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:52:56][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:52:56][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:52:57][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:52:57][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 12:54:48][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:54:48][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:54:48][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:54:48][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:54:48][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:54:48][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:54:48][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 12:58:59][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:58:59][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:58:59][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:58:59][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:58:59][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:58:59][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:58:59][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 12:59:14][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 12:59:14][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 12:59:14][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 12:59:14][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 12:59:14][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 12:59:14][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 12:59:14][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 13:03:16][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 13:03:16][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 13:03:16][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 13:03:16][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 13:03:16][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 13:03:16][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 13:03:16][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 13:04:56][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-14 13:04:56][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 13:04:56][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 13:04:56][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 13:04:56][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 13:05:13][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 13:05:13][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 13:05:13][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 13:05:13][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 13:05:13][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 13:07:41][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 13:07:41][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 13:07:41][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 13:07:41][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 13:07:41][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 14:04:19][INFO] Incoming request: URI = /forum/ask, Method = GET
+[2025-10-14 14:04:19][ERROR] Route not found: URI = /forum/ask, Method = GET
+[2025-10-14 14:04:19][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:04:19][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:04:24][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 14:04:24][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:04:24][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 14:04:24][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 14:04:24][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 14:04:24][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:04:24][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:04:26][INFO] Incoming request: URI = /forum/ask, Method = GET
+[2025-10-14 14:04:26][ERROR] Route not found: URI = /forum/ask, Method = GET
+[2025-10-14 14:04:54][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 14:04:54][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:04:54][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 14:04:54][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 14:04:54][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 14:04:54][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:04:54][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:08:30][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:08:30][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:08:30][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:08:30][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:08:30][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:08:30][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:08:30][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:08:38][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-14 14:08:38][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:08:38][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-14 14:08:38][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-14 14:08:38][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-14 14:10:03][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-14 14:10:03][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:10:03][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 14:10:03][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 14:10:03][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 14:24:30][INFO] Incoming request: URI = /forum/add-question/, Method = GET
+[2025-10-14 14:24:30][ERROR] Route not found: URI = /forum/add-question/, Method = GET
+[2025-10-14 14:24:30][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:24:30][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:24:56][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-14 14:24:56][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:24:56][INFO] Calling action: addQuestion on controller: Forum_ForumController
+[2025-10-14 14:24:56][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-14 14:24:56][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-14 14:24:56][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:24:56][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:24:56][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:24:56][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:25:50][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-14 14:25:50][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:25:50][INFO] Calling action: addQuestion on controller: Forum_ForumController
+[2025-10-14 14:25:50][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-14 14:25:50][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-14 14:25:50][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:25:50][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:25:50][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:25:50][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:26:01][INFO] Incoming request: URI = /forum/ask, Method = GET
+[2025-10-14 14:26:01][ERROR] Route not found: URI = /forum/ask, Method = GET
+[2025-10-14 14:26:01][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:26:01][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:26:04][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-14 14:26:04][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 14:26:04][INFO] Calling action: addQuestion on controller: Forum_ForumController
+[2025-10-14 14:26:04][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-14 14:26:04][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-14 14:26:04][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:26:04][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-14 14:26:04][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:26:04][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:21:31][INFO] Incoming request: URI = /, Method = GET
+[2025-10-15 08:21:31][INFO] Instantiating controller: Home_HomeController
+[2025-10-15 08:21:31][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-15 08:21:31][INFO] Loading view: Home/home-view with data: []
+[2025-10-15 08:21:31][INFO] Successfully loaded view: Home/home-view
+[2025-10-15 08:21:31][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:21:31][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:21:33][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-15 08:21:33][INFO] Instantiating controller: Auth_LoginController
+[2025-10-15 08:21:33][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-15 08:21:33][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-15 08:21:33][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-15 08:21:40][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-15 08:21:40][INFO] Instantiating controller: Forum_ForumController
+[2025-10-15 08:21:40][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-15 08:21:40][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-15 08:21:40][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-15 08:21:40][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:21:40][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:21:51][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-15 08:21:51][INFO] Instantiating controller: Forum_ForumController
+[2025-10-15 08:21:51][INFO] Calling action: showQuestion on controller: Forum_ForumController
+[2025-10-15 08:21:51][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-15 08:21:51][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-15 08:21:55][INFO] Incoming request: URI = /forum/ask, Method = GET
+[2025-10-15 08:21:55][ERROR] Route not found: URI = /forum/ask, Method = GET
+[2025-10-15 08:22:26][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-15 08:22:26][INFO] Instantiating controller: Forum_ForumController
+[2025-10-15 08:22:26][INFO] Calling action: addQuestion on controller: Forum_ForumController
+[2025-10-15 08:22:26][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-15 08:22:26][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-15 08:22:26][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:22:26][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:35:48][INFO] Incoming request: URI = /forum/ask, Method = GET
+[2025-10-15 08:35:48][ERROR] Route not found: URI = /forum/ask, Method = GET
+[2025-10-15 08:35:48][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:35:48][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:35:49][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-15 08:35:49][INFO] Instantiating controller: Forum_ForumController
+[2025-10-15 08:35:49][INFO] Calling action: addQuestion on controller: Forum_ForumController
+[2025-10-15 08:35:49][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-15 08:35:49][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-15 08:35:49][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:35:49][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:35:49][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:35:49][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-15 08:45:13][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 08:45:13][INFO] Calling action: addQuestion on controller: Forum_ForumUserController
+[2025-10-15 08:45:13][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-15 08:45:13][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:45:13][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-15 08:45:13][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:13][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 08:45:20][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-15 08:45:20][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 08:45:20][INFO] Calling action: showAllQuestions on controller: Forum_ForumUserController
+[2025-10-15 08:45:20][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-15 08:45:20][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-15 09:09:02][INFO] Incoming request: URI = /, Method = GET
+[2025-10-15 09:09:02][INFO] Instantiating controller: Home_HomeController
+[2025-10-15 09:09:02][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-15 09:09:02][INFO] Loading view: Home/home-view with data: []
+[2025-10-15 09:09:02][INFO] Successfully loaded view: Home/home-view
+[2025-10-15 09:09:02][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 09:09:02][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 09:09:04][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-15 09:09:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-15 09:09:04][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-15 09:09:04][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-15 09:09:04][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-15 09:09:11][INFO] Incoming request: URI = /forum/, Method = GET
+[2025-10-15 09:09:11][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 09:09:11][INFO] Calling action: showAllQuestions on controller: Forum_ForumUserController
+[2025-10-15 09:09:11][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-15 09:09:11][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-15 09:09:11][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 09:09:11][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-15 09:09:24][INFO] Incoming request: URI = /forum/question, Method = GET
+[2025-10-15 09:09:24][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 09:09:24][INFO] Calling action: showQuestion on controller: Forum_ForumUserController
+[2025-10-15 09:09:24][INFO] Loading app view: User/edu-forum/one-question-view with data: [] and title: One Question - ReidHub
+[2025-10-15 09:09:24][INFO] Successfully loaded app view: User/edu-forum/one-question-view with layout and title: One Question - ReidHub
+[2025-10-15 09:10:13][INFO] Incoming request: URI = /forum/add, Method = GET
+[2025-10-15 09:10:13][INFO] Instantiating controller: Forum_ForumUserController
+[2025-10-15 09:10:13][INFO] Calling action: addQuestion on controller: Forum_ForumUserController
+[2025-10-15 09:10:13][INFO] Loading app view: User/edu-forum/add-question-view with data: [] and title: Add Question - ReidHub
+[2025-10-15 09:10:13][INFO] Successfully loaded app view: User/edu-forum/add-question-view with layout and title: Add Question - ReidHub
+[2025-10-15 09:10:13][INFO] Incoming request: URI = /forum/add-question.js, Method = GET
+[2025-10-15 09:10:13][ERROR] Route not found: URI = /forum/add-question.js, Method = GET
+[2025-10-15 09:16:45][INFO] Incoming request: URI = /forum/admin, Method = GET
+[2025-10-15 09:16:45][INFO] Instantiating controller: Forum_ForumAdminController
+[2025-10-15 09:16:45][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
+[2025-10-15 09:16:45][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:16:45][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:16:45][INFO] Incoming request: URI = /css/app/admin/edu-forum/manage-forum.css, Method = GET
+[2025-10-15 09:16:45][ERROR] Route not found: URI = /css/app/admin/edu-forum/manage-forum.css, Method = GET
+[2025-10-15 09:17:49][INFO] Incoming request: URI = /forum/admin, Method = GET
+[2025-10-15 09:17:49][INFO] Instantiating controller: Forum_ForumAdminController
+[2025-10-15 09:17:49][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
+[2025-10-15 09:17:49][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:17:49][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:17:49][INFO] Incoming request: URI = /css/app/admin/edu-forum/manage-forum.css, Method = GET
+[2025-10-15 09:17:49][ERROR] Route not found: URI = /css/app/admin/edu-forum/manage-forum.css, Method = GET
+[2025-10-15 09:18:15][INFO] Incoming request: URI = /forum/admin, Method = GET
+[2025-10-15 09:18:15][INFO] Instantiating controller: Forum_ForumAdminController
+[2025-10-15 09:18:15][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
+[2025-10-15 09:18:15][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:18:15][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Incoming request: URI = /forum/admin, Method = GET
+[2025-10-15 09:25:53][INFO] Instantiating controller: Forum_ForumAdminController
+[2025-10-15 09:25:53][INFO] Calling action: showForumAdminDashboard on controller: Forum_ForumAdminController
+[2025-10-15 09:25:53][INFO] Loading app view: Admin/edu-forum/manage-forum-view with data: [] and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Successfully loaded app view: Admin/edu-forum/manage-forum-view with layout and title: Forum Admin Dashboard - ReidHub
+[2025-10-15 09:25:53][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-15 09:25:53][ERROR] Route not found: URI = /favicon.ico, Method = GET
