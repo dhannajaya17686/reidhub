@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/app/globals.css">
-    <link rel="stylesheet" href="/css/app/user/layout.css">
+    <link rel="stylesheet" href="/css/app/layout.css">
     <link rel="stylesheet" href="/css/app/components/header.css">
     <link rel="stylesheet" href="/css/app/components/sidebar.css">
      <!-- Fonts -->
@@ -16,8 +16,8 @@
 </head>
 <body>
     <div class="app-shell">
-        <?php include __DIR__ . '/../components/sidebar.php'; ?>
-        <?php include __DIR__ . '/../components/header.php'; ?>
+        <?php include __DIR__ . '/components/sidebar.php'; ?>
+        <?php include __DIR__ . '/components/header.php'; ?>
         <main class="forum-main">
             <?php
             if (isset($content)) {
