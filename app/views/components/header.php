@@ -1,14 +1,23 @@
-<!-- Main Header - UNCHANGED -->
+<?php
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
+$isAdmin = isset($_SESSION['admin_id']);
+$u = $user ?? ($_SESSION['user'] ?? null);
+$displayName = $u['first_name'] ?? $u['email'] ?? 'User';
+?>
+<!-- Main Header -->
         <header class="forum-header" role="banner">
             <div class="header-content">
-                <!-- Main Navigation -->
-                <nav class="header-nav" role="navigation" aria-label="Main sections">
-                    <a href="#" class="header-nav-link is-active" aria-current="page">Edu Forum</a>
-                    <a href="#" class="header-nav-link">Community & Social</a>
-                    <a href="#" class="header-nav-link">UCSC Marketplace</a>
-                    <a href="#" class="header-nav-link">Lost & Found</a>
-                </nav>
+                <!-- Greeting and Logout -->
+                <div class="header-greeting">
+                    <?php if ($isAdmin): ?>
+                        <strong class="welcome-name">Welcome Students Union!</strong>
+                    <?php else: ?>
+                        <span class="welcome-prefix">Welcome,</span>
+                        <strong class="welcome-name"><?php echo htmlspecialchars($displayName); ?></strong>
+                    <?php endif; ?>
+                </div>
 
+                <?php if (!$isAdmin): ?>
                 <!-- Search -->
                 <div class="header-search">
                     <label for="search" class="sr-only">Search questions and topics</label>
@@ -35,5 +44,6 @@
                         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%230466C8'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-family='Arial' font-size='16' font-weight='bold'%3EU%3C/text%3E%3C/svg%3E" alt="User avatar">
                     </div>
                 </div>
+                <?php endif; ?>
             </div>
         </header>

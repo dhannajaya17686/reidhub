@@ -11,7 +11,6 @@
 .sidebar-brand-icon {
   width: 3rem;
   height: 3rem;
-  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,7 +53,9 @@
 }
 
 .sidebar-nav-link {
-  display: block;
+  display: flex;                /* align icon + text */
+  align-items: center;
+  gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
@@ -68,6 +69,35 @@
   background: var(--nav-active-bg);
   color: var(--nav-active-text);
   text-decoration: none;
+}
+
+.sidebar-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;              /* ~18px */
+  height: 1.125rem;
+  flex: 0 0 1.125rem;
+  color: var(--text-muted);     /* muted by default */
+  transition: color var(--transition-smooth), transform var(--transition-smooth);
+}
+
+.sidebar-nav-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;           /* inherit link color */
+}
+
+/* Match theme on hover/active */
+.sidebar-nav-link:hover .sidebar-nav-icon,
+.sidebar-nav-link.is-active .sidebar-nav-icon {
+  color: var(--nav-active-text); /* uses your theme blue */
+}
+
+.sidebar-link-text {
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .sidebar-toggle-btn {
@@ -103,4 +133,101 @@
 .sidebar-overlay.is-visible {
   opacity: 1;
   visibility: visible;
+}
+
+/* Dropdown toggle button styling */
+.sidebar-nav-toggle {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all var(--transition-smooth);
+}
+
+.sidebar-nav-toggle:hover,
+.sidebar-nav-toggle.is-active {
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+}
+
+.sidebar-nav-toggle:hover .sidebar-nav-icon,
+.sidebar-nav-toggle.is-active .sidebar-nav-icon {
+  color: var(--nav-active-text);
+}
+
+/* Icon and text container for toggle buttons */
+.sidebar-nav-toggle .sidebar-nav-icon {
+  flex: 0 0 1.125rem;
+}
+
+.sidebar-nav-toggle .sidebar-link-text {
+  flex: 1;
+}
+
+/* Chevron icon styling and animation */
+.sidebar-nav-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  transition: transform var(--transition-smooth);
+  color: var(--text-muted);
+}
+
+.sidebar-nav-chevron.is-expanded {
+  transform: rotate(90deg);
+}
+
+.sidebar-nav-chevron svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Submenu styling */
+.sidebar-submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-xs);
+}
+
+.sidebar-submenu.is-expanded {
+  max-height: 300px; /* Adjust based on your needs */
+}
+
+.sidebar-submenu-item {
+  margin: 0;
+}
+
+.sidebar-submenu-link {
+  display: block;
+  padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xl);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-smooth);
+  margin: var(--space-xs);
+}
+
+.sidebar-submenu-link:hover,
+.sidebar-submenu-link.is-active {
+  background: var(--nav-active-bg);
+  color: var(--nav-active-text);
+  text-decoration: none;
 }
