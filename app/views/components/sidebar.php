@@ -18,7 +18,7 @@ $userItems = [
         ]
     ],
     [ 
-        'label' => 'Community & Social', 
+        'label' => 'Community', 
         'href' => '/dashboard/community', 
         'icon' => 'community',
         'children' => [
