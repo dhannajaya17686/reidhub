@@ -166,6 +166,7 @@ class SearchEnhancement {
 }
 
 /**
+<<<<<<< HEAD
  * Sidebar Dropdown Navigation
  * ---------------------------
  * Handles expandable/collapsible navigation sections
@@ -203,6 +204,8 @@ class SidebarDropdown {
 }
 
 /**
+=======
+>>>>>>> ed92e142f73848822dd9709bbfaa561680b1af8c
  * Basic Initialization
  * -------------------
  * Initialize core interactive components when DOM is ready.
@@ -222,9 +225,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchInput) {
     new SearchEnhancement(searchInput);
   }
+<<<<<<< HEAD
 
   // Initialize sidebar dropdowns
   new SidebarDropdown();
+=======
+>>>>>>> ed92e142f73848822dd9709bbfaa561680b1af8c
 });
 
 /**
