@@ -166,17 +166,48 @@ class SearchEnhancement {
 }
 
 /**
+ * Sidebar Dropdown Navigation
+ * ---------------------------
+ * Handles expandable/collapsible navigation sections
+ */
+class SidebarDropdown {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    // Add click handlers to all dropdown toggles
+    document.querySelectorAll('[data-toggle="dropdown"]').forEach(button => {
+      button.addEventListener('click', (e) => this.handleToggle(e));
+    });
+  }
+
+  handleToggle(event) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    const chevron = button.querySelector('.sidebar-nav-chevron');
+    const submenu = button.parentElement.querySelector('.sidebar-submenu');
+
+    // Toggle states
+    button.setAttribute('aria-expanded', !isExpanded);
+    
+    if (chevron) {
+      chevron.classList.toggle('is-expanded', !isExpanded);
+    }
+    
+    if (submenu) {
+      submenu.classList.toggle('is-expanded', !isExpanded);
+    }
+  }
+}
+
+/**
  * Basic Initialization
  * -------------------
  * Initialize core interactive components when DOM is ready.
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize tab navigation
-  const tabContainer = document.querySelector('.content-tabs');
-  if (tabContainer) {
-    new TabNavigation(tabContainer);
-  }
-
   // Initialize mobile sidebar
   new MobileSidebar();
 
@@ -185,9 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (searchInput) {
     new SearchEnhancement(searchInput);
   }
+
+  // Initialize sidebar dropdowns
+  new SidebarDropdown();
 });
 
 /**
  * Export modules for potential external use
  */
-export {MobileSidebar, SearchEnhancement };
+export { MobileSidebar, SearchEnhancement, SidebarDropdown };

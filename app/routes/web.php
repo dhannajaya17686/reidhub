@@ -24,12 +24,14 @@ $routes['/verify-email'] = [
 
 
 $routes['/logout'] = [
-    'GET' => 'Auth_LoginController@logout'
+    'POST' => 'Auth_LoginController@logout'
 ];
 $routes['/dashboard'] = [
-    'GET' => 'User_DashboardController@index'
+    'GET' => 'Dashboard_UserDashboardController@showUserDashboard'
 ];
-
+$routes['/dashboard/admin'] = [
+    'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
+];
 // Forum routes
 $routes['/forum/'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
