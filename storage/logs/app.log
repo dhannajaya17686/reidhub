@@ -970,3 +970,8 @@
 [2025-10-17 04:28:49][INFO] Calling action: showLoginForm on controller: Auth_LoginController
 [2025-10-17 04:28:49][INFO] Loading view: Auth/log-in-view with data: []
 [2025-10-17 04:28:49][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-17 04:30:50][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-17 04:30:50][INFO] Instantiating controller: Auth_LoginController
+[2025-10-17 04:30:50][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-17 04:30:50][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-17 04:30:50][INFO] Successfully loaded view: Auth/log-in-view
