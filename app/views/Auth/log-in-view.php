@@ -1,235 +1,78 @@
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="css/home/globals.css">
         <title>ReidHub | SignIn</title>
+        <link rel="stylesheet" href="/css/auth/globals.css">
+        <link rel="stylesheet" href="/css/home/globals.css">
         <style>
-            body{
-                margin: 0;
-                padding: 0;
-                background-color: #E6E8F9;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-
-            .wrapper {
-                display: flex;
-                flex-wrap: wrap;
-                min-width: 80%;
-                height: 90%;
-                border-radius: 20px;
-                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-                overflow: hidden;
-                background-color: #ffffff;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .wrapper > * {
-                flex: 1 1 50%;
-                min-width: 0;
-                box-sizing: border-box;
-                padding: 0;
-            }
-
-            .container {
-                background-color: #ffffff;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-            }
-
-            .container > * {
-                min-width: 0;
-                max-width: 100%;
-                flex-shrink: 1;
-                box-sizing: border-box;
-                max-height: 100%;
-            }
-
-            .header {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 2%;
-            }
-
-            .header p{
-                text-align: center;
-                font-size: clamp(1.5rem, 4vw, 3rem);
-                font-weight: 400;
-                color: #165797;
-            }
-
-            .header img {
-                width: clamp(2rem, 6vw, 6rem);
-                margin-bottom: 2rem;
-            }
-
-            p {
-                text-align: center;
-                color: #000000b6;
-                margin: 0;
-                font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-                margin-top: 0.5rem;
-            }
-
-            form {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 100%;
-            }
-
-            .form-outline {
-                position: relative;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .form-password {
-                position: relative;
-            }
-
-            .form-password input {
-                width: 100%;
-                width: clamp(2rem, 20vw, 20rem);
-                box-sizing: border-box;
-            }
-
-            #togglePassword {
-                position: absolute;
-                right: 1rem; 
-                top: 40%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                width: clamp(1rem, 1.5vw, 1.5rem);
-                height: auto;
-            }
-
-
-            .form-control::placeholder {
-                color: #aaaaaa;
-            }
-
-            .form-control:focus::placeholder {
-                color: transparent;
-            }
-
-
-
-            .btn-primary {
-                color: #ffffff;
-                background-color: #0466C8;
-                cursor: pointer;
-                flex-shrink: 1;
-                margin-bottom: 2vh;
-            }
-
-            .btn-primary:hover {
-                background-color: #ffffff;
-                color: #0466C8;
-            }
-
-            .form-control,
-            .btn-primary {
-                width: clamp(2rem, 20vw, 20rem);
-                padding: clamp(0.5rem, 1vw, 1rem);
-                font-size: clamp(0.9rem, 1.2vw, 1.2rem);
-                border-radius: 3rem;
-                box-sizing: border-box;
-                border-color: #0466C8;
-                margin-bottom: 2vh;
-            }
-
-
-            .btn-primary {
-                color: #ffffff;
-                background-color: #0466C8;
-                border: 1 solid #0466C8;
-                cursor: pointer;
-                flex-shrink: 1;
-                width: clamp(2rem, 20vw, 20rem);
-                padding: clamp(0.5rem, 1vw, 1rem);
-                font-size: clamp(0.9rem, 1.2vw, 1.2rem);
-                border-radius: 3rem;
-                box-sizing: border-box;
-                border-color: #0466C8;
-            }
-
-            .btn-primary:hover {
-                background-color: #ffffff;
-                color: #0466C8;
-            }
-
-            .forgot .create {
-                text-align: center;
-                color: #000000b6;
-                font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-                margin-top: 20vw;
-            }
-
-            .forgot a .create a {
-                text-decoration: none;
-                color: #0264ec;
-            }
-
+            .field-error{color:#c0392b;font-size:.9rem;margin-top:6px;display:block;text-align:left}
+            .input-invalid{border-color:#c0392b !important}
         </style>
     </head>
-
     <body>
-        <div id="notification" class="notification"></div>
-        <div class="wrapper">
-            <div class="container">
+        <div class="main-container">
+            <div class="image-section"></div>
+
+            <div class="form-section">
                 <div class="header">
-                    <img src="assets/images/logo-no-text.png" alt="ReidHub Logo">
+                    <img src="/assets/images/logo-no-text.png" alt="ReidHub Logo" />
                     <p>Welcome Back!</p>
                 </div>
-                <form method="POST" enctype="multipart/form-data" class="form">
-                    <div class="form-outline">
-                        <input type="username" name="username" id="username" class="form-control" placeholder="Username" autocomplete="off" required />
+
+                <?php
+                  $errors = $errors ?? [];
+                  $old    = $old ?? [];
+                ?>
+
+                <form method="POST" class="form" action="/login" novalidate>
+                    <div class="form-username">
+                        <input
+                            type="text"
+                            name="username"
+                            id="username"
+                            class="form-control<?php echo isset($errors['username']) ? ' input-invalid' : '';?>"
+                            placeholder="Email or Registration No"
+                            autocomplete="username"
+                            value="<?php echo htmlspecialchars($old['username'] ?? ''); ?>"
+                            required
+                        />
+                        <small class="field-error" data-error-for="username">
+                            <?php echo isset($errors['username']) ? htmlspecialchars($errors['username']) : ''; ?>
+                        </small>
                     </div>
 
                     <div class="form-outline">
                         <div class="form-password">
-                        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required />
-                        <img id="togglePassword" src="assets/icons/hide.png" alt="Toggle Password">
+                            <input
+                                type="password"
+                                name="password"
+                                id="password"
+                                class="form-control<?php echo isset($errors['password']) ? ' input-invalid' : '';?>"
+                                placeholder="Password"
+                                autocomplete="current-password"
+                                required
+                            />
+                            <small class="field-error" data-error-for="password">
+                                <?php echo isset($errors['password']) ? htmlspecialchars($errors['password']) : ''; ?>
+                            </small>
+                        </div>
                     </div>
-                    
+
                     <div class="signin_button">
                         <button name="signin" class="btn-primary" type="submit">Sign In</button>
                     </div>
 
-                    <div class="forgot">
-                        <p class="mb-0 me-2">Forgot Password? <a href="/recoverPassword">Recover Password</a></p>
-                    </div>
-
-                    <div class="create">
-                        <p class="mb-0 me-2">Don't have an account? <a href="./register.html">Sign Up</a></p>
+                    <div class="create" style="margin-top:12px">
+                        <p class="mb-0 me-2">Don't have an account? <a href="/signup">Sign Up</a></p>
                     </div>
                 </form>
             </div>
         </div>
 
-        <script>
-            document.getElementById('togglePassword').addEventListener('click', function () {
-                const passwordField = document.getElementById('password');
-                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordField.setAttribute('type', type);
-                this.src = type === 'password' ? '../images/hide.png' : '../images/show.png';
-            });
-        </script>
+        <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+        <script src="/js/home/auth/response-handle.js"></script>
     </body>
 </html>
 

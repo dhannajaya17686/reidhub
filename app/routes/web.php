@@ -24,18 +24,26 @@ $routes['/verify-email'] = [
 
 
 $routes['/logout'] = [
-    'GET' => 'Auth_LoginController@logout'
+    'POST' => 'Auth_LoginController@logout'
 ];
 $routes['/dashboard'] = [
-    'GET' => 'User_DashboardController@index'
+    'GET' => 'Dashboard_UserDashboardController@showUserDashboard'
 ];
-
+$routes['/dashboard/admin'] = [
+    'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
+];
 // Forum routes
-$routes['/forum'] = [
-    'GET' => 'Forum_ForumController@showAllQuestions'
+$routes['/forum/'] = [
+    'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
-$routes['/forum/questions'] = [
-    'GET' => 'Forum_ForumController@showAllQuestions'
+$routes['/forum/question'] = [
+    'GET' => 'Forum_ForumUserController@showQuestion'
+];
+$routes['/forum/add'] = [
+    'GET' => 'Forum_ForumUserController@addQuestion'
+];
+$routes['/forum/admin'] = [
+    'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];
 
 $routes['/'] = [

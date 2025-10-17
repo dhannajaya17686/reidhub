@@ -226,4 +226,4 @@
                 </div>
             </section>
         </main>
- 
+     <script type="module" src="/js/app/edu-forum/all-questions.js"></script>

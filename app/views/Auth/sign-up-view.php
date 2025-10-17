@@ -19,26 +19,40 @@
                     <img src="assets/images/logo-no-text.png" alt="ReidHub Logo">
                     <p>Let's Get Started!</p>
                 </div>
-                <form method="POST" enctype="multipart/form-data" class="form">
+                <form method="POST" enctype="multipart/form-data" class="form" action="/signup">
                     <p>One stop for all your university needs.</p>
+
                     <div class="form-name">
-                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" autocomplete="off" required />
-                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name" autocomplete="off" required />
+                        <div class="field">
+                            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name" autocomplete="off" required />
+                            <small class="field-error" data-error-for="first_name"></small>
+                        </div>
+                        <div class="field">
+                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name" autocomplete="off" required />
+                            <small class="field-error" data-error-for="last_name"></small>
+                        </div>
                     </div>
+
                     <div class="form-name">
-                        <input type="text" name="email" id="email" class="form-control" placeholder="Student Email" autocomplete="off" required />
-                        <input type="text" name="reg_no" id="reg_no" class="form-control" placeholder="Registration No" autocomplete="off" required />
+                        <div class="field">
+                            <input type="text" name="email" id="email" class="form-control" placeholder="Student Email" autocomplete="off" required />
+                            <small class="field-error" data-error-for="email"></small>
+                        </div>
+                        <div class="field">
+                            <input type="text" name="reg_no" id="reg_no" class="form-control" placeholder="Registration No" autocomplete="off" required />
+                            <small class="field-error" data-error-for="reg_no"></small>
+                        </div>
                     </div>
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="password" id="password" class="form-control" placeholder="New Password" autocomplete="off" required />
-                            <img id="togglePassword" src="assets/icons/hide.png" alt="Toggle Password">
+                            <small class="field-error" data-error-for="password"></small>
                         </div>
                     </div>
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required />
-                            <img id="togglePassword" src="assets/icons/hide.png" alt="Toggle Password">
+                            <small class="field-error" data-error-for="confirm_password"></small>
                         </div>
                     </div>
                     <div class="signup_button">
@@ -47,5 +61,9 @@
                 </form>
             </div>
         </div>
+
+        <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+        <script src="/js/home/auth/response-handle.js"></script>
     </body>
 </html>
