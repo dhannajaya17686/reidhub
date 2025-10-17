@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [2025-10-16 05:04:40][INFO] Incoming request: URI = /signup, Method = POST
 [2025-10-16 05:04:40][INFO] Instantiating controller: Auth_LoginController
 [2025-10-16 05:04:40][INFO] Calling action: signup on controller: Auth_LoginController
@@ -903,3 +904,1055 @@
 [2025-10-17 03:48:41][INFO] Successfully loaded view: Auth/log-in-view
 [2025-10-17 03:48:41][INFO] Incoming request: URI = /favicon.ico, Method = GET
 [2025-10-17 03:48:41][ERROR] Route not found: URI = /favicon.ico, Method = GET
+=======
+[2025-10-14 08:22:26][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:22:26][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:22:26][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:22:26][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:22:26][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:28:07][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:28:07][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:28:07][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:28:07][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:28:07][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:28:07][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 08:28:07][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 08:30:29][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:30:29][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:30:29][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:30:29][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:30:29][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:30:29][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:29][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:30][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:30:30][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:30:30][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:30:30][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:30:30][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:30:30][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:30][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:40][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:30:40][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:30:40][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:30:40][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:30:40][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:30:40][INFO] Incoming request: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:40][ERROR] Route not found: URI = /css/app/edu-forum/all-questions.css, Method = GET
+[2025-10-14 08:30:40][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 08:30:40][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 08:30:59][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:30:59][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:30:59][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:30:59][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:30:59][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:35:57][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:35:57][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:35:57][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:35:57][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:35:57][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:35:57][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 08:35:57][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 08:38:50][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:38:50][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:38:50][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:38:50][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:38:50][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:38:50][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 08:38:50][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 08:45:43][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:45:43][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:45:43][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:45:43][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:45:43][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:46:07][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:46:07][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:46:07][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:46:07][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:46:07][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:46:08][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 08:46:08][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 08:46:24][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:46:24][INFO] Instantiating controller: Forum_ForumController
+[2025-10-14 08:46:24][INFO] Calling action: showAllQuestions on controller: Forum_ForumController
+[2025-10-14 08:46:24][INFO] Loading app view: User/edu-forum/all-questions-view with data: [] and title: All Questions - ReidHub
+[2025-10-14 08:46:24][INFO] Successfully loaded app view: User/edu-forum/all-questions-view with layout and title: All Questions - ReidHub
+[2025-10-14 08:52:03][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:52:03][ERROR] Route not found: URI = /forum, Method = GET
+[2025-10-14 08:52:05][INFO] Incoming request: URI = /forum, Method = GET
+[2025-10-14 08:52:05][ERROR] Route not found: URI = /forum, Method = GET
+[2025-10-14 08:52:08][INFO] Incoming request: URI = /fprum, Method = GET
+[2025-10-14 08:52:08][ERROR] Route not found: URI = /fprum, Method = GET
+[2025-10-14 08:52:08][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 08:52:08][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 08:52:08][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 08:52:08][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 08:52:08][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 08:52:10][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 08:52:10][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 08:52:10][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 08:52:10][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 08:52:10][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 08:52:11][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 08:52:11][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 08:52:11][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 08:52:11][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 08:52:11][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 08:52:12][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 08:52:12][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 08:52:12][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 08:52:12][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 08:52:12][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 08:52:15][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 08:52:15][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 08:52:15][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 08:52:15][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 08:52:15][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 08:52:16][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 08:52:16][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 08:52:16][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 08:52:16][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 08:52:16][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 08:52:19][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 08:52:19][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 08:52:19][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 08:52:19][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 08:52:19][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:31:47][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 09:31:47][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 09:31:47][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 09:31:47][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 09:31:47][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:31:47][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 09:31:47][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 09:31:53][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 09:31:53][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 09:31:53][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 09:31:53][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 09:31:53][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 09:32:03][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 09:32:03][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 09:32:03][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 09:32:03][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 09:32:03][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 09:32:05][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 09:32:05][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 09:32:05][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 09:32:05][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 09:32:05][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 10:00:17][INFO] Incoming request: URI = /lost-and-found, Method = GET
+[2025-10-14 10:00:17][ERROR] Route not found: URI = /lost-and-found, Method = GET
+[2025-10-14 10:00:30][INFO] Incoming request: URI = /app/lost-and-found, Method = GET
+[2025-10-14 10:00:30][ERROR] Route not found: URI = /app/lost-and-found, Method = GET
+[2025-10-14 11:08:08][INFO] Incoming request: URI = /app/lost-and-found, Method = GET
+[2025-10-14 11:08:08][ERROR] Route not found: URI = /app/lost-and-found, Method = GET
+[2025-10-14 14:12:30][INFO] Incoming request: URI = /app/lost-and-found, Method = GET
+[2025-10-14 14:12:30][ERROR] Route not found: URI = /app/lost-and-found, Method = GET
+[2025-10-14 14:12:32][INFO] Incoming request: URI = /lost-and-found, Method = GET
+[2025-10-14 14:12:32][ERROR] Route not found: URI = /lost-and-found, Method = GET
+[2025-10-14 14:12:34][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 14:12:34][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:12:34][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 14:12:34][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 14:12:34][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 14:12:34][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:12:34][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:12:34][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:12:34][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:12:34][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:13:05][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:05][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:05][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:13:05][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:13:05][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:13:05][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:13:05][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:13:52][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 14:13:52][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:13:52][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 14:13:52][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 14:13:52][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 14:13:52][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:52][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:56][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:56][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:56][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:56][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:57][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:13:57][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:13:57][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:13:57][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:13:57][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:13:58][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:13:58][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:34][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:34][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:35][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:35][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:36][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 14:15:36][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:15:36][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 14:15:36][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 14:15:36][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 14:15:36][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:36][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:39][INFO] Incoming request: URI = /recoverPassword, Method = GET
+[2025-10-14 14:15:39][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:15:39][INFO] Calling action: showRecoverPasswordForm on controller: Auth_LoginController
+[2025-10-14 14:15:39][INFO] Loading view: Auth/recover-password-view with data: []
+[2025-10-14 14:15:39][INFO] Successfully loaded view: Auth/recover-password-view
+[2025-10-14 14:15:39][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:39][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:42][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:42][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:42][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:42][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:43][INFO] Incoming request: URI = /register.html, Method = GET
+[2025-10-14 14:15:43][ERROR] Route not found: URI = /register.html, Method = GET
+[2025-10-14 14:15:43][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:43][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:45][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:45][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:45][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:45][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:46][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:46][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:47][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:47][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:49][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:15:49][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:15:49][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:15:49][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:15:49][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:15:50][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:15:50][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:16:23][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:16:23][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:16:23][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:16:23][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:16:23][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:16:23][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:16:23][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:19:31][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:19:31][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:19:31][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:19:31][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:19:31][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:19:32][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:19:32][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:19:33][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:19:33][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:19:33][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:19:33][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:19:33][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:19:33][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:19:33][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:22:11][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:22:11][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:22:11][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:22:11][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:22:11][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:22:11][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:22:11][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:23:31][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:23:31][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:23:31][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:23:31][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:23:31][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:23:31][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:23:31][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:24:11][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:24:11][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:24:11][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:24:12][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:24:12][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:24:12][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:24:12][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:24:13][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:24:13][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:24:13][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:24:13][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:24:13][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:24:13][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:24:13][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:00][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:00][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:00][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:00][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:00][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:00][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:00][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:00][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:00][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:00][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:00][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:00][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:00][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:00][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:20][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:20][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:20][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:20][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:20][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:21][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:21][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:21][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:21][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:21][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:21][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:21][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:21][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:21][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:37][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:37][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:37][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:37][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:37][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:38][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:38][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:38][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:38][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:38][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:38][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:38][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:39][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:39][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:39][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:39][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:39][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:39][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:39][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:39][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:39][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:39][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:39][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:39][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:39][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:39][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:40][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:40][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:40][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:40][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:40][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:40][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:40][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:40][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:25:40][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:25:40][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:25:40][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:25:40][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:25:40][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:25:40][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:28:02][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:28:02][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:28:02][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:28:02][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:28:02][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:28:02][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:28:02][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:28:04][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:28:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:28:04][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:28:04][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:28:04][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:28:04][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:28:04][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:30:58][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:30:58][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:30:58][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:30:58][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:30:58][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:30:58][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:30:58][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:32:25][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:32:25][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:32:25][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:32:25][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:32:25][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:32:26][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:32:26][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:32:26][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:32:26][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:32:26][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:32:29][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:32:29][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:33:25][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:33:25][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:33:25][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:33:25][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:33:25][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:33:25][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:33:25][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:33:26][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:33:26][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:33:26][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:33:26][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:33:26][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:33:26][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:33:26][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:13][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:13][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:13][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:13][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:13][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:13][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:13][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:14][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:14][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:14][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:14][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:14][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:14][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:14][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:21][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:21][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:21][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:21][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:21][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:22][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:22][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:22][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:22][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:22][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:22][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:22][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:22][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:23][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:23][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:23][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:23][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:23][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:23][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:23][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:23][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:23][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:23][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:22][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:22][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:22][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:22][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:31][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:31][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:31][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:31][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:31][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:31][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:31][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:32][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:32][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:32][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:32][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:32][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:32][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:32][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:32][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:32][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:32][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:32][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:32][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:32][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:32][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:43][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:43][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:43][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:43][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:43][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:43][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:43][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:45][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:34:45][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:34:45][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:34:45][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:34:45][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:34:45][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:34:45][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:35:13][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:35:13][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:35:13][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:35:13][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:35:13][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:35:13][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:35:13][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:35:15][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:35:15][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:35:15][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:35:15][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:35:15][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:35:15][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:35:15][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:35:15][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:35:15][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:35:15][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:35:16][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:35:16][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:34][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:37:34][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:37:34][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:37:34][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:37:34][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:34][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:34][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:34][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:37:34][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:37:34][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:37:35][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:37:35][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:35][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:35][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:35][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:37:35][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:37:36][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:37:36][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:37:36][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:36][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:36][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:36][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:37:36][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:37:36][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:37:36][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:37:36][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:37][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:37][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:37][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:37:37][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:37:37][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:37:37][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:37:37][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:37:37][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:37][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:37:57][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:37:57][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:37:57][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:37:57][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:37:57][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:37:58][INFO] Incoming request: URI = /favicon.ico, Method = GET
+[2025-10-14 14:37:58][ERROR] Route not found: URI = /favicon.ico, Method = GET
+[2025-10-14 14:38:01][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:38:01][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:38:01][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:38:01][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:38:01][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:44:49][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:44:49][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:44:49][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:44:49][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:44:49][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:45:04][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:45:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:45:04][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:45:04][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:45:04][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:45:28][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:45:28][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:45:28][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:45:28][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:45:28][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:45:59][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:45:59][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:45:59][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:45:59][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:45:59][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:46:07][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:46:07][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:46:07][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:46:07][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:46:07][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:46:20][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:46:20][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:46:20][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:46:20][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:46:20][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:46:21][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:46:21][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:46:21][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:46:21][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:46:21][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:47:05][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:47:05][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:47:05][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:47:05][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:47:05][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:47:45][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:47:45][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:47:45][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:47:45][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:47:45][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:47:47][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:47:47][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:47:47][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:47:47][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:47:47][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:48:42][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:48:42][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:48:42][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:48:42][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:48:42][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:48:43][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:48:43][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:48:44][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:48:44][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:48:44][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:49:02][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:49:02][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:49:02][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:49:02][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:49:02][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:49:16][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:49:16][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:49:16][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:49:16][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:49:16][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:49:43][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:49:43][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:50:18][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:50:19][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:50:19][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:50:19][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:50:19][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:50:19][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:50:19][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 14:52:06][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:52:06][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:52:07][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:52:07][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:52:07][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:52:31][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:52:31][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:52:31][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:52:31][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:52:31][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:52:33][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:52:33][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:52:33][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:52:33][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:52:33][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:52:44][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:52:44][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:52:44][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:52:44][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:52:44][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:52:45][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:52:45][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:52:45][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:52:45][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:52:45][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:53:29][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:53:29][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:53:29][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:53:29][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:53:29][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:54:12][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:54:12][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:54:12][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:54:12][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:54:12][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:54:14][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:54:14][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:54:14][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:54:14][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:54:14][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:54:37][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:54:37][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:54:37][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:54:37][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:54:37][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:54:45][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:54:45][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:54:45][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:54:45][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:54:45][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:55:28][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:55:28][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:55:28][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:55:28][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:55:28][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:55:29][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:55:29][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:55:29][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:55:29][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:55:29][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:55:31][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:55:31][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:55:31][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:55:31][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:55:31][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:56:20][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:56:20][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:56:20][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:56:20][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:56:20][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:56:21][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:56:21][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:56:21][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:56:21][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:56:21][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:56:36][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:56:36][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:56:36][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:56:36][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:56:36][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:56:37][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:56:38][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:56:38][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:56:38][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:56:38][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:56:47][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:56:47][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:56:47][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:56:47][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:56:47][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:01][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:01][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:01][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:01][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:01][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:15][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:15][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:15][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:15][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:15][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:30][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:30][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:30][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:30][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:30][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:37][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:37][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:37][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:37][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:38][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:46][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:46][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:46][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:46][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:47][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:57:55][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:57:55][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:57:55][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:57:56][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:57:56][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:58:04][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:58:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:58:04][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:58:04][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:58:04][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:58:40][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:58:40][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:58:40][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:58:40][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:58:40][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 14:58:47][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 14:58:47][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 14:58:47][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 14:58:47][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 14:58:47][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 14:58:49][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 14:58:49][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:58:49][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 14:58:49][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 14:58:49][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 14:58:59][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 14:58:59][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 14:58:59][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 14:58:59][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 14:58:59][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:02:35][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 15:02:35][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 15:02:35][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 15:02:35][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 15:02:35][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 15:02:38][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:02:38][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:02:38][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:02:38][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:02:38][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:10:26][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:10:26][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:10:26][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:10:26][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:10:26][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:10:56][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:10:56][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:10:56][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:10:56][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:10:56][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:11:52][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:11:52][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:11:53][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:11:53][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:11:53][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:12:13][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:12:13][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:12:13][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:12:13][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:12:13][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:14:08][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:14:08][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:14:08][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:14:08][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:14:08][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:14:19][INFO] Incoming request: URI = /recoverPassword, Method = GET
+[2025-10-14 15:14:19][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:14:19][INFO] Calling action: showRecoverPasswordForm on controller: Auth_LoginController
+[2025-10-14 15:14:19][INFO] Loading view: Auth/recover-password-view with data: []
+[2025-10-14 15:14:19][INFO] Successfully loaded view: Auth/recover-password-view
+[2025-10-14 15:14:24][INFO] Incoming request: URI = /register.html, Method = GET
+[2025-10-14 15:14:24][ERROR] Route not found: URI = /register.html, Method = GET
+[2025-10-14 15:15:14][INFO] Incoming request: URI = /register.html, Method = GET
+[2025-10-14 15:15:14][ERROR] Route not found: URI = /register.html, Method = GET
+[2025-10-14 15:15:17][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:15:17][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:17][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:15:17][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:15:17][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:15:27][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:15:27][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:27][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:15:27][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:15:27][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:15:35][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:15:35][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:35][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:15:35][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:15:35][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:15:36][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:15:36][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:36][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:15:36][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:15:36][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:15:37][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 15:15:37][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 15:15:37][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 15:15:37][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 15:15:37][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 15:15:40][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 15:15:40][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 15:15:40][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 15:15:40][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 15:15:40][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 15:15:41][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 15:15:42][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:42][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 15:15:42][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 15:15:42][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:15:46][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:15:46][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:15:46][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:15:46][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:15:46][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:16:35][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:16:35][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:16:35][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:16:35][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:16:35][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:16:44][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:16:44][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:16:44][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:16:44][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:16:44][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:17:20][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:17:20][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:17:20][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:17:20][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:17:20][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:17:57][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:17:57][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:17:57][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:17:57][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:17:58][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:18:08][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:18:08][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:18:08][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:18:09][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:18:09][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:18:16][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:18:16][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:18:16][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:18:16][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:18:16][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:18:46][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:18:46][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:18:46][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:18:46][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:18:46][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:19:03][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:19:03][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:19:03][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:19:03][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:19:03][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:19:04][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:19:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:19:04][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:19:04][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:19:04][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:19:10][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:19:10][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:19:10][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:19:10][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:19:10][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:19:23][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:19:23][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:21:53][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:21:53][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:21:53][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:21:53][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:21:54][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:21:54][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:21:54][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:22:44][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:22:44][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:22:44][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:22:44][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:22:44][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:22:44][INFO] Incoming request: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:22:44][ERROR] Route not found: URI = /.well-known/appspecific/com.chrome.devtools.json, Method = GET
+[2025-10-14 15:23:48][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:23:48][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:23:48][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:23:48][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:23:48][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:23:55][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:23:55][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:23:55][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:23:55][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:23:55][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:24:35][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:24:35][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:24:35][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:24:35][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:24:35][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:25:41][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:25:42][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:25:42][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:25:42][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:25:42][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:26:17][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:26:17][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:26:17][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:26:17][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:26:17][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:26:42][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:26:42][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:26:42][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:26:42][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:26:42][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:27:18][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:27:18][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:27:18][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:27:18][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:27:18][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:28:04][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:28:04][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:28:04][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:28:04][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:28:04][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:28:39][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:28:39][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:28:39][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:28:39][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:28:39][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:28:53][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:28:53][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:28:53][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:28:53][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:28:53][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:28:54][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:28:54][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:28:54][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:28:54][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:28:54][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:29:03][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:29:03][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:29:03][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:29:03][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:29:03][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:29:13][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:29:13][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:29:13][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:29:13][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:29:13][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:29:29][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:29:29][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:29:29][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:29:29][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:29:29][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:29:45][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:29:45][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:29:45][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:29:45][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:29:45][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:29:58][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:29:58][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:29:58][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:29:58][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:29:58][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:30:10][INFO] Incoming request: URI = /, Method = GET
+[2025-10-14 15:30:10][INFO] Instantiating controller: Home_HomeController
+[2025-10-14 15:30:10][INFO] Calling action: index on controller: Home_HomeController
+[2025-10-14 15:30:10][INFO] Loading view: Home/home-view with data: []
+[2025-10-14 15:30:10][INFO] Successfully loaded view: Home/home-view
+[2025-10-14 15:30:11][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 15:30:11][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:30:11][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 15:30:11][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 15:30:11][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:30:57][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 15:30:57][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:30:57][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 15:30:57][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 15:30:57][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:31:02][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:31:02][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:31:02][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:31:02][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:31:02][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:31:37][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:31:37][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:31:37][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:31:37][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:31:37][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:31:42][INFO] Incoming request: URI = /recoverPassword, Method = GET
+[2025-10-14 15:31:42][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:31:42][INFO] Calling action: showRecoverPasswordForm on controller: Auth_LoginController
+[2025-10-14 15:31:42][INFO] Loading view: Auth/recover-password-view with data: []
+[2025-10-14 15:31:42][INFO] Successfully loaded view: Auth/recover-password-view
+[2025-10-14 15:31:46][INFO] Incoming request: URI = /register.html, Method = GET
+[2025-10-14 15:31:46][ERROR] Route not found: URI = /register.html, Method = GET
+[2025-10-14 15:31:50][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 15:31:50][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:31:50][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 15:31:50][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 15:31:50][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:31:54][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:31:54][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:31:54][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:31:54][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:31:54][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:32:01][INFO] Incoming request: URI = /signup, Method = GET
+[2025-10-14 15:32:01][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:32:01][INFO] Calling action: showSignupForm on controller: Auth_LoginController
+[2025-10-14 15:32:01][INFO] Loading view: Auth/sign-up-view with data: []
+[2025-10-14 15:32:01][INFO] Successfully loaded view: Auth/sign-up-view
+[2025-10-14 15:32:07][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:32:07][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:32:07][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:32:07][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:32:07][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:32:46][INFO] Incoming request: URI = /login, Method = GET
+[2025-10-14 15:32:46][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:32:46][INFO] Calling action: showLoginForm on controller: Auth_LoginController
+[2025-10-14 15:32:46][INFO] Loading view: Auth/log-in-view with data: []
+[2025-10-14 15:32:47][INFO] Successfully loaded view: Auth/log-in-view
+[2025-10-14 15:32:56][INFO] Incoming request: URI = /recoverPassword, Method = GET
+[2025-10-14 15:32:56][INFO] Instantiating controller: Auth_LoginController
+[2025-10-14 15:32:56][INFO] Calling action: showRecoverPasswordForm on controller: Auth_LoginController
+[2025-10-14 15:32:56][INFO] Loading view: Auth/recover-password-view with data: []
+[2025-10-14 15:32:56][INFO] Successfully loaded view: Auth/recover-password-view
+>>>>>>> ed92e142f73848822dd9709bbfaa561680b1af8c
