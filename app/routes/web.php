@@ -32,13 +32,20 @@ $routes['/dashboard'] = [
 $routes['/dashboard/admin'] = [
     'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
 ];
-// Forum routes
-$routes['/forum/'] = [
-    'GET' => 'Forum_ForumUserController@showAllQuestions'
+//Marketplace User routes
+$routes['/dashboard/marketplace/merch-store'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showMerchStore'
+];  
+$routes['/dashboard/marketplace/show-product'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showSpecificProduct'
 ];
-$routes['/forum/question'] = [
-    'GET' => 'Forum_ForumUserController@showQuestion'
+$routes['/dashboard/marketplace/my-cart'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showMyCart'
 ];
+$routes['/dashboard/marketplace/orders'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showMyOrders'
+];
+
 $routes['/forum/add'] = [
     'GET' => 'Forum_ForumUserController@addQuestion'
 ];

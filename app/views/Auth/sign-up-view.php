@@ -46,20 +46,13 @@
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="password" id="password" class="form-control" placeholder="New Password" autocomplete="off" required />
-<<<<<<< HEAD
                             <small class="field-error" data-error-for="password"></small>
-=======
->>>>>>> ed92e142f73848822dd9709bbfaa561680b1af8c
                         </div>
                     </div>
                     <div class="form-outline">
                         <div class="form-password">
                             <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirm Password" required />
-<<<<<<< HEAD
                             <small class="field-error" data-error-for="confirm_password"></small>
-=======
-
->>>>>>> ed92e142f73848822dd9709bbfaa561680b1af8c
                         </div>
                     </div>
                     <div class="signup_button">

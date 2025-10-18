@@ -219,4 +219,38 @@ class Auth_LoginController extends Controller
         header('Location: /login', true, 302);
         exit;
     }
+
+    /**
+     * Checks if a user is logged in and returns the user array or null.
+     * If not logged in, optionally redirects to login.
+     */
+    public static function getSessionUser(bool $redirectIfNotLoggedIn = true)
+    {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        $sessionUser = $_SESSION['user'] ?? null;
+        $userId = $_SESSION['user_id'] ?? ($sessionUser['id'] ?? null);
+
+        if (!$userId) {
+            if ($redirectIfNotLoggedIn) {
+                header('Location: /login', true, 302);
+                exit;
+            }
+            return null;
+        }
+
+        $user = $sessionUser;
+        if (!$user || (int)($user['id'] ?? 0) !== (int)$userId) {
+            $user = (new User())->findById((int)$userId);
+            if (!$user) {
+                $_SESSION = [];
+                if ($redirectIfNotLoggedIn) {
+                    header('Location: /login', true, 302);
+                    exit;
+                }
+                return null;
+            }
+            $_SESSION['user'] = $user;
+        }
+        return $user;
+    }
 }

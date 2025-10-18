@@ -33,10 +33,9 @@ $userItems = [
         'href' => '/dashboard/marketplace', 
         'icon' => 'market',
         'children' => [
-            ['label' => 'Buy Items', 'href' => '/dashboard/marketplace/buy'],
-            ['label' => 'Sell Items', 'href' => '/dashboard/marketplace/sell'],
-            ['label' => 'My Listings', 'href' => '/dashboard/marketplace/my-listings'],
-            ['label' => 'Orders', 'href' => '/dashboard/marketplace/orders'],
+            ['label' => 'Merch Store', 'href' => '/dashboard/marketplace/merch-store'],
+            ['label' => 'My Cart', 'href' => '/dashboard/marketplace/my-cart'],
+            ['label' => 'My Orders', 'href' => '/dashboard/marketplace/orders'],
         ]
     ],
     [ 
@@ -84,6 +83,8 @@ function svg_icon(string $name): string {
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 1-5.3 14l-2.8 2.8 1.4 1.4 2.8-2.8A8 8 0 0 1 10 2Zm0 2a6 6 0 1 0 6 6 6 6 0 0 0-6-6Z"/></svg>';
         case 'logout':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>';
+        case 'seller':
+            return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
         case 'chevron':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>';
         default:
@@ -119,6 +120,7 @@ function svg_icon(string $name): string {
                             $hasChildren = !empty($it['children']);
                             $hasActiveChild = $hasChildren && has_active_child($it['children'], $path);
                             $isExpanded = $active || $hasActiveChild;
+                            $isMarketplace = $it['label'] === 'Marketplace';
                         ?>
                         <li class="sidebar-nav-item">
                             <?php if ($hasChildren): ?>
@@ -142,6 +144,18 @@ function svg_icon(string $name): string {
                                             </a>
                                         </li>
                                     <?php endforeach; ?>
+                                    
+                                    <?php if ($isMarketplace): ?>
+                                        <!-- Switch to Seller Account Button -->
+                                        <li class="sidebar-submenu-item">
+                                            <a class="sidebar-submenu-link sidebar-seller-switch" 
+                                               href="/dashboard/marketplace/seller"
+                                               title="Switch to Seller Account">
+                                                <span class="seller-switch-icon"><?php echo svg_icon('seller'); ?></span>
+                                                <span class="seller-switch-text">Switch to Seller Account</span>
+                                            </a>
+                                        </li>
+                                    <?php endif; ?>
                                 </ul>
                             <?php else: ?>
                                 <a class="sidebar-nav-link<?php echo $active ? ' is-active' : ''; ?>"

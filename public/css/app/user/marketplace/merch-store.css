@@ -1,0 +1,565 @@
+/* --------------------------------------------------------------------------
+   Welcome Section
+   --------------------------------------------------------------------------
+   Personalized greeting and user statistics overview.
+   Uses --stats-bg for card backgrounds and consistent spacing.
+   -------------------------------------------------------------------------- */
+.welcome-section {
+  margin-bottom: var(--space-xl);
+}
+
+/*.welcome-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  --card-padding: 20px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  text-align: left;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.stat-card__label {
+  font-size: 0.875rem;
+  color: var(--muted-text);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.stat-card__value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+*/
+
+.page-header {
+  margin-bottom: var(--space-xl);
+}
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: var(--space-lg);
+}
+
+.page-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+  text-align: center;
+  transition: all var(--transition-smooth);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: var(--space-xs);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+/* --------------------------------------------------------------------------
+   Tab Navigation
+   --------------------------------------------------------------------------
+   Main category tabs for filtering between Merchandise and Second Hand Items.
+   Uses --chip-bg and --chip-active-bg for state management.
+   State: .tab-button--active for selected tab
+   -------------------------------------------------------------------------- */
+.tab-navigation {
+  margin-bottom: var(--space-xl);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-list {
+  display: flex;
+  gap: 4px;
+  margin-bottom: -1px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tab-list::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-button {
+  --tab-padding: 12px 24px;
+  padding: var(--tab-padding);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--muted-text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  position: relative;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button:hover {
+  background: var(--chip-bg);
+  color: var(--text-color);
+}
+
+.tab-button--active {
+  background: var(--surface);
+  color: var(--secondary-color);
+  border-bottom-color: var(--secondary-color);
+  font-weight: 600;
+}
+
+.tab-button:focus-visible {
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-md);
+}
+
+/* --------------------------------------------------------------------------
+   Tab Content Panels
+   --------------------------------------------------------------------------
+   Content containers for each tab. Only one panel is visible at a time.
+   Uses data-tab-content attribute for JavaScript targeting.
+   State: .is-hidden for inactive panels
+   -------------------------------------------------------------------------- */
+.tab-content {
+  transition: opacity var(--transition-fast);
+}
+
+.tab-content.is-hidden {
+  display: none;
+}
+
+/* Fade-in animation for tab content */
+.tab-content:not(.is-hidden) {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   Enhanced Product Sections
+   --------------------------------------------------------------------------
+   Modular product listing sections with improved visual hierarchy.
+   Added enhanced spacing and visual improvements.
+   -------------------------------------------------------------------------- */
+.product-section {
+  margin-bottom: calc(var(--space-lg) * 1.2);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-count {
+  background: var(--surface-subtle);
+  color: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  padding: 4px 12px;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.section-action {
+  font-size: 0.875rem;
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.section-action:hover {
+  color: color-mix(in srgb, var(--secondary-color) 80%, black);
+  text-decoration: underline;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+  margin-bottom: 32px;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Enhanced Product Cards
+   --------------------------------------------------------------------------
+   Individual product display with improved visual design and interactions.
+   Added better hover states, loading animations, and visual feedback.
+   State: .product-card--featured for highlighted items
+   State: .product-card--deal for special pricing
+   -------------------------------------------------------------------------- */
+.product-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: box-shadow 0.18s, border-color 0.18s, transform 0.18s;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+.product-card--featured {
+  border-color: var(--secondary-color);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--info-100) 100%);
+}
+
+.product-card--featured::before {
+  content: "Featured";
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--secondary-color);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.product-card__image {
+  aspect-ratio: 1;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.18s;
+}
+
+.product-card:hover .product-card__image img {
+  transform: scale(1.04);
+}
+
+.product-card__content {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.product-card__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.product-card__price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 6px;
+}
+
+.product-card__condition {
+  font-size: 0.93rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.condition-badge {
+  padding: 2px 10px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--surface-subtle);
+  color: var(--secondary-color);
+}
+
+.condition-badge--new {
+  background: var(--draft-save-success);
+  color: #065f46;
+}
+
+.condition-badge--used {
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+}
+
+.product-card__category {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   Enhanced Buttons
+   --------------------------------------------------------------------------
+   Improved button styling with better states and loading animations.
+   Added secondary button variant and enhanced interaction feedback.
+   -------------------------------------------------------------------------- */
+.btn {
+  padding: 12px 24px;
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  background:  var(--secondary-color);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn--primary:hover {
+  background-color: var(--surface-subtle);
+  box-shadow: var(--shadow-lg);
+  color: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading state */
+.btn--loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --------------------------------------------------------------------------
+   Empty States
+   --------------------------------------------------------------------------
+   Displays when no products are available in a category.
+   Provides helpful messaging and calls-to-action.
+   -------------------------------------------------------------------------- */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted-text);
+}
+
+.empty-state__icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.empty-state__description {
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Add to Cart Button
+   --------------------------------------------------------------------------
+   Specialized button for adding products to the cart.
+   Enhanced styling and interaction states.
+   -------------------------------------------------------------------------- */
+.btn--secondary.btn--add-to-cart {
+  background: var(--secondary-color);
+  color: var(--surface-elevated);
+  border: 1px solid var(--border-color);
+  width: auto;
+  min-width: 70px;
+  min-height: 50px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  font-size: 1rem;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.btn--secondary.btn--add-to-cart:hover:not(:disabled) {
+  border-color: var(--secondary-color);
+  background-color: var(--surface-subtle);
+  box-shadow: var(--shadow-lg);
+  color: var(--secondary-color);
+}
+/* Sort Controls */
+.sort-controls {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.sort-group {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+
+.sort-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.sort-dropdown {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  min-width: 140px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sort-dropdown:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 3px rgba(4, 102, 200, 0.1);
+}
+
+.sort-dropdown:hover {
+  border-color: var(--secondary-color);
+}
+
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .sort-controls {
+    justify-content: space-between;
+  }
+}
+
+/* Stock Badge */
+.stock-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  z-index: 2;
+}
+
+.stock-badge--in-stock {
+  background: #119b74;
+  color: #ffffff;
+}
+
+.stock-badge--low-stock {
+  background: #d97706;
+  color: #ffffff;
+}
+
+.stock-badge--out-of-stock {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+
