@@ -203,6 +203,56 @@ class SidebarDropdown {
 }
 
 /**
+ * Account Mode Indicator
+ * Shows visual feedback when switching between buyer/seller modes
+ */
+class AccountModeManager {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    // Add visual indicator for current mode
+    this.addModeIndicator();
+    
+    // Handle account switch clicks
+    document.querySelectorAll('.sidebar-account-switch').forEach(link => {
+      link.addEventListener('click', (e) => this.handleAccountSwitch(e));
+    });
+  }
+
+  addModeIndicator() {
+    const isSellerMode = window.location.pathname.includes('/seller/');
+    const sidebar = document.querySelector('.forum-sidebar');
+    
+    if (sidebar) {
+      sidebar.setAttribute('data-account-mode', isSellerMode ? 'seller' : 'buyer');
+    }
+  }
+
+  handleAccountSwitch(event) {
+    const link = event.currentTarget;
+    const isGoingToSeller = link.href.includes('/seller/');
+    
+    // Add loading state
+    link.style.opacity = '0.7';
+    link.style.pointerEvents = 'none';
+    
+    // Optional: Add smooth transition effect
+    document.body.style.transition = 'opacity 0.2s ease';
+    document.body.style.opacity = '0.95';
+    
+    // Let the navigation happen naturally
+    setTimeout(() => {
+      link.style.opacity = '';
+      link.style.pointerEvents = '';
+      document.body.style.transition = '';
+      document.body.style.opacity = '';
+    }, 100);
+  }
+}
+
+/**
  * Basic Initialization
  * -------------------
  * Initialize core interactive components when DOM is ready.
@@ -219,6 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize sidebar dropdowns
   new SidebarDropdown();
+  
+  // Initialize account mode manager
+  new AccountModeManager();
 });
 
 /**

@@ -232,15 +232,15 @@
   text-decoration: none;
 }
 
-/* Seller Switch Button Styles */
-.sidebar-seller-switch {
+/* Account Switch Button Styles (replaces seller-specific styles) */
+.sidebar-account-switch {
   display: flex !important;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md) !important;
   margin: var(--space-sm) var(--space-xs) var(--space-xs) var(--space-xs) !important;
-  border-radius: var(--radius-md) ;
-  background: var(--secondary-color) ;
+  border-radius: var(--radius-md);
+  background: var(--secondary-color);
   color: white;
   font-weight: 600;
   font-size: 0.8rem;
@@ -250,10 +250,9 @@
   position: relative;
   overflow: hidden;
   border: 1px solid var(--border-color);
-
 }
 
-.sidebar-seller-switch::before {
+.sidebar-account-switch::before {
   content: '';
   position: absolute;
   top: 0;
@@ -264,21 +263,17 @@
   opacity: 0;
 }
 
-.sidebar-seller-switch:hover {
+.sidebar-account-switch:hover {
   background: var(--surface-hover);
   color: var(--text-primary);
   border-color: var(--secondary-color);
 }
 
-.sidebar-seller-switch:hover::before {
+.sidebar-account-switch:hover::before {
   opacity: 1;
 }
 
-.sidebar-seller-switch:active {
-  transform: translateY(0);
-}
-
-.seller-switch-icon {
+.account-switch-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -288,41 +283,35 @@
   color: white;
 }
 
-.seller-switch-icon svg {
+.account-switch-icon svg {
   width: 100%;
   height: 100%;
   fill: currentColor;
 }
 
-.seller-switch-text {
+.account-switch-text {
   line-height: 1.2;
 }
 
-/* Hover effect for the seller switch */
-.sidebar-seller-switch:hover .seller-switch-icon {
+/* Hover effect for the account switch */
+.sidebar-account-switch:hover .account-switch-icon {
   animation: pulse 0.6s ease-in-out;
 }
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
 /* Focus styles for accessibility */
-.sidebar-seller-switch:focus {
+.sidebar-account-switch:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
 }
 
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
-  .sidebar-seller-switch {
+  .sidebar-account-switch {
     font-size: 0.75rem;
     padding: var(--space-xs) var(--space-sm) !important;
   }
   
-  .seller-switch-text {
+  .account-switch-text {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

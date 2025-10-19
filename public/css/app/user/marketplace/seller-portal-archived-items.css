@@ -1,0 +1,47 @@
+/* ==========================================================================
+   Archived Items - Only CSS Differences from Active Items
+   ========================================================================== */
+
+/* Archived status badge */
+.item-status.archived {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  background: var(--surface-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-left: var(--space-sm);
+  font-weight: 500;
+}
+
+/* Success button styling for unarchive */
+.btn-success {
+  background: var(--vote-active);
+  color: var(--text-inverse);
+  border-color: var(--vote-active);
+}
+
+.btn-success:hover {
+  background: var(--success-darker, #059669);
+  border-color: var(--success-darker, #059669);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Subtle visual difference for archived items */
+.item-card {
+  opacity: 0.95;
+}
+
+.item-card:hover {
+  opacity: 1;
+}
+
+/* Archived item title styling */
+.item-title {
+  color: var(--text-secondary);
+}
+
+.item-card:hover .item-title {
+  color: var(--text-primary);
+}

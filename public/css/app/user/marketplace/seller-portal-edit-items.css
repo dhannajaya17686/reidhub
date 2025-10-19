@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Edit Items - Only CSS Differences from Add Items
+   ========================================================================== */
+
+/* Edit specific modifications */
+.page-title {
+  color: var(--secondary-color);
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+}
+
+/* Edit form styling */
+#edit-item-form {
+  position: relative;
+}
+
+/* Pre-filled form styling */
+.form-input:not(:placeholder-shown),
+.form-select:not([value=""]),
+.form-textarea:not(:placeholder-shown) {
+  background-color: var(--surface-subtle);
+  border-color: var(--secondary-color);
+}
+
+/* Show existing image remove button */
+.image-slot .remove-image {
+  display: flex;
+}
+
+/* Existing data indicator */
+.form-group.has-data .form-label::after {
+  content: ' (current)';
+  color: var(--text-muted);
+  font-weight: normal;
+  font-size: 0.75rem;
+}
+
+/* Bank preview always visible in edit mode */
+.bank-preview {
+  display: block !important;
+}
+
+/* Success styling for save button */
+.btn-primary {
+  background: var(--vote-active);
+  border-color: var(--vote-active);
+}
+
+.btn-primary:hover {
+  background: var(--success-darker, #059669);
+  border-color: var(--success-darker, #059669);
+}

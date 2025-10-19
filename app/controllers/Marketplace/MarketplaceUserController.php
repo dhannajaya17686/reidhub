@@ -28,5 +28,34 @@ class Marketplace_MarketplaceUserController extends Controller
         $user = Auth_LoginController::getSessionUser(true);
         $this->viewApp('/User/marketplace/my-orders-view', ['user' => $user], 'My Orders - ReidHub Marketplace');
     }
-
+    public function showSellerPortalAnalytics()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-analytics-view', ['user' => $user], 'Seller Portal Analytics - ReidHub Marketplace');
+    }
+    public function showSellerPortalAddItems()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-add-items-view', ['user' => $user], 'Seller Portal Add Items - ReidHub Marketplace');
+    }
+    public function showSellerPortalActiveItems()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-active-items-view', ['user' => $user], 'Seller Portal Active Items - ReidHub Marketplace');
+    }
+    public function showSellerPortalArchivedItems()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-archived-items-view', ['user' => $user], 'Seller Portal Archived Items - ReidHub Marketplace');
+    }
+    public function showSellerPortalEditItems()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-edit-items-view', ['user' => $user], 'Seller Portal Edit Items - ReidHub Marketplace');
+    }
+    public function showSellerPortalOrders()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-orders-view', ['user' => $user], 'Seller Portal Orders - ReidHub Marketplace');
+    }
 }
