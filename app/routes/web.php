@@ -75,4 +75,46 @@ $routes['/'] = [
     'GET' => 'Home_HomeController@index'
 ];
 
+// ============ COMMUNITY BLOGS ROUTES (MATCHING MARKETPLACE PATTERN) ============
+$routes['/dashboard/community/blogs'] = [
+    'GET' => 'Community_CommunityUserController@showAllBlogs'
+];
+$routes['/dashboard/community/blogs/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewBlog'
+];
+$routes['/dashboard/community/blogs/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateBlog'
+];
+$routes['/dashboard/community/blogs/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditBlog'
+];
+
+// ============ COMMUNITY CLUBS ROUTES ============
+$routes['/dashboard/community/clubs'] = [
+    'GET' => 'Community_CommunityUserController@showAllClubs'
+];
+$routes['/dashboard/community/clubs/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewClub'
+];
+$routes['/dashboard/community/clubs/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateClub'
+];
+$routes['/dashboard/community/clubs/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditClub'
+];
+
+// ============ COMMUNITY EVENTS ROUTES ============
+$routes['/dashboard/community/events'] = [
+    'GET' => 'Community_CommunityUserController@showAllEvents'
+];
+$routes['/dashboard/community/events/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewEvent'
+];
+$routes['/dashboard/community/events/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateEvent'
+];
+$routes['/dashboard/community/events/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditEvent'
+];
+
 return $routes;

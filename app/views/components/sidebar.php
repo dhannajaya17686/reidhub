@@ -25,10 +25,9 @@ $userItems = [
         'href' => '/dashboard/community', 
         'icon' => 'community',
         'children' => [
-            ['label' => 'Forum', 'href' => '/dashboard/community/forum'],
+            ['label' => 'Clubs', 'href' => '/dashboard/community/clubs'],
             ['label' => 'Events', 'href' => '/dashboard/community/events'],
-            ['label' => 'Groups', 'href' => '/dashboard/community/groups'],
-            ['label' => 'Chat', 'href' => '/dashboard/community/chat'],
+            ['label' => 'Blogs', 'href' => '/dashboard/community/blogs'],
         ]
     ],
     [ 
