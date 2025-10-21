@@ -1,7 +1,6 @@
 <link rel="stylesheet" href="/css/app/user/marketplace/merch-store.css">
 <!-- Main Dashboard Content Area -->
 <main class="dashboard-main" role="main" aria-label="Marketplace Dashboard">
-  
   <!-- Page Header -->
   <div class="page-header">
     <h1 class="page-title">Merch Store</h1>
@@ -50,16 +49,14 @@
 
   <!-- Merchandise Tab Content -->
   <div class="tab-content" data-tab-content="merchandise" id="tab-content-merchandise" role="tabpanel" aria-labelledby="merchandise-tab">
-    
-    <!-- All Merchandise Section -->
     <section class="product-section" aria-labelledby="merchandise-title">
       <div class="section-header">
         <h2 id="merchandise-title" class="section-title">
           All Merchandise
-          <span class="section-count">2</span>
+          <span class="section-count"><?php echo isset($merchandiseCount) ? (int)$merchandiseCount : 0; ?></span>
         </h2>
-        
-        <!-- Sort Options -->
+
+        <!-- Sort Options (unchanged) -->
         <div class="sort-controls">
           <div class="sort-group">
             <label for="sort-price" class="sort-label">Sort by Price:</label>
@@ -81,79 +78,70 @@
           </div>
         </div>
       </div>
-      
-      <div class="product-grid">
-        <article class="product-card" tabindex="0" role="article" aria-label="UCSC Tshirt, Rs.2000, Brand New" data-price="2000" data-type="clothing">
-          <div class="product-card__image">
-            <img src="https://via.placeholder.com/280x280/1e3a8a/ffffff?text=UCSC+Tshirt" alt="UCSC Tshirt - Navy blue polo shirt with white accents">
-            <div class="stock-badge stock-badge--in-stock">In Stock</div>
-          </div>
-          <div class="product-card__content">
-            <h3 class="product-card__title">UCSC Tshirt</h3>
-            <div class="product-card__price">Rs.2000</div>
-            <div class="product-card__condition">
-              Condition: <span class="condition-badge condition-badge--new">Brand New</span>
-            </div>
-            <div class="product-card__actions" style="display: flex; gap: 8px;">
-              <a href="/dashboard/marketplace/show-product" class="btn btn--primary btn--full-width">
-                View Product
-              </a>
-              <button class="btn btn--secondary btn--add-to-cart" title="Add to Cart" data-product-action="add-to-cart" data-product-id="1">
-                <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
-                  <!-- Simple cart SVG icon -->
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="visually-hidden">Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </article>
 
-        <article class="product-card" tabindex="0" role="article" aria-label="UCSC Hoodie, Rs.3500, Brand New" data-price="3500" data-type="clothing">
-          <div class="product-card__image">
-            <img src="https://via.placeholder.com/280x280/2563eb/ffffff?text=UCSC+Hoodie" alt="UCSC Hoodie - Navy blue hoodie with university logo">
-            <div class="stock-badge stock-badge--low-stock">Low Stock</div>
-          </div>
-          <div class="product-card__content">
-            <div class="product-card__category">Apparel • Official Merchandise</div>
-            <h3 class="product-card__title">UCSC Hoodie</h3>
-            <div class="product-card__price">Rs.3500</div>
-            <div class="product-card__condition">
-              Condition: <span class="condition-badge condition-badge--new">Brand New</span>
-            </div>
-            <div class="product-card__actions" style="display: flex; gap: 8px;">
-              <a href="/marketplace/product/2" class="btn btn--primary btn--full-width">
-                View Product
-              </a>
-              <button class="btn btn--secondary btn--add-to-cart" title="Add to Cart" data-product-action="add-to-cart" data-product-id="2">
-                <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="visually-hidden">Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </article>
+      <div class="product-grid">
+        <?php if (!empty($merchandiseItems)): ?>
+          <?php foreach ($merchandiseItems as $item): ?>
+            <article class="product-card" tabindex="0" role="article"
+                     aria-label="<?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>, Rs.<?php echo number_format($item['price'], 0, '.', ','); ?>, <?php echo $item['condition'] === 'brand_new' ? 'Brand New' : 'Used'; ?>"
+                     data-price="<?php echo (int)$item['price']; ?>"
+                     data-type="<?php echo htmlspecialchars(strtolower($item['product_type'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+              <div class="product-card__image">
+                <img src="<?php echo htmlspecialchars($item['image'] ?: '/images/placeholders/product.png', ENT_QUOTES, 'UTF-8'); ?>"
+                     alt="<?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="stock-badge <?php echo $item['stock_badge_class']; ?>">
+                  <?php echo htmlspecialchars($item['stock_badge_text'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+              </div>
+              <div class="product-card__content">
+                <?php if (!empty($item['product_type'])): ?>
+                  <div class="product-card__category"><?php echo htmlspecialchars(ucfirst($item['product_type']), ENT_QUOTES, 'UTF-8'); ?></div>
+                <?php endif; ?>
+                <h3 class="product-card__title"><?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <div class="product-card__price">Rs.<?php echo number_format($item['price'], 0, '.', ','); ?></div>
+                <div class="product-card__condition">
+                  Condition:
+                  <span class="condition-badge <?php echo ($item['condition'] === 'brand_new') ? 'condition-badge--new' : 'condition-badge--used'; ?>">
+                    <?php echo ($item['condition'] === 'brand_new') ? 'Brand New' : 'Used'; ?>
+                  </span>
+                </div>
+                <div class="product-card__actions" style="display: flex; gap: 8px;">
+                  <a href="/dashboard/marketplace/show-product?id=<?php echo (int)$item['id']; ?>" class="btn btn--primary btn--full-width">
+                    View Product
+                  </a>
+                  <button class="btn btn--secondary btn--add-to-cart"
+                          title="Add to Cart" data-product-action="add-to-cart"
+                          data-product-id="<?php echo (int)$item['id']; ?>"
+                          <?php echo ($item['stock_quantity'] <= 0) ? 'disabled' : ''; ?>>
+                    <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                      <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span class="visually-hidden">Add to Cart</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <!-- Fallback: existing sample cards remain if no data -->
+          <!-- ...existing static merchandise cards... -->
+        <?php endif; ?>
       </div>
     </section>
   </div>
 
   <!-- Second Hand Items Tab Content -->
   <div class="tab-content is-hidden" data-tab-content="second-hand" id="tab-content-second-hand" role="tabpanel" aria-labelledby="second-hand-tab">
-    
-    <!-- All Second Hand Items Section -->
     <section class="product-section" aria-labelledby="secondhand-title">
       <div class="section-header">
         <h2 id="secondhand-title" class="section-title">
           All Second Hand Items
-          <span class="section-count">2</span>
+          <span class="section-count"><?php echo isset($secondHandCount) ? (int)$secondHandCount : 0; ?></span>
         </h2>
-        
-        <!-- Sort Options -->
+
+        <!-- Sort Options (unchanged) -->
         <div class="sort-controls">
           <div class="sort-group">
             <label for="sort-price-secondhand" class="sort-label">Sort by Price:</label>
@@ -175,61 +163,54 @@
           </div>
         </div>
       </div>
-      
-      <div class="product-grid">
-        <article class="product-card" tabindex="0" role="article" aria-label="Programming Book, Rs.650, Used" data-price="650" data-type="books">
-          <div class="product-card__image">
-            <img src="https://via.placeholder.com/280x280/1e3a8a/ffffff?text=Programming+Book" alt="Programming Book - Blue textbook">
-            <div class="stock-badge stock-badge--in-stock">Available</div>
-          </div>
-          <div class="product-card__content">
-            <h3 class="product-card__title">Programming Book</h3>
-            <div class="product-card__price">Rs.650</div>
-            <div class="product-card__condition">
-              Condition: <span class="condition-badge condition-badge--used">Used</span>
-            </div>
-            <div class="product-card__actions" style="display: flex; gap: 8px;">
-              <a href="/marketplace/product/3" class="btn btn--primary btn--full-width">
-                View Product
-              </a>
-              <button class="btn btn--secondary btn--add-to-cart" title="Add to Cart" data-product-action="add-to-cart" data-product-id="3">
-                <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="visually-hidden">Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </article>
 
-        <article class="product-card" tabindex="0" role="article" aria-label="Gaming Mouse, Rs.1200, Used" data-price="1200" data-type="electronics">
-          <div class="product-card__image">
-            <img src="https://via.placeholder.com/280x280/374151/ffffff?text=Gaming+Mouse" alt="Gaming Mouse - Black ergonomic gaming mouse">
-            <div class="stock-badge stock-badge--out-of-stock">Sold</div>
-          </div>
-          <div class="product-card__content">
-            <h3 class="product-card__title">Gaming Mouse</h3>
-            <div class="product-card__price">Rs.1200</div>
-            <div class="product-card__condition">
-              Condition: <span class="condition-badge condition-badge--used">Used</span>
-            </div>
-            <div class="product-card__actions" style="display: flex; gap: 8px;">
-              <a href="/marketplace/product/4" class="btn btn--primary btn--full-width">
-                View Product
-              </a>
-              <button class="btn btn--secondary btn--add-to-cart" title="Add to Cart" data-product-action="add-to-cart" data-product-id="4" disabled>
-                <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
-                    <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-                <span class="visually-hidden">Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </article>
+      <div class="product-grid">
+        <?php if (!empty($secondHandItems)): ?>
+          <?php foreach ($secondHandItems as $item): ?>
+            <article class="product-card" tabindex="0" role="article"
+                     aria-label="<?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>, Rs.<?php echo number_format($item['price'], 0, '.', ','); ?>, Used"
+                     data-price="<?php echo (int)$item['price']; ?>"
+                     data-type="<?php echo htmlspecialchars(strtolower($item['product_type'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+              <div class="product-card__image">
+                <img src="<?php echo htmlspecialchars($item['image'] ?: '/images/placeholders/product.png', ENT_QUOTES, 'UTF-8'); ?>"
+                     alt="<?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="stock-badge <?php echo $item['stock_badge_class']; ?>">
+                  <?php echo htmlspecialchars($item['stock_badge_text'], ENT_QUOTES, 'UTF-8'); ?>
+                </div>
+              </div>
+              <div class="product-card__content">
+                <?php if (!empty($item['product_type'])): ?>
+                  <div class="product-card__category"><?php echo htmlspecialchars(ucfirst($item['product_type']), ENT_QUOTES, 'UTF-8'); ?></div>
+                <?php endif; ?>
+                <h3 class="product-card__title"><?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                <div class="product-card__price">Rs.<?php echo number_format($item['price'], 0, '.', ','); ?></div>
+                <div class="product-card__condition">
+                  Condition:
+                  <span class="condition-badge condition-badge--used">Used</span>
+                </div>
+                <div class="product-card__actions" style="display: flex; gap: 8px;">
+                  <a href="/dashboard/marketplace/show-product?id=<?php echo (int)$item['id']; ?>" class="btn btn--primary btn--full-width">
+                    View Product
+                  </a>
+                  <button class="btn btn--secondary btn--add-to-cart"
+                          title="Add to Cart" data-product-action="add-to-cart"
+                          data-product-id="<?php echo (int)$item['id']; ?>"
+                          <?php echo ($item['stock_quantity'] <= 0) ? 'disabled' : ''; ?>>
+                    <span class="cart-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                      <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span class="visually-hidden">Add to Cart</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <!-- Fallback: existing static second-hand cards remain if no data -->
+          <!-- ...existing static second-hand cards... -->
+        <?php endif; ?>
       </div>
     </section>
   </div>

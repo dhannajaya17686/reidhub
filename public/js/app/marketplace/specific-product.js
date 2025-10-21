@@ -7,28 +7,38 @@ class ProductPage {
     this.setupImageGallery();
     this.setupQuantityControls();
     this.setupReportModal();
+    this.setupAddToCart();
   }
 
   setupImageGallery() {
-    const thumbnails = document.querySelectorAll('.thumbnail');
+    const thumbnails = Array.from(document.querySelectorAll('.thumbnail'));
     const mainImage = document.querySelector('.main-image__img');
+    if (!mainImage || thumbnails.length === 0) return;
+
+    // Collect actual image URLs from the rendered thumbnails
+    const imageUrls = thumbnails.map((btn) => {
+      const img = btn.querySelector('img');
+      return img ? img.getAttribute('src') : '';
+    });
+
+    // Keep initial main image in sync with the active thumbnail (if any)
+    const activeIndex = thumbnails.findIndex(t => t.classList.contains('thumbnail--active'));
+    if (activeIndex >= 0 && imageUrls[activeIndex]) {
+      mainImage.src = imageUrls[activeIndex];
+    }
 
     thumbnails.forEach((thumbnail, index) => {
       thumbnail.addEventListener('click', () => {
-        // Remove active class from all thumbnails
+        // Toggle active state
         thumbnails.forEach(t => t.classList.remove('thumbnail--active'));
-        // Add active class to clicked thumbnail
         thumbnail.classList.add('thumbnail--active');
-        
-        // Update main image (in a real app, you'd have an array of image URLs)
-        const imageUrls = [
-          'https://via.placeholder.com/500x500/1e3a8a/ffffff?text=UCSC+T-Shirt+Front',
-          'https://via.placeholder.com/500x500/1e3a8a/ffffff?text=UCSC+T-Shirt+Back',
-          'https://via.placeholder.com/500x500/1e3a8a/ffffff?text=UCSC+T-Shirt+Side'
-        ];
-        
-        if (mainImage && imageUrls[index]) {
-          mainImage.src = imageUrls[index];
+
+        // Update main image to the clicked thumbnail's source
+        const url = imageUrls[index] || (thumbnail.querySelector('img')?.getAttribute('src') || '');
+        if (url) {
+          mainImage.src = url;
+          const title = document.querySelector('.product-title')?.textContent?.trim() || 'Product';
+          mainImage.alt = `Image ${index + 1} - ${title}`;
         }
       });
     });
@@ -119,6 +129,35 @@ class ProductPage {
         this.handleReportSubmission(reportForm);
       });
     }
+  }
+
+  setupAddToCart() {
+    const btn = document.getElementById('add-to-cart-button');
+    const qtyInput = document.getElementById('quantity');
+    if (!btn || !qtyInput) return;
+
+    btn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const productId = parseInt(btn.getAttribute('data-product-id') || '0', 10);
+      const qty = Math.max(1, parseInt(qtyInput.value || '1', 10));
+      if (!productId) { alert('Invalid product.'); return; }
+
+      try {
+        const fd = new FormData();
+        fd.append('product_id', String(productId));
+        fd.append('quantity', String(qty));
+
+        const res = await fetch('/dashboard/marketplace/cart/add', { method: 'POST', body: fd });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data?.success) {
+          alert(data?.message || 'Failed to add to cart');
+          return;
+        }
+        alert('Added to cart');
+      } catch {
+        alert('Network error');
+      }
+    });
   }
 
   async handleReportSubmission(form) {

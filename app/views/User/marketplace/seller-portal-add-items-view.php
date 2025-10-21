@@ -12,7 +12,7 @@
   </div>
 
   <!-- Add Item Form -->
-  <form class="add-item-form" id="add-item-form" method="POST" action="/marketplace/seller/add-item" enctype="multipart/form-data">
+  <form class="add-item-form" id="add-item-form" method="POST" action="/dashboard/marketplace/seller/add" enctype="multipart/form-data">
     
     <!-- Basic Information Section -->
     <div class="form-section">

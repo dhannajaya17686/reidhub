@@ -14,10 +14,8 @@ $userItems = [
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
         'children' => [
-            ['label' => 'My Courses', 'href' => '/dashboard/edu-hub/courses'],
-            ['label' => 'Assignments', 'href' => '/dashboard/edu-hub/assignments'],
-            ['label' => 'Timetable', 'href' => '/dashboard/edu-hub/timetable'],
-            ['label' => 'Results', 'href' => '/dashboard/edu-hub/results'],
+            ['label' => 'All Questions', 'href' => '/dashboard/forum/all'],
+            ['label' => 'Ask Question', 'href' => '/dashboard/forum/add'],
         ]
     ],
     [ 

@@ -1,4 +1,15 @@
+<?php
+// Expect $product (may be null)
+$prd = $product ?? null;
+?>
 <link rel="stylesheet" href="/css/app/user/marketplace/specific-product.css">
+
+<?php if (!$prd): ?>
+<script>
+  alert('Product not found or unavailable.');
+  history.back();
+</script>
+<?php return; endif; ?>
 
 <!-- Main Content Area -->
 <main class="product-main" role="main" aria-label="Product Details">
@@ -7,13 +18,15 @@
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="breadcrumb__list">
       <li class="breadcrumb__item">
-        <a href="/marketplace" class="breadcrumb__link">Marketplace</a>
+        <a href="/dashboard/marketplace/merch-store" class="breadcrumb__link">Marketplace</a>
       </li>
       <li class="breadcrumb__item">
-        <a href="/marketplace/merchandise" class="breadcrumb__link">Merchandise</a>
+        <a href="/dashboard/marketplace/merch-store" class="breadcrumb__link">
+          <?php echo htmlspecialchars($prd['category_label'] ?? 'Merchandise', ENT_QUOTES, 'UTF-8'); ?>
+        </a>
       </li>
       <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-        UCSC T-Shirt
+        <?php echo htmlspecialchars($prd['title'], ENT_QUOTES, 'UTF-8'); ?>
       </li>
     </ol>
   </nav>
@@ -25,22 +38,26 @@
     <section class="product-images" aria-label="Product Images">
       <div class="image-gallery">
         <div class="main-image">
-          <img src="https://via.placeholder.com/500x500/1e3a8a/ffffff?text=UCSC+T-Shirt" 
-               alt="UCSC T-Shirt - Navy blue polo shirt with white accents" 
-               class="main-image__img">
-          <div class="stock-badge stock-badge--in-stock">In Stock</div>
+          <img src="<?php echo htmlspecialchars($prd['main_image'], ENT_QUOTES, 'UTF-8'); ?>" 
+               alt="<?php echo htmlspecialchars($prd['title'], ENT_QUOTES, 'UTF-8'); ?>" 
+               class="main-image__img"
+               onerror="this.src='/images/placeholders/product.png'">
+          <div class="stock-badge <?php echo htmlspecialchars($prd['stock_class'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($prd['stock_text'], ENT_QUOTES, 'UTF-8'); ?>
+          </div>
         </div>
         
         <div class="image-thumbnails">
-          <button class="thumbnail thumbnail--active" data-image="0">
-            <img src="https://via.placeholder.com/100x100/1e3a8a/ffffff?text=Front" alt="Front view">
-          </button>
-          <button class="thumbnail" data-image="1">
-            <img src="https://via.placeholder.com/100x100/1e3a8a/ffffff?text=Back" alt="Back view">
-          </button>
-          <button class="thumbnail" data-image="2">
-            <img src="https://via.placeholder.com/100x100/1e3a8a/ffffff?text=Side" alt="Side view">
-          </button>
+          <?php foreach (($prd['images'] ?? []) as $idx => $img): ?>
+            <button class="thumbnail <?php echo $idx === 0 ? 'thumbnail--active' : ''; ?>" data-image="<?php echo (int)$idx; ?>">
+              <img src="<?php echo htmlspecialchars($img, ENT_QUOTES, 'UTF-8'); ?>" alt="Image <?php echo (int)$idx + 1; ?>" onerror="this.src='/images/placeholders/product.png'">
+            </button>
+          <?php endforeach; ?>
+          <?php if (empty($prd['images'])): ?>
+            <button class="thumbnail thumbnail--active" data-image="0">
+              <img src="/images/placeholders/product.png" alt="Image 1">
+            </button>
+          <?php endif; ?>
         </div>
       </div>
     </section>
@@ -48,34 +65,42 @@
     <!-- Product Information Section -->
     <section class="product-info" aria-label="Product Information">
       <div class="product-header">
-        <div class="product-category">Apparel • Official Merchandise</div>
-        <h1 class="product-title">UCSC T-Shirt</h1>
-        <div class="product-price">Rs. 2,000</div>
+        <div class="product-category">
+          <?php
+            $pt = trim((string)($prd['product_type_label'] ?? ''));
+            $catText = $prd['category'] === 'second-hand' ? 'Second Hand' : 'Official Merchandise';
+            echo htmlspecialchars(($pt ? $pt . ' • ' : '') . $catText, ENT_QUOTES, 'UTF-8');
+          ?>
+        </div>
+        <h1 class="product-title"><?php echo htmlspecialchars($prd['title'], ENT_QUOTES, 'UTF-8'); ?></h1>
+        <div class="product-price">Rs. <?php echo number_format($prd['price'], 0, '.', ','); ?></div>
       </div>
 
       <div class="product-details">
         <div class="detail-item">
           <span class="detail-label">Condition:</span>
-          <span class="condition-badge condition-badge--new">Brand New</span>
+          <span class="condition-badge <?php echo htmlspecialchars($prd['condition_class'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($prd['condition_text'], ENT_QUOTES, 'UTF-8'); ?>
+          </span>
         </div>
         
         <div class="detail-item">
           <span class="detail-label">Category:</span>
-          <span class="detail-value">Clothing</span>
+          <span class="detail-value"><?php echo htmlspecialchars($prd['product_type_label'] ?: 'Other', ENT_QUOTES, 'UTF-8'); ?></span>
         </div>
         
         <div class="detail-item">
           <span class="detail-label">Availability:</span>
-          <span class="availability availability--in-stock">In Stock (15 available)</span>
+          <span class="availability <?php echo htmlspecialchars($prd['availability_class'], ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo htmlspecialchars($prd['availability_text'], ENT_QUOTES, 'UTF-8'); ?>
+          </span>
         </div>
       </div>
 
       <div class="product-description">
         <h3 class="description-title">Description</h3>
         <p class="description-text">
-          University of Colombo School of Computing printed shirt. 
-          Made from baby pique cotton material, dark blue, front with curved 
-          hemline, side seam detail hemline and band acoustic. Premium quality.
+          <?php echo nl2br(htmlspecialchars($prd['description'] ?? '', ENT_QUOTES, 'UTF-8')); ?>
         </p>
       </div>
 
@@ -87,8 +112,8 @@
             <img src="https://via.placeholder.com/48x48/0466C8/ffffff?text=SU" alt="Seller avatar">
           </div>
           <div class="seller-details">
-            <div class="seller-name">Students Union of UCSC</div>
-            <div class="seller-location">Narahena Mahason</div>
+            <div class="seller-name"><?php echo 'Seller #' . (int)$prd['seller_id']; ?></div>
+            <div class="seller-location">UCSC Community</div>
           </div>
         </div>
       </div>
@@ -99,13 +124,25 @@
           <label for="quantity" class="quantity-label">Quantity:</label>
           <div class="quantity-controls">
             <button type="button" class="quantity-btn quantity-btn--minus" aria-label="Decrease quantity">-</button>
-            <input type="number" id="quantity" name="quantity" min="1" max="15" value="1" class="quantity-input">
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              min="1"
+              max="<?php echo max((int)$prd['stock_quantity'], 1); ?>"
+              value="1"
+              class="quantity-input"
+              <?php echo ((int)$prd['stock_quantity'] <= 0) ? 'disabled' : ''; ?>
+            >
             <button type="button" class="quantity-btn quantity-btn--plus" aria-label="Increase quantity">+</button>
           </div>
         </div>
 
         <div class="purchase-actions">
-          <button class="btn btn--primary btn--large btn--full-width">
+          <button class="btn btn--primary btn--large btn--full-width"
+                  data-product-id="<?php echo (int)$prd['id']; ?>"
+                  id="add-to-cart-button"
+                  <?php echo ((int)$prd['stock_quantity'] <= 0) ? 'disabled' : ''; ?>>
             <span class="btn-icon">
               <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
                 <path d="M6.5 17a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm9 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0ZM3.5 4h1.11l1.31 7.39a2 2 0 0 0 2 1.61h5.36a2 2 0 0 0 2-1.61l1.13-5.39H5.12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -115,8 +152,7 @@
           </button>
           
           <div class="secondary-actions">
-            
-            <button class="btn btn--secondary btn--outline btn--report" data-product-id="1">
+            <button class="btn btn--secondary btn--outline btn--report" data-product-id="<?php echo (int)$prd['id']; ?>">
               <span class="btn-icon">
                 <svg width="20" height="20" fill="none" viewBox="0 0 20 20" aria-hidden="true">
                   <path d="M10 9a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5A.75.75 0 0 1 10 9ZM10 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" fill="currentColor"/>

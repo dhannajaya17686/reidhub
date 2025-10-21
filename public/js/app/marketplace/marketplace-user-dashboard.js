@@ -512,3 +512,28 @@ window.addEventListener('popstate', () => {
  * Allows dashboard to be imported in other scripts if needed
  */
 export { MarketplaceDashboard };
+
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('[data-product-action="add-to-cart"]');
+  if (!btn) return;
+  e.preventDefault();
+
+  const productId = parseInt(btn.getAttribute('data-product-id') || '0', 10);
+  if (!productId) { alert('Invalid product.'); return; }
+
+  try {
+    const fd = new FormData();
+    fd.append('product_id', String(productId));
+    fd.append('quantity', '1');
+
+    const res = await fetch('/dashboard/marketplace/cart/add', { method: 'POST', body: fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.success) {
+      alert(data?.message || 'Failed to add to cart');
+      return;
+    }
+    alert('Added to cart');
+  } catch {
+    alert('Network error');
+  }
+});

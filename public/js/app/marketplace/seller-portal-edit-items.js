@@ -422,7 +422,7 @@ class EditItemsForm {
     .then(data => {
       if (data.success) {
         alert('Item updated successfully!');
-        window.location.href = '/marketplace/seller/items';
+        history.back(); // go to the previous page
       } else {
         alert('Error: ' + (data.message || 'Failed to update item'));
       }

@@ -15,13 +15,6 @@
     
     <!-- Header Actions -->
     <div class="header-actions">
-      <div class="date-filter-group">
-        <button class="date-filter-btn active" data-range="week">This Week</button>
-        <button class="date-filter-btn" data-range="month">This Month</button>
-        <button class="date-filter-btn" data-range="quarter">This Quarter</button>
-        <button class="date-filter-btn" data-range="year">This Year</button>
-      </div>
-      
       <div class="action-buttons">
         <button class="btn btn--secondary" id="refresh-data">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -250,7 +243,7 @@
           <div class="messages-list">
             <div class="message-row">
               <div class="message-avatar">
-                <img src="https://via.placeholder.com/40x40/0466C8/ffffff?text=WW" alt="Wrote Warren">
+                <img src="/assets/placeholders/profile.png" alt="Wrote Warren">
               </div>
               <div class="message-content">
                 <div class="message-header">
@@ -263,7 +256,7 @@
 
             <div class="message-row">
               <div class="message-avatar">
-                <img src="https://via.placeholder.com/40x40/10B981/ffffff?text=JW" alt="Jerry Wilson">
+                <img src="/assets/placeholders/profile.png" alt="Jerry Wilson">
               </div>
               <div class="message-content">
                 <div class="message-header">
@@ -276,7 +269,7 @@
 
             <div class="message-row">
               <div class="message-avatar">
-                <img src="https://via.placeholder.com/40x40/F59E0B/ffffff?text=RF" alt="Robert Fox">
+                <img src="/assets/placeholders/profile.png" alt="Robert Fox">
               </div>
               <div class="message-content">
                 <div class="message-header">
@@ -289,7 +282,7 @@
 
             <div class="message-row">
               <div class="message-avatar">
-                <img src="https://via.placeholder.com/40x40/EF4444/ffffff?text=JC" alt="Jane Cooper">
+                <img src="/assets/placeholders/profile.png" alt="Jane Cooper">
               </div>
               <div class="message-content">
                 <div class="message-header">

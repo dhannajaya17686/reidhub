@@ -1,482 +1,340 @@
 class CartManager {
   constructor() {
-    this.cartItems = new Map();
+    this.items = new Map(); // key: product_id, value: item (+ selected payment)
     this.init();
   }
 
-  init() {
-    this.loadCartData();
+  async init() {
+    await this.loadCartData();
+    this.renderItems();
+    this.updateSummary();
     this.setupEventListeners();
-    this.updateCartSummary();
   }
 
-  loadCartData() {
-    // Sample cart data - in real app, this would come from API
-    this.cartItems.set('1', {
-      id: '1',
-      name: 'UCSC Tshirt',
-      price: 2000,
-      quantity: 2,
-      condition: 'new',
-      seller: 'Students Union of UCSC',
-      image: 'https://via.placeholder.com/120x120/1e3a8a/ffffff?text=UCSC+Tshirt',
-      paymentType: 'cod',
-      allowsCOD: true,
-      isPreorder: false
-    });
-
-    this.cartItems.set('2', {
-      id: '2',
-      name: 'UCSC Wrist Band',
-      price: 600,
-      quantity: 1,
-      condition: 'new',
-      seller: 'Students Union of UCSC',
-      image: 'https://via.placeholder.com/120x120/374151/ffffff?text=Wrist+Band',
-      paymentType: 'prepaid',
-      allowsCOD: false,
-      isPreorder: true
-    });
+  async loadCartData() {
+    try {
+      const res = await fetch('/dashboard/marketplace/cart/get', { method: 'GET' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        alert(data?.message || 'Failed to load cart');
+        return;
+      }
+      (data.items || []).forEach(it => {
+        // Normalize/Default to enum values: 'cash_on_delivery' | 'preorder'
+        if (!it.payment_method) {
+          if (it.allowsCOD) it.payment_method = 'cash_on_delivery';
+          else if (it.isPreorder) it.payment_method = 'preorder';
+          else it.payment_method = null;
+        }
+        this.items.set(String(it.product_id), it);
+      });
+    } catch {
+      alert('Network error while loading cart');
+    }
   }
 
   setupEventListeners() {
-    // Quantity controls
-    document.addEventListener('click', (e) => {
-      if (e.target.matches('.quantity-btn')) {
-        this.handleQuantityChange(e.target);
+    // Quantity +/- buttons
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('.quantity-btn');
+      if (!btn) return;
+      const productId = btn.dataset.itemId;
+      const input = document.querySelector(`.quantity-input[data-item-id="${productId}"]`);
+      if (!input) return;
+
+      const min = parseInt(input.dataset.min || '1', 10);
+      const max = parseInt(input.dataset.max || '999', 10);
+      let q = parseInt(input.value || '1', 10);
+      if (isNaN(q)) q = min;
+
+      if (btn.dataset.action === 'increase') q = Math.min(q + 1, max);
+      if (btn.dataset.action === 'decrease') q = Math.max(q - 1, min);
+
+      await this.updateQuantity(productId, q);
+    });
+
+    // Quantity direct input (numeric-only text field)
+    document.addEventListener('input', (e) => {
+      if (!e.target.matches('.quantity-input')) return;
+      // Strip non-digits live
+      e.target.value = e.target.value.replace(/\D+/g, '');
+    });
+
+    document.addEventListener('change', async (e) => {
+      if (!e.target.matches('.quantity-input')) return;
+      const input = e.target;
+      const productId = input.dataset.itemId;
+      const min = parseInt(input.dataset.min || '1', 10);
+      const max = parseInt(input.dataset.max || '999', 10);
+      let q = parseInt(input.value || '1', 10);
+      if (isNaN(q)) q = min;
+      q = Math.max(min, Math.min(q, max));
+      await this.updateQuantity(productId, q);
+    });
+
+    // Remove item
+    document.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-action="remove"]');
+      if (!btn) return;
+      const productId = btn.dataset.itemId;
+      if (!confirm('Remove this item from your cart?')) return;
+      await this.removeItem(productId);
+    });
+
+    // Payment option selection (persist server-side)
+    document.addEventListener('change', async (e) => {
+      if (!e.target.matches('.payment-radio')) return;
+      const productId = e.target.dataset.itemId;
+      const method = e.target.value; // 'cash_on_delivery' | 'preorder'
+      const item = this.items.get(String(productId));
+      if (!item) return;
+
+      const prev = item.payment_method;
+      item.payment_method = method;
+
+      const ok = await this.updatePaymentMethod(productId, method);
+      if (!ok) {
+        // revert selection on failure
+        item.payment_method = prev;
+        const prevInput = document.querySelector(`.payment-radio[name="payment_method_${productId}"][value="${prev}"]`);
+        if (prevInput) prevInput.checked = true;
       }
     });
+  }
 
-    // Quantity input changes
-    document.addEventListener('change', (e) => {
-      if (e.target.matches('.quantity-input')) {
-        this.handleQuantityInput(e.target);
+  async updateQuantity(productId, quantity) {
+    try {
+      const fd = new FormData();
+      fd.append('product_id', String(productId));
+      fd.append('quantity', String(quantity));
+      const res = await fetch('/dashboard/marketplace/cart/update', { method: 'POST', body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        alert(data?.message || 'Failed to update quantity');
+        const stored = this.items.get(String(productId));
+        const input = document.querySelector(`.quantity-input[data-item-id="${productId}"]`);
+        if (stored && input) input.value = stored.quantity;
+        return;
       }
-    });
+      const item = this.items.get(String(productId));
+      if (item) item.quantity = parseInt(data.quantity || quantity, 10);
+      const input = document.querySelector(`.quantity-input[data-item-id="${productId}"]`);
+      if (input) input.value = item.quantity;
+      this.updateSummary();
+    } catch {
+      alert('Network error while updating quantity');
+    }
+  }
 
-    // Payment option changes
-    document.addEventListener('change', (e) => {
-      if (e.target.matches('.payment-radio')) {
-        this.handlePaymentOptionChange(e.target);
+  async updatePaymentMethod(productId, method) {
+    try {
+      const fd = new FormData();
+      fd.append('product_id', String(productId));
+      fd.append('payment_method', method); // 'cash_on_delivery' | 'preorder'
+      const res = await fetch('/dashboard/marketplace/cart/payment-method', { method: 'POST', body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        alert(data?.message || 'Failed to update payment method');
+        return false;
       }
-    });
+      return true;
+    } catch {
+      alert('Network error while updating payment method');
+      return false;
+    }
+  }
 
-    // Item actions
-    document.addEventListener('click', (e) => {
-      const action = e.target.dataset.action;
-      const itemId = e.target.dataset.itemId;
-
-      switch (action) {
-        case 'save-later':
-          this.saveForLater(itemId);
-          break;
-        case 'remove':
-          this.removeItem(itemId);
-          break;
+  async removeItem(productId) {
+    try {
+      const fd = new FormData();
+      fd.append('product_id', String(productId));
+      const res = await fetch('/dashboard/marketplace/cart/remove', { method: 'POST', body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.success) {
+        alert(data?.message || 'Failed to remove item');
+        return;
       }
-    });
-
-    // Checkout button
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (checkoutBtn) {
-      checkoutBtn.addEventListener('click', () => this.handleCheckout());
-    }
-
-    // Payment modal
-    this.setupPaymentModal();
-
-    // File upload
-    this.setupFileUpload();
-  }
-
-  handleQuantityChange(button) {
-    const action = button.dataset.action;
-    const itemId = button.dataset.itemId;
-    const quantityInput = document.querySelector(`.quantity-input[data-item-id="${itemId}"]`);
-    
-    if (!quantityInput) return;
-
-    let newQuantity = parseInt(quantityInput.value);
-    const min = parseInt(quantityInput.min) || 1;
-    const max = parseInt(quantityInput.max) || 99;
-
-    if (action === 'increase' && newQuantity < max) {
-      newQuantity++;
-    } else if (action === 'decrease' && newQuantity > min) {
-      newQuantity--;
-    }
-
-    quantityInput.value = newQuantity;
-    this.updateItemQuantity(itemId, newQuantity);
-  }
-
-  handleQuantityInput(input) {
-    const itemId = input.dataset.itemId;
-    const quantity = parseInt(input.value);
-    const min = parseInt(input.min) || 1;
-    const max = parseInt(input.max) || 99;
-
-    if (quantity < min) {
-      input.value = min;
-      this.updateItemQuantity(itemId, min);
-    } else if (quantity > max) {
-      input.value = max;
-      this.updateItemQuantity(itemId, max);
-    } else {
-      this.updateItemQuantity(itemId, quantity);
+      this.items.delete(String(productId));
+      const el = document.querySelector(`.cart-item[data-item-id="${productId}"]`);
+      if (el) el.remove();
+      this.updateCounts();
+      this.updateSummary();
+      if (this.items.size === 0) this.renderEmptyState();
+    } catch {
+      alert('Network error while removing item');
     }
   }
 
-  updateItemQuantity(itemId, quantity) {
-    const item = this.cartItems.get(itemId);
-    if (item) {
-      item.quantity = quantity;
-      this.updateCartSummary();
-    }
-  }
+  renderItems() {
+    const container = document.getElementById('cart-items');
+    if (!container) return;
+    container.innerHTML = '';
 
-  handlePaymentOptionChange(radio) {
-    const itemId = radio.name.split('-')[1]; // Extract item ID from name like "payment-1"
-    const paymentType = radio.value;
-    
-    const item = this.cartItems.get(itemId);
-    if (item) {
-      item.paymentType = paymentType;
-      this.updateCartSummary();
-    }
-  }
-
-  updateCartSummary() {
-    let subtotal = 0;
-    let codAmount = 0;
-    let prepaidAmount = 0;
-    let hasDiscountEligibleItems = false;
-
-    this.cartItems.forEach(item => {
-      const itemTotal = item.price * item.quantity;
-      subtotal += itemTotal;
-
-      if (item.paymentType === 'cod') {
-        codAmount += itemTotal;
-      } else {
-        prepaidAmount += itemTotal;
-        if (!item.isPreorder) {
-          hasDiscountEligibleItems = true;
-        }
-      }
-    });
-
-    const shipping = 300;
-    const taxes = 100;
-    let discount = 0;
-
-    // Calculate discount for prepaid items (5% off, excluding preorders)
-    if (hasDiscountEligibleItems) {
-      const discountEligibleAmount = Array.from(this.cartItems.values())
-        .filter(item => item.paymentType === 'prepaid' && !item.isPreorder)
-        .reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      discount = Math.round(discountEligibleAmount * 0.05);
-    }
-
-    const total = subtotal + shipping + taxes - discount;
-
-    // Update UI
-    document.getElementById('subtotal').textContent = `Rs. ${subtotal.toLocaleString()}`;
-    document.getElementById('shipping').textContent = `Rs. ${shipping.toLocaleString()}`;
-    document.getElementById('taxes').textContent = `Rs. ${taxes.toLocaleString()}`;
-    document.getElementById('total').textContent = `Rs. ${total.toLocaleString()}`;
-
-    // Show/hide discount line
-    const discountLine = document.getElementById('discount-line');
-    if (discount > 0) {
-      document.getElementById('discount').textContent = `-Rs. ${discount.toLocaleString()}`;
-      discountLine.style.display = 'flex';
-    } else {
-      discountLine.style.display = 'none';
-    }
-
-    // Update payment summary
-    document.getElementById('cod-amount').textContent = `Rs. ${codAmount.toLocaleString()}`;
-    document.getElementById('prepaid-amount').textContent = `Rs. ${prepaidAmount.toLocaleString()}`;
-
-    // Update checkout button text
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (prepaidAmount > 0) {
-      checkoutBtn.textContent = 'Proceed to Payment';
-    } else {
-      checkoutBtn.textContent = 'Place Order';
-    }
-  }
-
-  saveForLater(itemId) {
-    // In real app, this would save to wishlist/saved items
-    this.showNotification('Item saved for later', 'success');
-  }
-
-  removeItem(itemId) {
-    if (confirm('Are you sure you want to remove this item from your cart?')) {
-      this.cartItems.delete(itemId);
-      
-      // Remove from DOM
-      const itemElement = document.querySelector(`[data-item-id="${itemId}"]`).closest('.cart-item');
-      if (itemElement) {
-        itemElement.remove();
-      }
-      
-      this.updateCartSummary();
-      this.updateCartCount();
-      this.showNotification('Item removed from cart', 'info');
-    }
-  }
-
-  updateCartCount() {
-    const totalItems = Array.from(this.cartItems.values())
-      .reduce((sum, item) => sum + item.quantity, 0);
-    
-    const countElement = document.querySelector('.cart-count');
-    if (countElement) {
-      countElement.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''} in your cart`;
-    }
-  }
-
-  handleCheckout() {
-    const prepaidItems = Array.from(this.cartItems.values())
-      .filter(item => item.paymentType === 'prepaid');
-
-    if (prepaidItems.length > 0) {
-      // Calculate total prepaid amount
-      const prepaidTotal = prepaidItems.reduce((sum, item) => 
-        sum + (item.price * item.quantity), 0);
-      
-      // Show payment modal
-      this.showPaymentModal(prepaidTotal);
-    } else {
-      // All items are COD, proceed directly to order placement
-      this.placeOrder();
-    }
-  }
-
-  showPaymentModal(amount) {
-    const modal = document.getElementById('payment-modal');
-    const transferAmount = document.getElementById('transfer-amount');
-    
-    if (modal && transferAmount) {
-      transferAmount.textContent = `Rs. ${amount.toLocaleString()}`;
-      modal.style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
-  setupPaymentModal() {
-    const modal = document.getElementById('payment-modal');
-    const closeBtn = document.querySelector('.modal-close');
-    const cancelBtn = document.getElementById('cancel-payment');
-    const paymentForm = document.getElementById('payment-form');
-
-    // Close modal function
-    const closeModal = () => {
-      modal.style.display = 'none';
-      document.body.style.overflow = '';
-      paymentForm.reset();
-      this.clearFilePreview();
-    };
-
-    // Close modal events
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-
-    // Close on overlay click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    // Close on escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.style.display === 'flex') {
-        closeModal();
-      }
-    });
-
-    // Copy account number
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('.copy-btn')) {
-        const copyText = e.target.closest('.copy-btn').dataset.copy;
-        navigator.clipboard.writeText(copyText).then(() => {
-          this.showNotification('Account number copied to clipboard', 'success');
-        });
-      }
-    });
-
-    // Handle form submission
-    if (paymentForm) {
-      paymentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        this.handlePaymentSubmission(paymentForm);
-      });
-    }
-  }
-
-  setupFileUpload() {
-    const fileInput = document.getElementById('payment-slip');
-    const uploadArea = document.getElementById('file-upload-area');
-    const preview = document.getElementById('file-preview');
-    const removeBtn = document.getElementById('preview-remove');
-
-    if (!fileInput || !uploadArea) return;
-
-    // Handle file selection
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        this.showFilePreview(file);
-      }
-    });
-
-    // Handle drag and drop
-    uploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      uploadArea.style.borderColor = 'var(--secondary-color)';
-      uploadArea.style.background = 'var(--surface-hover)';
-    });
-
-    uploadArea.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      uploadArea.style.borderColor = 'var(--border-color)';
-      uploadArea.style.background = '';
-    });
-
-    uploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      uploadArea.style.borderColor = 'var(--border-color)';
-      uploadArea.style.background = '';
-      
-      const file = e.dataTransfer.files[0];
-      if (file) {
-        fileInput.files = e.dataTransfer.files;
-        this.showFilePreview(file);
-      }
-    });
-
-    // Remove file
-    if (removeBtn) {
-      removeBtn.addEventListener('click', () => {
-        this.clearFilePreview();
-      });
-    }
-  }
-
-  showFilePreview(file) {
-    const preview = document.getElementById('file-preview');
-    const uploadArea = document.getElementById('file-upload-area');
-    const nameElement = document.getElementById('preview-name');
-    const sizeElement = document.getElementById('preview-size');
-
-    if (preview && uploadArea && nameElement && sizeElement) {
-      nameElement.textContent = file.name;
-      sizeElement.textContent = this.formatFileSize(file.size);
-      
-      uploadArea.style.display = 'none';
-      preview.style.display = 'block';
-    }
-  }
-
-  clearFilePreview() {
-    const fileInput = document.getElementById('payment-slip');
-    const preview = document.getElementById('file-preview');
-    const uploadArea = document.getElementById('file-upload-area');
-
-    if (fileInput) fileInput.value = '';
-    if (preview) preview.style.display = 'none';
-    if (uploadArea) uploadArea.style.display = 'block';
-  }
-
-  formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  }
-
-  async handlePaymentSubmission(form) {
-    const formData = new FormData(form);
-    
-    // Validate required fields
-    const paymentSlip = formData.get('payment-slip');
-    if (!paymentSlip || paymentSlip.size === 0) {
-      this.showNotification('Please upload a payment slip', 'error');
+    if (this.items.size === 0) {
+      this.renderEmptyState();
+      this.updateCounts();
       return;
     }
 
-    try {
-      // In real app, upload payment slip and create order
-      console.log('Payment submission:', {
-        paymentSlip: paymentSlip.name,
-        referenceNumber: formData.get('reference-number'),
-        notes: formData.get('payment-notes')
-      });
+    const frag = document.createDocumentFragment();
 
-      // Show success and close modal
-      this.showNotification('Payment submitted successfully! Your order will be processed once payment is verified.', 'success');
-      
-      document.getElementById('payment-modal').style.display = 'none';
-      document.body.style.overflow = '';
-      form.reset();
-      this.clearFilePreview();
-      
-      // Redirect to orders page or show order confirmation
-      setTimeout(() => {
-        // window.location.href = '/orders';
-        console.log('Redirecting to orders page...');
-      }, 2000);
-      
-    } catch (error) {
-      console.error('Payment submission error:', error);
-      this.showNotification('Failed to submit payment. Please try again.', 'error');
+    this.items.forEach((item) => {
+      const qtyMax = Math.max(1, parseInt(item.stock_quantity || 999, 10));
+      const condText = item.condition === 'brand_new' ? 'Brand New' : 'Used';
+      const stockBadgeText = (item.stock_quantity ?? 0) <= 0 ? 'Out of Stock' : 'In Stock';
+      const stockBadgeClass = (item.stock_quantity ?? 0) <= 0 ? 'stock-badge--out-of-stock' : 'stock-badge--in-stock';
+
+      const codAllowed = !!item.allowsCOD;
+      const poAllowed = !!item.isPreorder;
+      const selected = item.payment_method || (codAllowed ? 'cash_on_delivery' : (poAllowed ? 'preorder' : null));
+
+      const article = document.createElement('article');
+      article.className = 'cart-item';
+      article.setAttribute('data-item-id', String(item.product_id));
+      article.innerHTML = `
+        <div class="item-image">
+          <img src="${this.escape(item.image || '/images/placeholders/product.png')}" alt="${this.escape(item.title)}" onerror="this.src='/images/placeholders/product.png'">
+          <div class="stock-badge ${stockBadgeClass}">${stockBadgeText}</div>
+        </div>
+        <div class="item-details">
+          <div class="item-header">
+            <h3 class="item-title">${this.escape(item.title)}</h3>
+            <div class="item-price">Rs. ${Number(item.price).toLocaleString()}</div>
+          </div>
+
+          <div class="item-meta">
+            <div class="item-condition">
+              Condition: <span class="condition-badge ${item.condition === 'brand_new' ? 'condition-badge--new' : 'condition-badge--used'}">${condText}</span>
+            </div>
+            <div class="item-seller">Sold by: <span class="seller-name">${this.escape(item.seller_label)}</span></div>
+          </div>
+
+          <!-- Payment options -->
+          <div class="payment-options" aria-label="Payment Options">
+            <label class="payment-option ${codAllowed ? '' : 'payment-option--disabled'}">
+              <input type="radio"
+                     class="payment-radio"
+                     name="payment_method_${item.product_id}"
+                     data-item-id="${item.product_id}"
+                     value="cash_on_delivery"
+                     ${codAllowed ? '' : 'disabled'}
+                     ${selected === 'cash_on_delivery' ? 'checked' : ''}>
+              <span class="payment-label ${codAllowed ? '' : 'payment-label--disabled'}">
+                <span class="payment-icon" aria-hidden="true">💵</span>
+                <span>Cash&nbsp;on&nbsp;Delivery</span>
+              </span>
+            </label>
+
+            <label class="payment-option ${poAllowed ? '' : 'payment-option--disabled'}">
+              <input type="radio"
+                     class="payment-radio"
+                     name="payment_method_${item.product_id}"
+                     data-item-id="${item.product_id}"
+                     value="preorder"
+                     ${poAllowed ? '' : 'disabled'}
+                     ${selected === 'preorder' ? 'checked' : ''}>
+              <span class="payment-label ${poAllowed ? '' : 'payment-label--disabled'}">
+                <span class="payment-icon" aria-hidden="true">💳</span>
+                <span>Pre&#8209;order</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="item-actions">
+            <div class="quantity-controls">
+              <button type="button" class="quantity-btn quantity-btn--minus" data-action="decrease" data-item-id="${item.product_id}">-</button>
+              <input type="text"
+                     inputmode="numeric"
+                     pattern="[0-9]*"
+                     class="quantity-input"
+                     value="${item.quantity}"
+                     data-min="1"
+                     data-max="${qtyMax}"
+                     data-item-id="${item.product_id}">
+              <button type="button" class="quantity-btn quantity-btn--plus" data-action="increase" data-item-id="${item.product_id}">+</button>
+            </div>
+
+            <div class="item-buttons">
+              <button class="btn btn--secondary btn--small btn--danger" data-action="remove" data-item-id="${item.product_id}">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      frag.appendChild(article);
+    });
+
+    container.appendChild(frag);
+    this.updateCounts();
+  }
+
+  renderEmptyState() {
+    const container = document.getElementById('cart-items');
+    if (!container) return;
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3 class="empty-title">Your cart is empty</h3>
+        <p class="empty-description">Browse the marketplace and add items to your cart.</p>
+        <a href="/dashboard/marketplace/merch-store" class="btn btn--primary">Go to Marketplace</a>
+      </div>
+    `;
+    const det = document.getElementById('summary-details');
+    if (det) {
+      det.innerHTML = `
+        <div class="summary-line summary-line--total">
+          <span class="summary-label">Total</span>
+          <span class="summary-value summary-value--total" id="total">Rs. 0</span>
+        </div>
+      `;
     }
   }
 
-  placeOrder() {
-    // Handle COD order placement
-    console.log('Placing COD order...');
-    this.showNotification('Order placed successfully!', 'success');
-    
-    setTimeout(() => {
-      // window.location.href = '/orders';
-      console.log('Redirecting to orders page...');
-    }, 2000);
+  updateCounts() {
+    const countEl = document.getElementById('cart-count');
+    if (!countEl) return;
+    const totalItems = Array.from(this.items.values()).reduce((sum, it) => sum + (parseInt(it.quantity, 10) || 0), 0);
+    countEl.textContent = `${totalItems} item${totalItems === 1 ? '' : 's'} in your cart`;
   }
 
-  showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification--${type}`;
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: ${type === 'success' ? 'var(--vote-active-bg)' : type === 'error' ? '#FEF2F2' : '#F3F4F6'};
-      color: ${type === 'success' ? 'var(--vote-active)' : type === 'error' ? '#DC2626' : '#374151'};
-      padding: var(--space-md) var(--space-lg);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      z-index: 1002;
-      max-width: 400px;
-      font-size: 0.875rem;
-      font-weight: 500;
-    `;
-    notification.textContent = message;
+  updateSummary() {
+    const items = Array.from(this.items.values());
+    const subtotal = items.reduce((sum, it) => sum + (Number(it.price) * Number(it.quantity)), 0);
 
-    document.body.appendChild(notification);
+    const det = document.getElementById('summary-details') || document.querySelector('.summary-details');
+    if (det) {
+      const lines = items.map(it => {
+        const lineTotal = Number(it.price) * Number(it.quantity);
+        return `
+          <div class="summary-line">
+            <span class="summary-label">${this.escape(it.title)} × ${Number(it.quantity)}</span>
+            <span class="summary-value">Rs. ${Number(lineTotal).toLocaleString()}</span>
+          </div>
+        `;
+      }).join('');
 
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
-      }
-    }, 5000);
+      det.innerHTML = `
+        ${lines || ''}
+        ${items.length ? '<hr class="summary-divider">' : ''}
+        <div class="summary-line summary-line--total">
+          <span class="summary-label">Total</span>
+          <span class="summary-value summary-value--total" id="total">Rs. ${Number(subtotal).toLocaleString()}</span>
+        </div>
+      `;
+    } else {
+      const totalEl = document.getElementById('total');
+      if (totalEl) totalEl.textContent = `Rs. ${Number(subtotal).toLocaleString()}`;
+    }
+  }
+
+  escape(s) {
+    return String(s ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 }
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   new CartManager();
 });

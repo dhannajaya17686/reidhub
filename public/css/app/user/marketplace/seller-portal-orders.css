@@ -342,6 +342,7 @@
    Chat Modal
    ========================================================================== */
 
+/* Ensure overlay centers content like checkout and has safe padding */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -352,17 +353,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  padding: var(--space-md);
 }
 
 .chat-modal {
   background: var(--surface);
   border-radius: var(--radius-lg);
   width: 90%;
-  max-width: 500px;
-  max-height: 600px;
+  max-width: 560px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-lg, 0 20px 40px rgba(0,0,0,0.2));
 }
 
 .modal-header {
@@ -371,6 +375,10 @@
   align-items: center;
   padding: var(--space-md);
   border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 2;
 }
 
 .modal-header h3 {
@@ -398,7 +406,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: calc(85vh - 60px); /* header height compensation */
 }
 
 .chat-messages {
@@ -519,11 +528,80 @@
   background: var(--surface);
   border-radius: var(--radius-lg);
   width: 90%;
-  max-width: 600px;
-  max-height: 80vh;
+  max-width: 640px;            /* similar to checkout modal width */
+  max-height: 85vh;            /* keep within viewport */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;              /* CHANGED from hidden -> auto to avoid cut-off */
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-lg, 0 20px 40px rgba(0,0,0,0.2));
+}
+
+/* Overlay (inspired by checkout.js) */
+#manage-modal,
+#chat-modal {
+  display: none;               /* toggled by JS */
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5);
+  align-items: center;         /* center content */
+  justify-content: center;
+  padding: 16px;               /* safe area on small screens */
+}
+
+/* Modal panel */
+#manage-modal .modal-panel,
+#chat-modal .modal-panel {
+  background: var(--surface, #ffffff);
+  width: min(640px, 92vw);
+  max-height: 85vh;
+  border-radius: 12px;
+  overflow: auto;              /* scroll internal content if long */
+  -webkit-overflow-scrolling: touch;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+/* Header/footer/body blocks (non-breaking if absent) */
+#manage-modal .modal-header,
+#chat-modal .modal-header {
+  position: sticky;
+  top: 0;
+  background: var(--surface, #ffffff);
+  z-index: 2;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+}
+#manage-modal .modal-body,
+#chat-modal .modal-body {
+  padding: 16px 20px;
+}
+#manage-modal .modal-footer,
+#chat-modal .modal-footer {
+  position: sticky;
+  bottom: 0;
+  background: var(--surface, #ffffff);
+  z-index: 2;
+  padding: 12px 20px;
+  border-top: 1px solid #E5E7EB;
+}
+
+/* Close icon/button in header */
+.modal-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #6B7280;
+  cursor: pointer;
+}
+.modal-close:hover { color: #111827; }
+
+/* Payment slip image fit */
+#payment-slip-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
 .order-details {
@@ -571,13 +649,6 @@
   padding: var(--space-md);
   background: var(--surface);
   text-align: center;
-}
-
-#payment-slip-image {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
 }
 
 /* ==========================================================================
@@ -790,5 +861,12 @@
   
   .orders-table {
     min-width: 700px;
+  }
+}
+
+@media (max-width: 480px) {
+  .manage-modal,
+  .chat-modal {
+    max-height: 90vh;
   }
 }

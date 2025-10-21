@@ -57,27 +57,9 @@ class ArchivedItemsManager {
     }
   }
 
-  // Show success message
+  // Show success message (kept)
   showMessage(message, type = 'success') {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `${type}-message slide-up`;
-    messageDiv.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      ${message}
-    `;
-
-    const main = document.querySelector('.active-items-main');
-    main.insertBefore(messageDiv, main.firstChild);
-
-    // Remove message after 3 seconds
-    setTimeout(() => {
-      messageDiv.classList.add('fade-out');
-      setTimeout(() => {
-        messageDiv.remove();
-      }, 300);
-    }, 3000);
+    alert(message); // simple popup
   }
 
   // Remove item from grid
@@ -93,45 +75,42 @@ class ArchivedItemsManager {
   }
 }
 
-// Global functions for button actions
+// Update actions to match real routes
 function viewItem(itemId) {
-  window.location.href = `/marketplace/seller/items/${itemId}/view`;
+  window.location.href = `/dashboard/marketplace/show-product?id=${itemId}`;
 }
 
 function editItem(itemId) {
-  window.location.href = `/marketplace/seller/items/${itemId}/edit`;
+  window.location.href = `/dashboard/marketplace/seller/edit?id=${itemId}`;
 }
 
-// Main difference: unarchive instead of archive
+// Unarchive with simple popup + refresh UI (POST only)
 function unarchiveItem(itemId) {
-  if (confirm('Are you sure you want to unarchive this item?')) {
-    const manager = window.archivedItemsManager;
-    manager.showLoading();
+  if (!confirm('Unarchive this item?')) return;
 
-    // Simulate API call
-    fetch(`/api/marketplace/seller/items/${itemId}/unarchive`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  const manager = window.archivedItemsManager;
+  manager && manager.showLoading();
+
+  const fd = new FormData();
+  fd.append('id', String(itemId));
+
+  fetch('/dashboard/marketplace/seller/archived/update', {
+    method: 'POST',
+    body: fd
+  })
+    .then(res => res.json().catch(() => ({})).then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (!ok || !data?.success) {
+        alert(data?.message || 'Failed to unarchive item');
+        return;
       }
+      alert('Item unarchived successfully');
+      const card = document.querySelector(`.item-card[data-item-id="${itemId}"]`);
+      if (card) card.remove();
+      manager && manager.checkItemsCount();
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        manager.showMessage('Item unarchived successfully!');
-        manager.removeItemFromGrid(itemId);
-      } else {
-        manager.showMessage('Failed to unarchive item', 'error');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      manager.showMessage('An error occurred', 'error');
-    })
-    .finally(() => {
-      manager.hideLoading();
-    });
-  }
+    .catch(() => alert('Network error'))
+    .finally(() => manager && manager.hideLoading());
 }
 
 // Initialize when DOM loads
