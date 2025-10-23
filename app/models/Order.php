@@ -99,18 +99,42 @@ class Order extends Model
     }
 
     /**
-     * Cancel an order with a reason (seller-owned).
+     * Cancel an order with a reason (seller-owned) and restock product.
      */
     public function cancel(int $sellerId, int $orderId, string $reason): bool
     {
         try {
-            $stmt = $this->db->prepare("UPDATE {$this->table}
+            $this->db->beginTransaction();
+
+            // Lock the order row
+            $stmt = $this->db->prepare("SELECT product_id, quantity, status FROM {$this->table} WHERE id = ? AND seller_id = ? LIMIT 1 FOR UPDATE");
+            $stmt->execute([$orderId, $sellerId]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) { $this->db->rollBack(); return false; }
+            if (in_array($row['status'], ['cancelled','delivered'], true)) { $this->db->rollBack(); return false; }
+
+            // Cancel
+            $up = $this->db->prepare("UPDATE {$this->table}
                 SET status = 'cancelled', cancel_reason = ?, updated_at = NOW()
-                WHERE id = ? AND seller_id = ? AND status <> 'cancelled' AND status <> 'delivered' LIMIT 1");
-            $stmt->execute([$reason, $orderId, $sellerId]);
-            return $stmt->rowCount() > 0;
+                WHERE id = ? AND seller_id = ? LIMIT 1");
+            if (!$up->execute([$reason, $orderId, $sellerId])) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            // Restock the product
+            $mp = new MarketPlace();
+            if (!$mp->releaseStock((int)$row['product_id'], (int)$row['quantity'])) {
+                // If restock fails, still rollback to keep consistency
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
         } catch (Throwable $e) {
             Logger::error('cancel order error: ' . $e->getMessage());
+            if ($this->db->inTransaction()) $this->db->rollBack();
             return false;
         }
     }

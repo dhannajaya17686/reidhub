@@ -26,4 +26,16 @@ class Admin extends Model
         $admin = $this->findByEmail($email);
         return $admin ? password_verify($password, $admin['password']) : false;
     }
+
+    /**
+     * Get admin by primary key
+     * @param int $id
+     * @return array|null
+     */
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE id = ? LIMIT 1");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
 }

@@ -52,10 +52,10 @@ class Auth_LoginController extends Controller
             Logger::info('Login success: user_id=' . $_SESSION['user_id']);
             if ($isAjax) {
                 header('Content-Type: application/json');
-                echo json_encode(['ok' => true, 'redirect' => '/dashboard']);
+                echo json_encode(['ok' => true, 'redirect' => '/dashboard/user']);
                 return;
             }
-            header('Location: /dashboard', true, 303);
+            header('Location: /dashboard/user', true, 303);
             exit;
         }
 
@@ -252,5 +252,55 @@ class Auth_LoginController extends Controller
             $_SESSION['user'] = $user;
         }
         return $user;
+    }
+
+    /**
+     * Validate admin session and return admin array.
+     * Redirects to /login if not authenticated (configurable).
+     * NOTE: Uses Admin model only. No direct DB access here.
+     */
+    public static function getSessionAdmin(bool $redirectIfNotAdmin = true): ?array
+    {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+
+        $sessionAdmin = $_SESSION['admin'] ?? null;
+        $adminId = $_SESSION['admin_id'] ?? ($sessionAdmin['id'] ?? null);
+
+        if (!$adminId) {
+            if ($redirectIfNotAdmin) {
+                header('Location: /login', true, 302);
+                exit;
+            }
+            return null;
+        }
+
+        // Re-fetch admin if session copy missing or mismatched
+        $admin = $sessionAdmin;
+        if (!$admin || (int)($admin['id'] ?? 0) !== (int)$adminId) {
+            require_once __DIR__ . '/../../models/Admin.php';
+            $adminModel = new Admin();
+            $admin = $adminModel->findById((int)$adminId);
+
+            if (!$admin) {
+                unset($_SESSION['admin'], $_SESSION['admin_id']);
+                if ($redirectIfNotAdmin) {
+                    header('Location: /login', true, 302);
+                    exit;
+                }
+                return null;
+            }
+            $_SESSION['admin'] = $admin;
+        }
+
+        return $admin;
+    }
+
+    /**
+     * Quick boolean check for admin session.
+     */
+    public static function isAdminLoggedIn(): bool
+    {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        return isset($_SESSION['admin_id']) && (int)$_SESSION['admin_id'] > 0;
     }
 }

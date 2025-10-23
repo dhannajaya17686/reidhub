@@ -14,9 +14,145 @@ class AddItemsForm {
     this.setupImageUploads();
     this.setupQuantityControls();
     this.setupPaymentOptions();
+    this.setupConditionChangeHandler();
     this.setupBankAccountValidation();
     this.setupFormValidation();
     this.setupCharacterCounter();
+  }
+
+  // Setup condition change handler to disable preorder for used items
+  setupConditionChangeHandler() {
+    console.log('Setting up condition change handler...'); // Debug log
+    
+    const conditionRadios = document.querySelectorAll('input[name="condition"]');
+    const preorderOption = document.getElementById('preorder-option');
+    const preorderLabel = document.querySelector('label[for="preorder-option"]');
+    const bankDetailsSection = document.getElementById('bank-details-section');
+    
+    console.log('Found condition radios:', conditionRadios.length); // Debug log
+    console.log('Preorder option found:', !!preorderOption); // Debug log
+
+    if (conditionRadios.length === 0) {
+      console.warn('No condition radio buttons found');
+      return;
+    }
+
+    conditionRadios.forEach((radio, index) => {
+      console.log(`Radio ${index}: value="${radio.value}", name="${radio.name}"`); // Debug log
+      
+      radio.addEventListener('change', () => {
+        console.log('Condition changed to:', radio.value); // Debug log
+        
+        if (radio.value === 'used' && radio.checked) {
+          console.log('Disabling preorder for used item...'); // Debug log
+          
+          // Disable preorder for used items
+          if (preorderOption) {
+            preorderOption.checked = false;
+            preorderOption.disabled = true;
+            
+            // Update label to show it's disabled
+            if (preorderLabel) {
+              preorderLabel.classList.add('disabled');
+              const description = preorderLabel.querySelector('.checkbox-description');
+              if (description) {
+                description.textContent = 'Not available for used items';
+              }
+            }
+
+            // Hide bank details if they were shown
+            if (bankDetailsSection) {
+              bankDetailsSection.style.display = 'none';
+              this.makeBankFieldsRequired(false);
+            }
+
+            // Show notification to user
+            this.showConditionNotification('Preorder payment has been disabled for used items. Only Cash on Delivery is available.');
+          }
+        } else if (radio.value === 'brand_new' && radio.checked) {
+          console.log('Enabling preorder for new item...'); // Debug log
+          
+          // Re-enable preorder for new items
+          if (preorderOption) {
+            preorderOption.disabled = false;
+            
+            // Restore original label
+            if (preorderLabel) {
+              preorderLabel.classList.remove('disabled');
+              const description = preorderLabel.querySelector('.checkbox-description');
+              if (description) {
+                description.textContent = 'Customer pays before receiving the item';
+              }
+            }
+
+            // Hide any previous notification
+            this.hideConditionNotification();
+          }
+        }
+
+        // Revalidate payment methods after condition change
+        this.validatePaymentMethods();
+      });
+    });
+  }
+
+  // Show notification about condition restrictions
+  showConditionNotification(message) {
+    console.log('Showing notification:', message); // Debug log
+    
+    // Remove existing notification if any
+    this.hideConditionNotification();
+
+    // Try to find the payment section - look for the section containing payment methods
+    let paymentSection = document.querySelector('.form-section:has(#preorder-option)');
+    
+    if (!paymentSection) {
+      // Fallback: find the section that contains the preorder option
+      const preorderOption = document.getElementById('preorder-option');
+      if (preorderOption) {
+        paymentSection = preorderOption.closest('.form-section');
+      }
+    }
+
+    console.log('Payment section found:', !!paymentSection); // Debug log
+
+    if (paymentSection) {
+      const notification = document.createElement('div');
+      notification.className = 'condition-notification';
+      notification.innerHTML = `
+        <div class="notification-content">
+          <svg class="notification-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+            <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="notification-text">${message}</span>
+        </div>
+      `;
+      
+      // Insert after the section title
+      const sectionTitle = paymentSection.querySelector('.section-title');
+      if (sectionTitle) {
+        sectionTitle.insertAdjacentElement('afterend', notification);
+      } else {
+        paymentSection.insertBefore(notification, paymentSection.firstChild);
+      }
+
+      // DO NOT auto-hide - notification stays until user changes condition
+      // Removed: setTimeout(() => { this.hideConditionNotification(); }, 6000);
+    } else {
+      // Fallback: show alert if we can't find the section
+      console.log('Fallback: showing alert');
+      alert(message);
+    }
+  }
+
+  // Hide condition notification
+  hideConditionNotification() {
+    const notification = document.querySelector('.condition-notification');
+    if (notification) {
+      console.log('Hiding notification');
+      notification.remove();
+    }
   }
 
   // Setup payment options functionality
@@ -26,22 +162,30 @@ class AddItemsForm {
     const bankDetailsSection = document.getElementById('bank-details-section');
 
     // Show/hide bank details based on preorder selection
-    preorderOption.addEventListener('change', () => {
-      if (preorderOption.checked) {
-        bankDetailsSection.style.display = 'block';
-        bankDetailsSection.classList.add('show');
-        this.makeBankFieldsRequired(true);
-      } else if (!preorderOption.checked && !codOption.checked) {
-        bankDetailsSection.style.display = 'none';
-        this.makeBankFieldsRequired(false);
-      }
-    });
+    if (preorderOption) {
+      preorderOption.addEventListener('change', () => {
+        if (preorderOption.checked && !preorderOption.disabled) {
+          if (bankDetailsSection) {
+            bankDetailsSection.style.display = 'block';
+            bankDetailsSection.classList.add('show');
+          }
+          this.makeBankFieldsRequired(true);
+        } else if (!preorderOption.checked) {
+          if (bankDetailsSection) {
+            bankDetailsSection.style.display = 'none';
+          }
+          this.makeBankFieldsRequired(false);
+        }
+      });
+    }
 
     // Ensure at least one payment method is selected
     [codOption, preorderOption].forEach(option => {
-      option.addEventListener('change', () => {
-        this.validatePaymentMethods();
-      });
+      if (option) {
+        option.addEventListener('change', () => {
+          this.validatePaymentMethods();
+        });
+      }
     });
   }
 
@@ -71,7 +215,6 @@ class AddItemsForm {
     const bankBranch = document.getElementById('bank-branch');
     const accountName = document.getElementById('account-name');
     const accountNumber = document.getElementById('account-number');
-    const bankPreview = document.getElementById('bank-preview');
 
     // Update preview when fields change
     [bankName, bankBranch, accountName, accountNumber].forEach(field => {
@@ -109,21 +252,40 @@ class AddItemsForm {
     const hasAnyBankData = [bankName, bankBranch, accountName, accountNumber]
       .some(field => field && field.value.trim());
 
-    if (hasAnyBankData) {
+    if (hasAnyBankData && bankPreview) {
       bankPreview.style.display = 'block';
       
       // Update preview values
-      document.getElementById('preview-bank').textContent = 
-        bankName.value || '-';
-      document.getElementById('preview-branch').textContent = 
-        bankBranch.value || '-';
-      document.getElementById('preview-account-name').textContent = 
-        accountName.value || '-';
-      document.getElementById('preview-account-number').textContent = 
-        accountNumber.value || '-';
-    } else {
+      const previewBank = document.getElementById('preview-bank');
+      const previewBranch = document.getElementById('preview-branch');
+      const previewAccountName = document.getElementById('preview-account-name');
+      const previewAccountNumber = document.getElementById('preview-account-number');
+
+      if (previewBank) previewBank.textContent = this.displayBankName(bankName?.value || '');
+      if (previewBranch) previewBranch.textContent = bankBranch?.value || '-';
+      if (previewAccountName) previewAccountName.textContent = accountName?.value || '-';
+      if (previewAccountNumber) previewAccountNumber.textContent = accountNumber?.value || '-';
+    } else if (bankPreview) {
       bankPreview.style.display = 'none';
     }
+  }
+
+  // Display bank name helper
+  displayBankName(val) {
+    const map = {
+      commercial_bank: 'Commercial Bank of Ceylon',
+      peoples_bank: "People's Bank",
+      bank_of_ceylon: 'Bank of Ceylon',
+      hatton_national: 'Hatton National Bank',
+      sampath_bank: 'Sampath Bank',
+      seylan_bank: 'Seylan Bank',
+      dfcc_bank: 'DFCC Bank',
+      ndb_bank: 'National Development Bank',
+      nations_trust: 'Nations Trust Bank',
+      union_bank: 'Union Bank',
+      other: 'Other'
+    };
+    return map[val] || '-';
   }
 
   // Validate individual bank field
@@ -151,11 +313,14 @@ class AddItemsForm {
     const preorderOption = document.getElementById('preorder-option');
     const errorElement = document.getElementById('payment-methods-error');
 
-    const isValid = codOption.checked || preorderOption.checked;
+    // Check if at least one payment method is selected and enabled
+    const codSelected = codOption && codOption.checked;
+    const preorderSelected = preorderOption && preorderOption.checked && !preorderOption.disabled;
+    const isValid = codSelected || preorderSelected;
 
-    if (!isValid) {
-      this.showError('payment-methods-error', 'Please select at least one payment method');
-    } else {
+    if (!isValid && errorElement) {
+      this.showError('payment-methods-error', 'Please select at least one available payment method');
+    } else if (errorElement) {
       errorElement.classList.remove('show');
     }
 
@@ -168,7 +333,9 @@ class AddItemsForm {
       const slot = document.querySelector(`[data-slot="${i}"]`);
       const input = document.getElementById(`image-${i}`);
       const preview = document.getElementById(`preview-${i}`);
-      const removeBtn = slot.querySelector('.remove-image');
+      const removeBtn = slot?.querySelector('.remove-image');
+
+      if (!slot || !input || !preview) continue;
 
       // Click to upload
       slot.addEventListener('click', (e) => {
@@ -183,10 +350,12 @@ class AddItemsForm {
       });
 
       // Remove image
-      removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.removeImage(i, input, preview, removeBtn);
-      });
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.removeImage(i, input, preview, removeBtn);
+        });
+      }
     }
   }
 
@@ -202,7 +371,7 @@ class AddItemsForm {
     const reader = new FileReader();
     reader.onload = (e) => {
       preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-      removeBtn.style.display = 'block';
+      if (removeBtn) removeBtn.style.display = 'block';
       this.uploadedImages.add(slotIndex);
     };
     reader.readAsDataURL(file);
@@ -230,7 +399,7 @@ class AddItemsForm {
   removeImage(slotIndex, input, preview, removeBtn) {
     input.value = '';
     preview.innerHTML = this.getPlaceholderHTML(slotIndex);
-    removeBtn.style.display = 'none';
+    if (removeBtn) removeBtn.style.display = 'none';
     this.uploadedImages.delete(slotIndex);
   }
 
@@ -259,29 +428,35 @@ class AddItemsForm {
     const increaseBtn = document.querySelector('.qty-increase');
     const qtyInput = document.getElementById('item-quantity');
 
-    decreaseBtn.addEventListener('click', () => {
-      const currentValue = parseInt(qtyInput.value) || 1;
-      if (currentValue > 1) {
-        qtyInput.value = currentValue - 1;
-      }
-    });
+    if (decreaseBtn && qtyInput) {
+      decreaseBtn.addEventListener('click', () => {
+        const currentValue = parseInt(qtyInput.value) || 1;
+        if (currentValue > 1) {
+          qtyInput.value = currentValue - 1;
+        }
+      });
+    }
 
-    increaseBtn.addEventListener('click', () => {
-      const currentValue = parseInt(qtyInput.value) || 1;
-      if (currentValue < 999) {
-        qtyInput.value = currentValue + 1;
-      }
-    });
+    if (increaseBtn && qtyInput) {
+      increaseBtn.addEventListener('click', () => {
+        const currentValue = parseInt(qtyInput.value) || 1;
+        if (currentValue < 999) {
+          qtyInput.value = currentValue + 1;
+        }
+      });
+    }
 
     // Validate manual input
-    qtyInput.addEventListener('input', () => {
-      const value = parseInt(qtyInput.value);
-      if (isNaN(value) || value < 1) {
-        qtyInput.value = 1;
-      } else if (value > 999) {
-        qtyInput.value = 999;
-      }
-    });
+    if (qtyInput) {
+      qtyInput.addEventListener('input', () => {
+        const value = parseInt(qtyInput.value);
+        if (isNaN(value) || value < 1) {
+          qtyInput.value = 1;
+        } else if (value > 999) {
+          qtyInput.value = 999;
+        }
+      });
+    }
   }
 
   // Setup character counter for description
@@ -289,31 +464,35 @@ class AddItemsForm {
     const description = document.getElementById('description');
     const counter = document.getElementById('desc-count');
 
-    description.addEventListener('input', () => {
-      const length = description.value.length;
-      counter.textContent = length;
-      
-      if (length > 450) {
-        counter.style.color = '#F59E0B';
-      } else if (length > 500) {
-        counter.style.color = '#EF4444';
-      } else {
-        counter.style.color = '#6B7280';
-      }
-    });
+    if (description && counter) {
+      description.addEventListener('input', () => {
+        const length = description.value.length;
+        counter.textContent = length;
+        
+        if (length > 450) {
+          counter.style.color = '#F59E0B';
+        } else if (length > 500) {
+          counter.style.color = '#EF4444';
+        } else {
+          counter.style.color = '#6B7280';
+        }
+      });
+    }
   }
 
   // Setup form validation
   setupFormValidation() {
     const form = document.getElementById('add-item-form');
     
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      
-      if (this.validateForm()) {
-        this.submitForm();
-      }
-    });
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (this.validateForm()) {
+          this.submitForm();
+        }
+      });
+    }
   }
 
   // Validate form
@@ -323,13 +502,13 @@ class AddItemsForm {
 
     // Basic validation
     const itemName = document.getElementById('item-name');
-    if (!itemName.value.trim()) {
+    if (itemName && !itemName.value.trim()) {
       this.showError('item-name-error', 'Item name is required');
       isValid = false;
     }
 
     const category = document.getElementById('category');
-    if (!category.value) {
+    if (category && !category.value) {
       this.showError('category-error', 'Please select a category');
       isValid = false;
     }
@@ -341,19 +520,19 @@ class AddItemsForm {
     }
 
     const description = document.getElementById('description');
-    if (!description.value.trim()) {
+    if (description && !description.value.trim()) {
       this.showError('description-error', 'Description is required');
       isValid = false;
     }
 
     const price = document.getElementById('item-price');
-    if (!price.value || parseFloat(price.value) <= 0) {
+    if (price && (!price.value || parseFloat(price.value) <= 0)) {
       this.showError('item-price-error', 'Please enter a valid price');
       isValid = false;
     }
 
     const quantity = document.getElementById('item-quantity');
-    if (!quantity.value || parseInt(quantity.value) <= 0) {
+    if (quantity && (!quantity.value || parseInt(quantity.value) <= 0)) {
       this.showError('item-quantity-error', 'Please enter a valid quantity');
       isValid = false;
     }
@@ -365,7 +544,7 @@ class AddItemsForm {
 
     // Bank details validation (if preorder is selected)
     const preorderOption = document.getElementById('preorder-option');
-    if (preorderOption.checked) {
+    if (preorderOption && preorderOption.checked && !preorderOption.disabled) {
       const bankFields = [
         { id: 'bank-name', name: 'Bank name' },
         { id: 'bank-branch', name: 'Branch' },
@@ -375,7 +554,7 @@ class AddItemsForm {
 
       bankFields.forEach(field => {
         const element = document.getElementById(field.id);
-        if (!element.value.trim()) {
+        if (element && !element.value.trim()) {
           this.showError(`${field.id}-error`, `${field.name} is required`);
           isValid = false;
         }
@@ -383,7 +562,7 @@ class AddItemsForm {
 
       // Validate account number format
       const accountNumber = document.getElementById('account-number');
-      if (accountNumber.value && !/^\d{10,18}$/.test(accountNumber.value)) {
+      if (accountNumber && accountNumber.value && !/^\d{10,18}$/.test(accountNumber.value)) {
         this.showError('account-number-error', 'Account number must be 10-18 digits');
         isValid = false;
       }
@@ -420,8 +599,8 @@ class AddItemsForm {
     const loadingOverlay = document.getElementById('loading-overlay');
     const submitBtn = document.getElementById('submit-btn');
 
-    loadingOverlay.style.display = 'flex';
-    submitBtn.disabled = true;
+    if (loadingOverlay) loadingOverlay.style.display = 'flex';
+    if (submitBtn) submitBtn.disabled = true;
 
     const formData = new FormData(form);
 
@@ -435,21 +614,23 @@ class AddItemsForm {
           throw new Error(data.message || 'Failed to submit item');
         }
         alert('Item added successfully!');
-        window.location.href = '/dashboard/marketplace/seller/active'; // updated redirect
+        window.location.href = '/dashboard/marketplace/seller/active';
       })
       .catch(error => {
         console.error('Error:', error);
         alert('Error: ' + error.message);
       })
       .finally(() => {
-        loadingOverlay.style.display = 'none';
-        submitBtn.disabled = false;
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
+        if (submitBtn) submitBtn.disabled = false;
       });
   }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+  new AddItemsForm();
+
   // Wire image slots (0..3)
   const slots = document.querySelectorAll('.image-slot');
   const OK_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
@@ -511,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Remove selected image and reset preview
     if (removeBtn) {
       removeBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // avoid triggering file picker
+        e.stopPropagation();
         input.value = '';
         if (objectUrl) {
           URL.revokeObjectURL(objectUrl);
@@ -581,6 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!bankPreview) return;
       const show =
         preorder.checked &&
+        !preorder.disabled &&
         (bankName?.value || bankBranch?.value || accountName?.value || accountNumber?.value);
 
       bankPreview.style.display = show ? 'block' : 'none';
@@ -608,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleBankSection() {
-      if (preorder.checked) {
+      if (preorder.checked && !preorder.disabled) {
         bankSection.style.display = 'block';
         makeBankFieldsRequired(true);
       } else {
@@ -619,9 +801,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function validatePaymentMethods() {
       if (!errPayment) return true;
-      const anyChecked = (preorder.checked || (cod && cod.checked));
+      const anyChecked = ((preorder.checked && !preorder.disabled) || (cod && cod.checked));
       if (!anyChecked) {
-        errPayment.textContent = 'Select at least one payment method.';
+        errPayment.textContent = 'Select at least one available payment method.';
         return false;
       }
       errPayment.textContent = '';
@@ -629,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function validateBankFieldsIfNeeded() {
-      if (!preorder.checked) return true;
+      if (!preorder.checked || preorder.disabled) return true;
 
       let ok = true;
       if (bankName && !bankName.value) {
@@ -672,7 +854,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBankPreview();
       });
       el.addEventListener('blur', () => {
-        if (preorder.checked) validateBankFieldsIfNeeded();
+        if (preorder.checked && !preorder.disabled) validateBankFieldsIfNeeded();
       });
     });
 

@@ -252,5 +252,47 @@ class MarketPlace extends Model
             return null;
         }
     }
+
+    /**
+     * Atomically reserve stock (decrease) if available.
+     */
+    public function reserveStock(int $productId, int $qty): bool
+    {
+        if ($qty <= 0) return true;
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE {$this->table}
+                SET stock_quantity = stock_quantity - ?
+                WHERE id = ? AND stock_quantity >= ?
+                LIMIT 1
+            ");
+            $stmt->execute([$qty, $productId, $qty]);
+            return $stmt->rowCount() === 1;
+        } catch (Throwable $e) {
+            Logger::error("reserveStock error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Release stock (increase) back.
+     */
+    public function releaseStock(int $productId, int $qty): bool
+    {
+        if ($qty <= 0) return true;
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE {$this->table}
+                SET stock_quantity = stock_quantity + ?
+                WHERE id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$qty, $productId]);
+            return $stmt->rowCount() === 1;
+        } catch (Throwable $e) {
+            Logger::error("releaseStock error: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 

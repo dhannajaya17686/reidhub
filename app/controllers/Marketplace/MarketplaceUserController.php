@@ -166,6 +166,11 @@ class Marketplace_MarketplaceUserController extends Controller
             'Product Details - ReidHub Marketplace'
         );
     }
+    public function showMyTransactions()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/all-transactions-view', ['user' => $user], 'My Transactions - ReidHub Marketplace');
+    }
     public function showMyCart()
     {
         $user = Auth_LoginController::getSessionUser(true);
@@ -1237,10 +1242,10 @@ class Marketplace_MarketplaceUserController extends Controller
                 if (!$ok) throw new RuntimeException('Failed to create order');
             }
 
-            // Clear
+            // Clear cart WITHOUT restocking (stock was already reserved on add)
             $cart = new Cart();
             foreach ($productIds as $pid) {
-                $cart->removeItem((int)$user['id'], (int)$pid);
+                $cart->removeItemNoRestock((int)$user['id'], (int)$pid);
             }
 
             echo json_encode(['success'=>true,'message'=>'Order placed','transaction_id'=>$txId]);
@@ -1500,5 +1505,118 @@ class Marketplace_MarketplaceUserController extends Controller
             http_response_code(500);
             echo json_encode(['success'=>false,'message'=>'Server error']);
         }
+    }
+    /**
+     * GET /dashboard/marketplace/transactions/data
+     * Returns all transactions for the logged-in buyer with nested orders.
+     * Optional query params: status, payment, from, to, search
+     */
+    public function getTransactionsData()
+    {
+        header('Content-Type: application/json');
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) { http_response_code(401); echo json_encode(['success'=>false,'message'=>'Unauthorized']); return; }
+
+            $filters = [
+                'status'  => $_GET['status']  ?? null,
+                'payment' => $_GET['payment'] ?? null,
+                'from'    => $_GET['from']    ?? null,
+                'to'      => $_GET['to']      ?? null,
+                'search'  => $_GET['search']  ?? null,
+            ];
+
+            $tx = new Transaction();
+            $data = $tx->getBuyerTransactionsWithOrders((int)$user['id'], $filters);
+
+            echo json_encode(['success'=>true, 'transactions'=>$data, 'count'=>count($data)]);
+        } catch (Throwable $e) {
+            Logger::error('getTransactionsData error: '.$e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success'=>false,'message'=>'Server error']);
+        }
+    }
+
+    /**
+     * Shows a single transaction details page with its per-item orders.
+     * GET /dashboard/marketplace/transactions/view?id=123
+     */
+    public function showTransaction()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        if (!$user) { header('Location: /login'); return; }
+
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id <= 0) { $this->render404('Invalid transaction'); return; }
+
+        $txModel = new Transaction();
+        $tx = $txModel->getBuyerTransactionFull((int)$user['id'], $id);
+        if (!$tx) { $this->render404('Transaction not found'); return; }
+
+        $this->viewApp('/User/marketplace/transaction-details-view', [
+            'transaction' => $tx,
+        ], 'Transaction Details');
+    }
+
+    /**
+     * Download a simple HTML invoice (attachment) for a transaction.
+     * GET /dashboard/marketplace/transactions/invoice?id=123
+     */
+    public function downloadInvoice()
+    {
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) { http_response_code(401); echo 'Unauthorized'; return; }
+
+            $id = (int)($_GET['id'] ?? 0);
+            if ($id <= 0) { http_response_code(422); echo 'Invalid transaction'; return; }
+
+            $txModel = new Transaction();
+            $tx = $txModel->getBuyerTransactionFull((int)$user['id'], $id);
+            if (!$tx) { http_response_code(404); echo 'Not found'; return; }
+
+            // Build minimal HTML invoice
+            $safe = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
+            $rowsHtml = '';
+            foreach ($tx['orders'] as $o) {
+                $line = $o['quantity'] * $o['unit_price'];
+                $rowsHtml .= '<tr>'.
+                  '<td>'. $safe($o['product_title']) .'</td>'.
+                  '<td style="text-align:center;">'. (int)$o['quantity'] .'</td>'.
+                  '<td style="text-align:right;">Rs. '. number_format($o['unit_price'], 2, '.', ',') .'</td>'.
+                  '<td style="text-align:right;">Rs. '. number_format($line, 2, '.', ',') .'</td>'.
+                '</tr>';
+            }
+
+            $html = '<!doctype html><html><head><meta charset="utf-8">'.
+              '<title>Invoice TX'.$tx['id'].'</title>'.
+              '<style>body{font-family:Arial,Helvetica,sans-serif;color:#111} table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px solid #eee} th{text-align:left;background:#fafafa} .tot{font-weight:bold} .meta{margin:0 0 16px 0;color:#555;font-size:12px}</style>'.
+              '</head><body>'.
+              '<h2>Invoice</h2>'.
+              '<p class="meta">Transaction: TX'.$tx['id'].'<br>'.
+              'Date: '. $safe(date('Y-m-d H:i', strtotime($tx['created_at']))) .'<br>'.
+              'Buyer ID: '. (int)$tx['buyer_id'] .'</p>'.
+              '<table><thead><tr><th>Item</th><th style="text-align:center;">Qty</th><th style="text-align:right;">Unit</th><th style="text-align:right;">Line Total</th></tr></thead>'.
+              '<tbody>'.$rowsHtml.'</tbody>'.
+              '<tfoot><tr><td colspan="3" class="tot" style="text-align:right;">Total</td><td class="tot" style="text-align:right;">Rs. '.number_format($tx['total_amount'], 2, '.', ',').'</td></tr></tfoot>'.
+              '</table>'.
+              '<p class="meta">Payment methods per item are shown in your order details page.</p>'.
+              '</body></html>';
+
+            header('Content-Type: text/html; charset=utf-8');
+            header('Content-Disposition: attachment; filename="invoice-TX'.$tx['id'].'.html"');
+            header('Cache-Control: private, no-store, no-cache, must-revalidate');
+            echo $html;
+        } catch (Throwable $e) {
+            Logger::error('downloadInvoice error: '.$e->getMessage());
+            http_response_code(500);
+            echo 'Server error';
+        }
+    }
+
+    private function render404(string $msg)
+    {
+        http_response_code(404);
+        $this->viewApp('/Errors/404', ['message'=>$msg], 'Not Found');
     }
 }

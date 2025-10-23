@@ -24,4 +24,5 @@ class Dashboard_AdminDashboardController extends Controller {
 
         $this->viewApp('/Admin/admin-dashboard-view', ['admin' => $admin], 'Admin Dashboard - ReidHub');
     }
+    
 }

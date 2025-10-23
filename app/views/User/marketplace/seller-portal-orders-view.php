@@ -63,7 +63,7 @@
       </thead>
       <tbody id="orders-tbody">
         <!-- Order 1 - Yet to Ship with Preorder -->
-        <tr class="order-row" data-status="yet-to-ship" data-payment="preorder">
+        <tr class="order-row" data-status="yet-to-ship" data-payment="preorder" data-order-id="12345">
           <td class="order-id">#12345</td>
           <td class="item-name">UCSC Tshirt</td>
           <td class="user-info">
@@ -78,12 +78,18 @@
           </td>
           <td class="actions">
             <button class="action-btn manage-btn" onclick="manageOrder('#12345', 'yet-to-ship', 'preorder')">Manage</button>
-            <button class="action-btn chat-btn" onclick="chatWithCustomer('Dhananjaya Mudalige')">Chat</button>
+            <button class="action-btn chat-btn" 
+                    data-order-id="12345" 
+                    data-buyer-name="Dhananjaya Mudalige"
+                    onclick="openChat('12345', 'Dhananjaya Mudalige')">
+              Chat
+              <span class="chat-badge" style="display: none;">2</span>
+            </button>
           </td>
         </tr>
 
         <!-- Order 2 - Yet to Ship with COD -->
-        <tr class="order-row" data-status="yet-to-ship" data-payment="cod">
+        <tr class="order-row" data-status="yet-to-ship" data-payment="cod" data-order-id="12346">
           <td class="order-id">#12346</td>
           <td class="item-name">UCSC Wrist band</td>
           <td class="user-info">
@@ -98,12 +104,17 @@
           </td>
           <td class="actions">
             <button class="action-btn manage-btn" onclick="manageOrder('#12346', 'yet-to-ship', 'cod')">Manage</button>
-            <button class="action-btn chat-btn" onclick="chatWithCustomer('Amasha')">Chat</button>
+            <button class="action-btn chat-btn" 
+                    data-order-id="12346" 
+                    data-buyer-name="Amasha"
+                    onclick="openChat('12346', 'Amasha')">
+              Chat
+            </button>
           </td>
         </tr>
 
         <!-- Order 3 - Delivered -->
-        <tr class="order-row" data-status="delivered" data-payment="preorder">
+        <tr class="order-row" data-status="delivered" data-payment="preorder" data-order-id="12347">
           <td class="order-id">#12347</td>
           <td class="item-name">DSA Book</td>
           <td class="user-info">
@@ -118,12 +129,17 @@
           </td>
           <td class="actions">
             <button class="action-btn view-btn" onclick="viewOrder('#12347')">View</button>
-            <button class="action-btn chat-btn" onclick="chatWithCustomer('Dhananjaya Mudalige')">Chat</button>
+            <button class="action-btn chat-btn" 
+                    data-order-id="12347" 
+                    data-buyer-name="Dhananjaya Mudalige"
+                    onclick="openChat('12347', 'Dhananjaya Mudalige')">
+              Chat
+            </button>
           </td>
         </tr>
 
         <!-- Order 4 - Canceled -->
-        <tr class="order-row" data-status="canceled" data-payment="cod">
+        <tr class="order-row" data-status="canceled" data-payment="cod" data-order-id="12348">
           <td class="order-id">#12348</td>
           <td class="item-name">Laptop Charger</td>
           <td class="user-info">
@@ -138,7 +154,12 @@
           </td>
           <td class="actions">
             <button class="action-btn view-btn" onclick="viewOrder('#12348')">View</button>
-            <button class="action-btn chat-btn" onclick="chatWithCustomer('Amasha')">Chat</button>
+            <button class="action-btn chat-btn" 
+                    data-order-id="12348" 
+                    data-buyer-name="Amasha"
+                    onclick="openChat('12348', 'Amasha')">
+              Chat
+            </button>
           </td>
         </tr>
       </tbody>
@@ -226,29 +247,64 @@
 </div>
 
 <!-- Chat Modal -->
-<div class="modal-overlay" id="chat-modal" style="display: none;">
-  <div class="modal chat-modal">
-    <div class="modal-header">
-      <h3 id="chat-title">Chat with Customer</h3>
-      <button class="close-btn" onclick="closeChatModal()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="chat-messages" id="chat-messages">
-        <div class="message received">
-          <div class="message-content">Hi, I have a question about my order.</div>
-          <div class="message-time">2:30 PM</div>
+<div class="chat-modal" id="chat-modal" aria-hidden="true" role="dialog" aria-labelledby="chat-modal-title">
+  <div class="chat-modal-backdrop" aria-label="Close chat"></div>
+  <div class="chat-modal-container">
+    
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-info">
+        <div class="buyer-avatar">
+          <img src="/images/placeholders/user.png" alt="Buyer" id="buyer-avatar">
+        </div>
+        <div class="chat-details">
+          <h2 class="chat-modal-title" id="chat-modal-title">Chat with Buyer</h2>
+          <div class="order-info">
+            <span class="order-title" id="chat-order-title">Order Title</span>
+            <span class="order-id" id="chat-order-id">#12345</span>
+          </div>
         </div>
       </div>
-      <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type your message...">
-        <button class="send-btn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24" fill="none">
-            <line x1="22" y1="2" x2="11" y2="13" stroke="currentColor" stroke-width="2"/>
-            <polygon points="22,2 15,22 11,13 2,9 22,2" fill="currentColor"/>
-          </svg>
-        </button>
+      <button class="chat-close" aria-label="Close chat">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-loading">
+        <div class="loading-spinner"></div>
+        <span>Loading messages...</span>
       </div>
     </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-container">
+      <form class="chat-form" id="chat-form">
+        <div class="chat-input-wrapper">
+          <textarea 
+            class="chat-input" 
+            id="chat-input" 
+            placeholder="Type your message..."
+            rows="1"
+            maxlength="500"
+          ></textarea>
+          <button type="submit" class="chat-send" aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="chat-actions">
+          <div class="char-counter">
+            <span id="chat-char-count">0</span>/500
+          </div>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>
 

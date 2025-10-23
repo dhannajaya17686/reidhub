@@ -1,4 +1,6 @@
 <?php
+
+//-------------------------------------------AUTH ROUTER START-------------------------------------------
 $routes['/login'] = [
     'GET' => 'Auth_LoginController@showLoginForm',
     'POST' => 'Auth_LoginController@login'
@@ -26,12 +28,15 @@ $routes['/verify-email'] = [
 $routes['/logout'] = [
     'POST' => 'Auth_LoginController@logout'
 ];
-$routes['/dashboard'] = [
+$routes['/dashboard/user'] = [
     'GET' => 'Dashboard_UserDashboardController@showUserDashboard'
 ];
 $routes['/dashboard/admin'] = [
     'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
 ];
+//-----------------------------------AUTH ROUTER END--------------------------------------------//
+
+//-----------------------------------MARKETPLACE ROUTES-----------------------------------//
 
 //Marketplace User routes
 $routes['/dashboard/marketplace/merch-store'] = [
@@ -43,7 +48,6 @@ $routes['/dashboard/marketplace/show-product'] = [
 $routes['/dashboard/marketplace/my-cart'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showMyCart'
 ];
-
 // Cart APIs
 $routes['/dashboard/marketplace/cart/get'] = [
     'GET' => 'Marketplace_MarketplaceUserController@getCartItemsApi'
@@ -86,8 +90,6 @@ $routes['/dashboard/marketplace/seller/archived'] = [
 $routes['/dashboard/marketplace/seller/archived/update'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateUnarchiveItem',
 ];
-
-
 $routes['/dashboard/marketplace/seller/edit'] = [
     'GET'  => 'Marketplace_MarketplaceUserController@showSellerPortalEditItems',
     'POST' => 'Marketplace_MarketplaceUserController@updateItem',
@@ -110,24 +112,34 @@ $routes['/dashboard/marketplace/seller/active/get'] = [
 $routes['/dashboard/marketplace/cart/add'] = [
     'POST' => 'Marketplace_MarketplaceUserController@addToCart'
 ];
-
-
-// Edu forum user routes 
-$routes['/dashboard/forum/add'] = [
-    'GET' => 'Forum_ForumUserController@addQuestion'
-];
-$routes['/dashboard/forum/question'] = [
-    'GET' => 'Forum_ForumUserController@showQuestion'
-];
-$routes['/dashboard/forum/all'] = [
-    'GET' => 'Forum_ForumUserController@showAllQuestions'
+$routes['/dashboard/marketplace/transactions'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showMyTransactions'
 ];
 
-$routes['/'] = [
-    'GET' => 'Home_HomeController@index'
+// New data endpoints for the transactions page
+$routes['/dashboard/marketplace/transactions/data'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getTransactionsData'
 ];
-
-// Add this to your existing routes in web.php
+$routes['/dashboard/marketplace/transactions/view'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getTransactionById'
+];
+$routes['/dashboard/marketplace/transactions/view'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showTransaction'
+];
+/* Download invoice */
+$routes['/dashboard/marketplace/transactions/invoice'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@downloadInvoice'
+];
+// Marketplace Admin routes
+$routes['/dashboard/marketplace/admin/analytics'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceAnalytics'
+];
+$routes['/dashboard/marketplace/admin/reported'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceReportedItems'
+];
+$routes['/dashboard/marketplace/admin/archived'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceArchivedItems'
+];
 $routes['/dashboard/marketplace/checkout'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showCheckout'
 ];
@@ -138,5 +150,93 @@ $routes['/dashboard/marketplace/checkout/place-order'] = [
 $routes['/dashboard/marketplace/cart/payment-method'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateCartPaymentMethod',
 ];
+//---------------------------------------MARKETLPACE ROUTE END------------------------------------------//
+
+//---------------------------------------CLUB AND SOCIETY ROUTER START---------------------------------//
+
+// ============ COMMUNITY BLOGS ROUTES (MATCHING MARKETPLACE PATTERN) ============
+$routes['/dashboard/community/blogs'] = [
+    'GET' => 'Community_CommunityUserController@showAllBlogs'
+];
+$routes['/dashboard/community/blogs/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewBlog'
+];
+$routes['/dashboard/community/blogs/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateBlog'
+];
+$routes['/dashboard/community/blogs/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditBlog'
+];
+
+// ============ COMMUNITY CLUBS ROUTES ============
+$routes['/dashboard/community/clubs'] = [
+    'GET' => 'Community_CommunityUserController@showAllClubs'
+];
+$routes['/dashboard/community/clubs/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewClub'
+];
+$routes['/dashboard/community/clubs/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateClub'
+];
+$routes['/dashboard/community/clubs/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditClub'
+];
+
+// ============ COMMUNITY EVENTS ROUTES ============
+$routes['/dashboard/community/events'] = [
+    'GET' => 'Community_CommunityUserController@showAllEvents'
+];
+$routes['/dashboard/community/events/view'] = [
+    'GET' => 'Community_CommunityUserController@showViewEvent'
+];
+$routes['/dashboard/community/events/create'] = [
+    'GET' => 'Community_CommunityUserController@showCreateEvent'
+];
+$routes['/dashboard/community/events/edit'] = [
+    'GET' => 'Community_CommunityUserController@showEditEvent'
+];
+//---------------------------------------CLUB AND SOCIETY ROUTES END-----------------------------------//
+
+//---------------------------------------FORUM ROUTES START------------------------------------------//
+// Edu forum user routes 
+$routes['/dashboard/forum/add'] = [
+    'GET' => 'Forum_ForumUserController@addQuestion'
+];
+$routes['/dashboard/forum/question'] = [
+    'GET' => 'Forum_ForumUserController@showQuestion'
+];
+$routes['/dashboard/forum/all'] = [
+    'GET' => 'Forum_ForumUserController@showAllQuestions'
+];
+$routes['/dashboard/forum/admin'] = [
+    'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
+];
+
+//--------------------------------------FORUM ROUTES END---------------------------------------------//
+
+//-------------------------------------LOST AND FOUND ROUTES START--------------------------------------//
+$routes['/dashboard/lost-and-found/report-lost-item'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@showReportLostItem'
+];
+$routes['/dashboard/lost-and-found/report-found-item'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@showReportFoundItem'
+];
+$routes['/dashboard/lost-and-found/items'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@showLostAndFoundItems'
+];
+$routes['/dashboard/community/admin'] = [
+    'GET' => 'Forum_ForumAdminController@showCommunityAdminDashboard'
+];
+$routes['/dashboard/lost-and-found/admin'] = [
+    'GET' => 'Forum_ForumAdminController@manageLostAndFound'
+];
+
+//---------------------------------------HOME ROUTES START------------------------------------------//
+$routes['/'] = [
+    'GET' => 'Home_HomeController@index'
+];
+//---------------------------------------HOME ROUTES END -------------------------------------------//
+
+// Add this to your existing routes in web.php
 
 return $routes;

@@ -1,0 +1,214 @@
+/* ==========================================================================
+   Report Found Item Form Styles - Inherits from Lost Item styles
+   ========================================================================== */
+
+@import url('./report-lost-item.css');
+
+/* Override page specific elements */
+.report-found-main {
+  flex: 1;
+  padding: clamp(1rem, 2vw, 2rem);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==========================================================================
+   Condition Selection (Similar to Priority but for Item Condition)
+   ========================================================================== */
+
+.condition-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.condition-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
+  padding: var(--space-lg);
+  border: 2px solid var(--form-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-smooth);
+  background: var(--surface);
+  position: relative;
+}
+
+.condition-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.condition-option input[type="radio"] {
+  display: none;
+}
+
+.condition-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--form-border);
+  border-radius: 50%;
+  position: relative;
+  transition: all var(--transition-smooth);
+  flex-shrink: 0;
+}
+
+.condition-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.condition-title {
+  font-weight: 600;
+  color: var(--form-text);
+  font-size: 0.875rem;
+}
+
+.condition-description {
+  font-size: 0.75rem;
+  color: var(--form-text-muted);
+  line-height: 1.4;
+}
+
+.condition-icon {
+  font-size: 1.5rem;
+  opacity: 0.7;
+  transition: all var(--transition-smooth);
+}
+
+/* Excellent Condition */
+.excellent-condition input[type="radio"]:checked + .condition-custom {
+  border-color: var(--priority-low);
+  background: var(--priority-low);
+}
+
+.excellent-condition input[type="radio"]:checked ~ .condition-content .condition-title {
+  color: var(--priority-low);
+}
+
+.excellent-condition:hover {
+  border-color: var(--priority-low);
+  background: rgba(16, 185, 129, 0.02);
+}
+
+/* Good Condition */
+.good-condition input[type="radio"]:checked + .condition-custom {
+  border-color: #3B82F6;
+  background: #3B82F6;
+}
+
+.good-condition input[type="radio"]:checked ~ .condition-content .condition-title {
+  color: #3B82F6;
+}
+
+.good-condition:hover {
+  border-color: #3B82F6;
+  background: rgba(59, 130, 246, 0.02);
+}
+
+/* Fair Condition */
+.fair-condition input[type="radio"]:checked + .condition-custom {
+  border-color: var(--priority-medium);
+  background: var(--priority-medium);
+}
+
+.fair-condition input[type="radio"]:checked ~ .condition-content .condition-title {
+  color: var(--priority-medium);
+}
+
+.fair-condition:hover {
+  border-color: var(--priority-medium);
+  background: rgba(245, 158, 11, 0.02);
+}
+
+/* Damaged Condition */
+.damaged-condition input[type="radio"]:checked + .condition-custom {
+  border-color: var(--priority-high);
+  background: var(--priority-high);
+}
+
+.damaged-condition input[type="radio"]:checked ~ .condition-content .condition-title {
+  color: var(--priority-high);
+}
+
+.damaged-condition:hover {
+  border-color: var(--priority-high);
+  background: rgba(239, 68, 68, 0.02);
+}
+
+.condition-option input[type="radio"]:checked + .condition-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.condition-option input[type="radio"]:checked ~ .condition-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Required Image Indicator
+   ========================================================================== */
+
+.required-image {
+  border-color: var(--form-danger);
+  border-style: solid;
+}
+
+.required-image .upload-text {
+  color: var(--form-danger);
+}
+
+.required-image:hover {
+  border-color: var(--form-danger);
+  background: rgba(239, 68, 68, 0.02);
+}
+
+/* ==========================================================================
+   Other Location Details
+   ========================================================================== */
+
+.other-location-details {
+  animation: slideDown 0.3s ease-out;
+}
+
+.other-location-details.show {
+  display: block;
+}
+
+/* ==========================================================================
+   Form Specific Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .condition-group {
+    gap: var(--space-sm);
+  }
+
+  .condition-option {
+    padding: var(--space-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .condition-option {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  .condition-content {
+    align-items: center;
+  }
+}

@@ -1,0 +1,680 @@
+/* ==========================================================================
+   Report Lost Item Form Styles
+   ========================================================================== */
+
+:root {
+  --form-primary: var(--secondary-color);
+  --form-success: #10B981;
+  --form-danger: #EF4444;
+  --form-warning: #F59E0B;
+  --form-border: var(--border-color);
+  --form-bg: var(--surface-subtle);
+  --form-text: var(--text-primary);
+  --form-text-muted: var(--text-muted);
+  
+  /* Priority colors */
+  --priority-low: #10B981;
+  --priority-medium: #F59E0B;
+  --priority-high: #EF4444;
+}
+
+/* ==========================================================================
+   Main Layout
+   ========================================================================== */
+
+.report-lost-main {
+  flex: 1;
+  padding: clamp(1rem, 2vw, 2rem);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==========================================================================
+   Page Header
+   ========================================================================== */
+
+.page-header {
+  margin-bottom: var(--space-xl);
+}
+
+.page-title {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Form Sections
+   ========================================================================== */
+
+.report-lost-form {
+  position: relative;
+}
+
+.form-section {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-lg);
+}
+
+/* ==========================================================================
+   Form Elements
+   ========================================================================== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+.form-group {
+  margin-bottom: var(--space-lg);
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: var(--form-text);
+  margin-bottom: var(--space-xs);
+  font-size: 0.875rem;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--form-border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  transition: all var(--transition-smooth);
+  background: var(--surface);
+  color: var(--form-text);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--form-primary);
+  box-shadow: 0 0 0 3px rgba(4, 102, 200, 0.1);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--form-text-muted);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-error {
+  color: var(--form-danger);
+  font-size: 0.75rem;
+  margin-top: var(--space-xs);
+  display: none;
+}
+
+.form-error.show {
+  display: block;
+}
+
+/* Character Counter */
+.char-counter {
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--form-text-muted);
+  margin-top: var(--space-xs);
+}
+
+/* ==========================================================================
+   Priority Selection
+   ========================================================================== */
+
+.priority-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.priority-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
+  padding: var(--space-lg);
+  border: 2px solid var(--form-border);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-smooth);
+  background: var(--surface);
+  position: relative;
+}
+
+.priority-option:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.priority-option input[type="radio"] {
+  display: none;
+}
+
+.priority-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--form-border);
+  border-radius: 50%;
+  position: relative;
+  transition: all var(--transition-smooth);
+  flex-shrink: 0;
+}
+
+.priority-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priority-title {
+  font-weight: 600;
+  color: var(--form-text);
+  font-size: 0.875rem;
+}
+
+.priority-description {
+  font-size: 0.75rem;
+  color: var(--form-text-muted);
+  line-height: 1.4;
+}
+
+.priority-icon {
+  font-size: 1.5rem;
+  opacity: 0.7;
+  transition: all var(--transition-smooth);
+}
+
+/* Low Priority */
+.low-priority input[type="radio"]:checked + .priority-custom {
+  border-color: var(--priority-low);
+  background: var(--priority-low);
+}
+
+.low-priority input[type="radio"]:checked ~ .priority-content .priority-title {
+  color: var(--priority-low);
+}
+
+.low-priority:hover {
+  border-color: var(--priority-low);
+  background: rgba(16, 185, 129, 0.02);
+}
+
+/* Medium Priority */
+.medium-priority input[type="radio"]:checked + .priority-custom {
+  border-color: var(--priority-medium);
+  background: var(--priority-medium);
+}
+
+.medium-priority input[type="radio"]:checked ~ .priority-content .priority-title {
+  color: var(--priority-medium);
+}
+
+.medium-priority:hover {
+  border-color: var(--priority-medium);
+  background: rgba(245, 158, 11, 0.02);
+}
+
+/* High Priority */
+.high-priority input[type="radio"]:checked + .priority-custom {
+  border-color: var(--priority-high);
+  background: var(--priority-high);
+}
+
+.high-priority input[type="radio"]:checked ~ .priority-content .priority-title {
+  color: var(--priority-high);
+}
+
+.high-priority:hover {
+  border-color: var(--priority-high);
+  background: rgba(239, 68, 68, 0.02);
+}
+
+.priority-option input[type="radio"]:checked + .priority-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.priority-option input[type="radio"]:checked ~ .priority-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ==========================================================================
+   Checkbox Elements
+   ========================================================================== */
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  padding: var(--space-md);
+  border: 1px solid var(--form-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-smooth);
+}
+
+.checkbox-wrapper:hover {
+  border-color: var(--form-primary);
+  background: rgba(4, 102, 200, 0.02);
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--form-border);
+  border-radius: 4px;
+  position: relative;
+  transition: all var(--transition-smooth);
+  flex-shrink: 0;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom {
+  border-color: var(--form-primary);
+  background: var(--form-primary);
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + .checkbox-custom::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: white;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' d='M5 12l5 5L20 7'/%3E%3C/svg%3E") no-repeat center;
+  mask-size: contain;
+}
+
+.checkbox-label {
+  font-weight: 500;
+  color: var(--form-text);
+  font-size: 0.875rem;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked ~ .checkbox-label {
+  color: var(--form-primary);
+}
+
+/* ==========================================================================
+   Price Input
+   ========================================================================== */
+
+.price-input {
+  position: relative;
+}
+
+.price-prefix {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--form-text-muted);
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.price-field {
+  padding-left: 50px;
+}
+
+/* ==========================================================================
+   Reward Details Section
+   ========================================================================== */
+
+.reward-details {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--form-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--form-border);
+  transition: all var(--transition-smooth);
+}
+
+.reward-details.show {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Image Upload (Same as seller portal)
+   ========================================================================== */
+
+.image-upload-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.image-slot {
+  position: relative;
+  aspect-ratio: 1;
+  border: 2px dashed var(--form-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  overflow: hidden;
+}
+
+.image-slot:hover {
+  border-color: var(--form-primary);
+  background: rgba(4, 102, 200, 0.02);
+}
+
+.image-slot.main-image {
+  grid-column: 1 / -1;
+  aspect-ratio: 2/1;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: var(--form-text-muted);
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-sm);
+  color: var(--form-text-muted);
+}
+
+.upload-text {
+  display: block;
+  font-weight: 500;
+  margin-bottom: var(--space-xs);
+}
+
+.upload-hint {
+  font-size: 0.75rem;
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-image {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.remove-image:hover {
+  background: var(--form-danger);
+}
+
+.main-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: var(--form-primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Upload Tips */
+.upload-tips {
+  background: var(--form-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  border: 1px solid var(--form-border);
+}
+
+.upload-tips h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--form-text);
+  margin-bottom: var(--space-xs);
+}
+
+.upload-tips ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.upload-tips li {
+  font-size: 0.75rem;
+  color: var(--form-text-muted);
+  margin-bottom: 4px;
+  position: relative;
+  padding-left: 16px;
+}
+
+.upload-tips li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--form-primary);
+}
+
+/* ==========================================================================
+   Form Actions
+   ========================================================================== */
+
+.form-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: flex-end;
+  padding: var(--space-xl);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--transition-smooth);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: white;
+  border-color: var(--btn-primary-bg);
+}
+
+.btn-primary:hover {
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--form-text);
+  border-color: var(--form-border);
+}
+
+.btn-secondary:hover {
+  background: var(--form-bg);
+  border-color: var(--form-primary);
+}
+
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ==========================================================================
+   Loading Overlay
+   ========================================================================== */
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border-radius: var(--radius-lg);
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--form-border);
+  border-top: 4px solid var(--form-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto var(--space-md);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .report-lost-main {
+    padding: var(--space-md);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-upload-container {
+    grid-template-columns: 1fr;
+  }
+
+  .image-slot.main-image {
+    grid-column: 1;
+    aspect-ratio: 1;
+  }
+
+  .priority-group {
+    gap: var(--space-sm);
+  }
+
+  .priority-option {
+    padding: var(--space-md);
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .priority-option {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-sm);
+  }
+
+  .priority-content {
+    align-items: center;
+  }
+}

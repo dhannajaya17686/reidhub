@@ -3,32 +3,64 @@ class Cart extends Model
 {
     protected $table = 'cart_items';
 
+    private function getCartRow(int $userId, int $productId): ?array
+    {
+        $stmt = $this->db->prepare("SELECT id, quantity FROM {$this->table} WHERE user_id = ? AND product_id = ? LIMIT 1");
+        $stmt->execute([$userId, $productId]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     /**
-     * Insert or increment a cart line. Also sets/updates payment_method.
+     * Add or increment an item and reserve stock.
      */
     public function addOrIncrement(int $userId, int $productId, int $qty, float $unitPrice, string $paymentMethod = 'cash_on_delivery'): bool
     {
-        try {
-            $qty = max(1, min($qty, 999));
-            $paymentMethod = $this->sanitizePaymentMethod($paymentMethod);
+        if ($qty <= 0) return false;
 
-            $sql = "INSERT INTO {$this->table} (user_id, product_id, quantity, unit_price, payment_method, created_at, updated_at)
+        try {
+            $this->db->beginTransaction();
+
+            $mp = new MarketPlace();
+            if (!$mp->reserveStock($productId, $qty)) {
+                $this->db->rollBack();
+                return false; // not enough stock to reserve
+            }
+
+            $existing = $this->getCartRow($userId, $productId);
+            if ($existing) {
+                $stmt = $this->db->prepare("
+                    UPDATE {$this->table}
+                    SET quantity = quantity + ?, unit_price = ?, payment_method = ?, updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $ok = $stmt->execute([$qty, number_format($unitPrice, 2, '.', ''), $paymentMethod, (int)$existing['id']]);
+            } else {
+                $stmt = $this->db->prepare("
+                    INSERT INTO {$this->table} (user_id, product_id, quantity, unit_price, payment_method, created_at, updated_at)
                     VALUES (?, ?, ?, ?, ?, NOW(), NOW())
-                    ON DUPLICATE KEY UPDATE
-                        quantity = LEAST(quantity + VALUES(quantity), 999),
-                        unit_price = VALUES(unit_price),
-                        payment_method = VALUES(payment_method),
-                        updated_at = NOW()";
-            $stmt = $this->db->prepare($sql);
-            return $stmt->execute([$userId, $productId, $qty, $unitPrice, $paymentMethod]);
+                ");
+                $ok = $stmt->execute([$userId, $productId, $qty, number_format($unitPrice, 2, '.', ''), $paymentMethod]);
+            }
+
+            if (!$ok) {
+                // rollback reservation
+                $mp->releaseStock($productId, $qty);
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
         } catch (Throwable $e) {
-            Logger::error('Cart addOrIncrement error: ' . $e->getMessage());
+            Logger::error('addOrIncrement error: ' . $e->getMessage());
+            if ($this->db->inTransaction()) $this->db->rollBack();
             return false;
         }
     }
 
     /**
-     * Get cart items joined with product info for a user.
+     * Get items for user (unchanged in signature).
      */
     public function getItemsForUser(int $userId): array
     {
@@ -59,61 +91,108 @@ class Cart extends Model
     }
 
     /**
-     * Remove a single item from cart for a user.
+     * Remove an item and release reserved stock.
      */
     public function removeItem(int $userId, int $productId): bool
     {
         try {
-            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE user_id = ? AND product_id = ? LIMIT 1");
-            $stmt->execute([$userId, $productId]);
-            return $stmt->rowCount() > 0;
+            $this->db->beginTransaction();
+
+            $row = $this->getCartRow($userId, $productId);
+            if (!$row) {
+                $this->db->rollBack();
+                return false;
+            }
+
+            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE id = ? LIMIT 1");
+            $ok = $stmt->execute([(int)$row['id']]);
+            if (!$ok) { $this->db->rollBack(); return false; }
+
+            // release the reserved qty
+            $mp = new MarketPlace();
+            $mp->releaseStock($productId, (int)$row['quantity']);
+
+            $this->db->commit();
+            return true;
         } catch (Throwable $e) {
-            Logger::error('Cart removeItem error: ' . $e->getMessage());
+            Logger::error('removeItem error: ' . $e->getMessage());
+            if ($this->db->inTransaction()) $this->db->rollBack();
             return false;
         }
     }
 
     /**
-     * Update quantity for an item in cart (clamped 1..999).
+     * Remove from cart without restocking (used after successful checkout).
+     */
+    public function removeItemNoRestock(int $userId, int $productId): bool
+    {
+        try {
+            $stmt = $this->db->prepare("DELETE FROM {$this->table} WHERE user_id = ? AND product_id = ? LIMIT 1");
+            return $stmt->execute([$userId, $productId]);
+        } catch (Throwable $e) {
+            Logger::error('removeItemNoRestock error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update quantity and adjust reservation delta.
      */
     public function updateQuantity(int $userId, int $productId, int $qty): bool
     {
+        if ($qty <= 0) return $this->removeItem($userId, $productId);
+
         try {
-            $qty = max(1, min($qty, 999));
-            $stmt = $this->db->prepare("UPDATE {$this->table} SET quantity = ?, updated_at = NOW()
-                                        WHERE user_id = ? AND product_id = ? LIMIT 1");
-            $stmt->execute([$qty, $userId, $productId]);
-            return $stmt->rowCount() > 0;
+            $this->db->beginTransaction();
+
+            $row = $this->getCartRow($userId, $productId);
+            if (!$row) { $this->db->rollBack(); return false; }
+
+            $current = (int)$row['quantity'];
+            $delta = $qty - $current;
+
+            $mp = new MarketPlace();
+            if ($delta > 0) {
+                // Need more stock reserved
+                if (!$mp->reserveStock($productId, $delta)) {
+                    $this->db->rollBack();
+                    return false;
+                }
+            } elseif ($delta < 0) {
+                // Release extra
+                $mp->releaseStock($productId, abs($delta));
+            }
+
+            $stmt = $this->db->prepare("UPDATE {$this->table} SET quantity = ?, updated_at = NOW() WHERE id = ?");
+            $ok = $stmt->execute([$qty, (int)$row['id']]);
+
+            if (!$ok) {
+                // In case of failure, try to revert reservation/release
+                if ($delta > 0) $mp->releaseStock($productId, $delta);
+                $this->db->rollBack();
+                return false;
+            }
+
+            $this->db->commit();
+            return true;
         } catch (Throwable $e) {
-            Logger::error('Cart updateQuantity error: ' . $e->getMessage());
+            Logger::error('updateQuantity error: ' . $e->getMessage());
+            if ($this->db->inTransaction()) $this->db->rollBack();
             return false;
         }
     }
 
     /**
-     * Update payment method for an existing cart item.
+     * Update payment method only (no stock change).
      */
     public function updatePaymentMethod(int $userId, int $productId, string $paymentMethod): bool
     {
-        Logger::info("Updating payment method for user_id={$userId}, product_id={$productId} to {$paymentMethod}");
         try {
-            $paymentMethod = $this->sanitizePaymentMethod($paymentMethod);
-            $stmt = $this->db->prepare("UPDATE {$this->table} SET payment_method = ?, updated_at = NOW()
-                                        WHERE user_id = ? AND product_id = ? LIMIT 1");
-            $stmt->execute([$paymentMethod, $userId, $productId]);
-            return $stmt->rowCount() > 0;
+            $stmt = $this->db->prepare("UPDATE {$this->table} SET payment_method = ?, updated_at = NOW() WHERE user_id = ? AND product_id = ? LIMIT 1");
+            return $stmt->execute([$paymentMethod, $userId, $productId]);
         } catch (Throwable $e) {
-            Logger::error('Cart updatePaymentMethod error: ' . $e->getMessage());
+            Logger::error('updatePaymentMethod error: ' . $e->getMessage());
             return false;
         }
-    }
-
-    /**
-     * Validate payment method against enum.
-     */
-    private function sanitizePaymentMethod(string $method): string
-    {
-        $method = strtolower(trim($method));
-        return in_array($method, ['cash_on_delivery', 'preorder'], true) ? $method : 'cash_on_delivery';
     }
 }

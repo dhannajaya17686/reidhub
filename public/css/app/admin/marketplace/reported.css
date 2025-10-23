@@ -1,0 +1,808 @@
+/* ==========================================================================
+   Admin Reported Items - Inspired by Seller Orders
+   ========================================================================== */
+
+/* ==========================================================================
+   Main Layout
+   ========================================================================== */
+
+.reported-main {
+  flex: 1;
+  padding: var(--space-lg);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==========================================================================
+   Page Header
+   ========================================================================== */
+
+.page-header {
+  margin-bottom: var(--space-lg);
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+  font-family: var(--heading-font);
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Report Tabs
+   ========================================================================== */
+
+.report-tabs {
+  display: flex;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--admin-primary, #0466C8);
+  border-bottom-color: var(--admin-primary, #0466C8);
+}
+
+/* ==========================================================================
+   Search and Filters
+   ========================================================================== */
+
+.search-filters {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  align-items: center;
+}
+
+.search-bar {
+  flex: 1;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+#search-input {
+  width: 100%;
+  padding: var(--space-sm) var(--space-sm) var(--space-sm) 40px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  background: var(--surface);
+}
+
+.filters {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.filter-select {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  min-width: 140px;
+}
+
+/* ==========================================================================
+   Reports Table
+   ========================================================================== */
+
+.reports-table-container {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.reports-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reports-table th {
+  background: var(--surface-subtle);
+  padding: var(--space-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.reports-table td {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  vertical-align: top;
+}
+
+.report-row:hover {
+  background: var(--surface-subtle);
+}
+
+.report-id {
+  font-family: monospace;
+  color: var(--admin-primary, #0466C8);
+  font-weight: 500;
+}
+
+/* ==========================================================================
+   Item Details
+   ========================================================================== */
+
+.item-details {
+  min-width: 200px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.item-image {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.item-text {
+  min-width: 0;
+}
+
+.item-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.item-price {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   User Info
+   ========================================================================== */
+
+.reporter-info,
+.seller-info {
+  min-width: 140px;
+}
+
+.user-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   Report Reason
+   ========================================================================== */
+
+.report-reason {
+  min-width: 180px;
+}
+
+.reason-tag {
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: inline-block;
+  margin-bottom: var(--space-xs);
+}
+
+.reason-tag.inappropriate {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.reason-tag.spam {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.reason-tag.fraud {
+  background: #FECACA;
+  color: #7F1D1D;
+}
+
+.reason-tag.copyright {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.reason-tag.other {
+  background: #F3E8FF;
+  color: #6B21A8;
+}
+
+.reason-text {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+/* ==========================================================================
+   Status Badges
+   ========================================================================== */
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.status-badge.under-review {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.status-badge.resolved {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.status-badge.archived {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+/* ==========================================================================
+   Action Buttons
+   ========================================================================== */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  min-width: 200px;
+}
+
+.action-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: var(--surface-subtle);
+}
+
+.review-btn {
+  color: var(--admin-primary, #0466C8);
+  border-color: var(--admin-primary, #0466C8);
+}
+
+.review-btn:hover {
+  background: var(--admin-primary, #0466C8);
+  color: white;
+}
+
+.chat-btn {
+  color: var(--admin-success, #10B981);
+  border-color: var(--admin-success, #10B981);
+}
+
+.chat-btn:hover {
+  background: var(--admin-success, #10B981);
+  color: white;
+}
+
+.archive-btn {
+  color: var(--text-secondary);
+  border-color: var(--text-secondary);
+}
+
+.archive-btn:hover {
+  background: var(--text-secondary);
+  color: white;
+}
+
+.unarchive-btn {
+  color: var(--admin-warning, #F59E0B);
+  border-color: var(--admin-warning, #F59E0B);
+}
+
+.unarchive-btn:hover {
+  background: var(--admin-warning, #F59E0B);
+  color: white;
+}
+
+.view-btn {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.view-btn:hover {
+  background: var(--surface-hover);
+}
+
+/* ==========================================================================
+   Empty State
+   ========================================================================== */
+
+.empty-state {
+  text-align: center;
+  padding: var(--space-2xl);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+}
+
+.empty-icon {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-md);
+  color: var(--text-muted);
+}
+
+.empty-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.empty-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-lg);
+}
+
+.page-btn {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: var(--surface-subtle);
+}
+
+.page-btn.active {
+  background: var(--admin-primary, #0466C8);
+  color: white;
+  border-color: var(--admin-primary, #0466C8);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-dots {
+  padding: var(--space-xs);
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  z-index: 1000;
+}
+
+.review-modal,
+.contact-modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 2;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  flex: 1;
+  padding: var(--space-lg);
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Review Modal
+   ========================================================================== */
+
+.report-details {
+  background: var(--surface-subtle);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  font-size: 0.875rem;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.review-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.resolve-btn {
+  background: var(--admin-success, #10B981);
+  color: white;
+  border: 1px solid var(--admin-success, #10B981);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  justify-content: center;
+  font-weight: 500;
+}
+
+.under-review-btn {
+  background: var(--admin-info, #3B82F6);
+  color: white;
+  border: 1px solid var(--admin-info, #3B82F6);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  justify-content: center;
+  font-weight: 500;
+}
+
+.dismiss-btn {
+  background: transparent;
+  color: var(--admin-danger, #EF4444);
+  border: 1px solid var(--admin-danger, #EF4444);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  justify-content: center;
+  font-weight: 500;
+}
+
+.dismiss-btn:hover {
+  background: var(--admin-danger, #EF4444);
+  color: white;
+}
+
+/* ==========================================================================
+   Contact Modal (Chat)
+   ========================================================================== */
+
+.chat-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--space-md);
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+}
+
+.message {
+  margin-bottom: var(--space-md);
+}
+
+.message.received .message-content {
+  background: var(--surface);
+  color: var(--text-primary);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: inline-block;
+  max-width: 80%;
+}
+
+.message.sent .message-content {
+  background: var(--admin-primary, #0466C8);
+  color: white;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  display: inline-block;
+  max-width: 80%;
+  margin-left: auto;
+}
+
+.message.sent {
+  text-align: right;
+}
+
+.message-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+.chat-input {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+#message-input {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.send-btn {
+  padding: var(--space-sm);
+  background: var(--admin-primary, #0466C8);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.send-btn:hover {
+  background: #0456b8;
+}
+
+/* ==========================================================================
+   Hidden Item Indicator
+   ========================================================================== */
+
+.hidden-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #DC2626;
+  font-size: 0.625rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  margin-left: var(--space-xs);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ==========================================================================
+   Hide/Show Item Buttons
+   ========================================================================== */
+
+.hide-btn {
+  color: var(--admin-danger, #EF4444);
+  border-color: var(--admin-danger, #EF4444);
+}
+
+.hide-btn:hover {
+  background: var(--admin-danger, #EF4444);
+  color: white;
+}
+
+.show-btn {
+  color: var(--admin-success, #10B981);
+  border-color: var(--admin-success, #10B981);
+}
+
+.show-btn:hover {
+  background: var(--admin-success, #10B981);
+  color: white;
+}
+
+/* ==========================================================================
+   Hidden Item Row Styling
+   ========================================================================== */
+
+.report-row[data-hidden="true"] {
+  background: rgba(239, 68, 68, 0.02);
+  border-left: 3px solid var(--admin-danger, #EF4444);
+}
+
+.report-row[data-hidden="true"] .item-name {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.report-row[data-hidden="true"] .item-image {
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .reports-table-container {
+    overflow-x: auto;
+  }
+  
+  .reports-table {
+    min-width: 900px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters {
+    width: 100%;
+  }
+  
+  .filter-select {
+    flex: 1;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .review-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .reported-main {
+    padding: var(--space-md);
+  }
+  
+  .item-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+  
+  .modal-overlay {
+    padding: var(--space-sm);
+  }
+  
+  .review-modal,
+  .contact-modal {
+    max-height: 90vh;
+  }
+}

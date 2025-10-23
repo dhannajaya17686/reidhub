@@ -100,7 +100,66 @@
   </div>
 </main>
 
+<!-- Chat Popup Modal -->
+<div class="chat-modal" id="chat-modal" aria-hidden="true" role="dialog" aria-labelledby="chat-modal-title">
+  <div class="chat-modal-backdrop" aria-label="Close chat"></div>
+  <div class="chat-modal-container">
+    
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="chat-info">
+        <div class="seller-avatar">
+          <img src="/images/placeholders/user.png" alt="Seller" id="seller-avatar">
+        </div>
+        <div class="chat-details">
+          <h2 class="chat-modal-title" id="chat-modal-title">Chat with Seller</h2>
+          <div class="order-info">
+            <span class="order-title" id="chat-order-title">Order Title</span>
+            <span class="order-id" id="chat-order-id">#12345</span>
+          </div>
+        </div>
+      </div>
+      <button class="chat-close" aria-label="Close chat">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-loading">
+        <div class="loading-spinner"></div>
+        <span>Loading messages...</span>
+      </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-container">
+      <form class="chat-form" id="chat-form">
+        <div class="chat-input-wrapper">
+          <textarea 
+            class="chat-input" 
+            id="chat-input" 
+            placeholder="Type your message..."
+            rows="1"
+            maxlength="500"
+          ></textarea>
+          <button type="submit" class="chat-send" aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="chat-char-count" id="chat-char-count">0/500</div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
 <!-- JavaScript -->
 <script type="module" src="/js/app/marketplace/my-orders.js"></script>
+<script src="/js/app/marketplace/my-orders-chat.js"></script>
 </body>
 </html>

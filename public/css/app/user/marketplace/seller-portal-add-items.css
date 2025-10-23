@@ -751,3 +751,94 @@
     margin-top: 0;
   }
 }
+
+/* Add this to your seller-portal-add-items.css file */
+
+/* Condition Notification Styles */
+.condition-notification {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+}
+
+.condition-notification::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #EF4444;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.notification-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.notification-icon {
+  width: 24px;
+  height: 24px;
+  color: #EF4444;
+  flex-shrink: 0;
+}
+
+.notification-text {
+  color: #DC2626;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 100px;
+  }
+}
+
+/* Disabled Payment Option Styles */
+.payment-option.disabled,
+label[for="preorder-option"].disabled {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.payment-option.disabled .payment-custom,
+label[for="preorder-option"].disabled input[type="checkbox"] + .checkbox-custom {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+}
+
+.payment-option.disabled .payment-title,
+label[for="preorder-option"].disabled .checkbox-title {
+  color: #6B7280;
+}
+
+.payment-option.disabled .payment-description,
+label[for="preorder-option"].disabled .checkbox-description {
+  color: #9CA3AF;
+  font-style: italic;
+}
+
+/* Override hover effects for disabled state */
+.payment-option.disabled:hover,
+label[for="preorder-option"].disabled:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: #E5E7EB;
+  background: var(--surface);
+}
