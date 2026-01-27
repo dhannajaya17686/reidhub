@@ -8,8 +8,6 @@
 5. [Module Organization](#module-organization)
 6. [Core Components](#core-components)
 7. [Design Patterns](#design-patterns)
-8. [Data Flow](#data-flow)
-
 ---
 
 ## System Overview
@@ -385,114 +383,6 @@ Avoids manual require_once for each class
 
 ---
 
-## Data Flow
-
-### User Authentication Flow
-
-```mermaid
-graph TD
-    User["👤 User"]
-    LoginForm["Login Form<br/>(view)"]
-    LoginController["LoginController<br/>login() action"]
-    UserModel["User Model<br/>findByEmail()"]
-    Database["MySQL<br/>users table"]
-    Session["PHP Session<br/>$_SESSION"]
-    Dashboard["User Dashboard"]
-    
-    User -->|1. Visits /login| LoginForm
-    LoginForm -->|2. Submits form| LoginController
-    LoginController -->|3. Call findByEmail()| UserModel
-    UserModel -->|4. SELECT query| Database
-    Database -->|5. Return user record| UserModel
-    LoginController -->|6. Verify password| LoginController
-    LoginController -->|7a. Success: Set session| Session
-    LoginController -->|7b. Redirect| Dashboard
-    
-    style User fill:#e3f2fd
-    style LoginForm fill:#f8bbd0
-    style LoginController fill:#ffccbc
-    style UserModel fill:#c8e6c9
-    style Database fill:#c8e6c9
-    style Session fill:#fff9c4
-    style Dashboard fill:#b2dfdb
-```
-
-### Marketplace Purchase Flow
-
-```mermaid
-graph TD
-    User["👤 User"]
-    Browse["Browse Products<br/>MarketplaceUserController"]
-    Cart["Add to Cart<br/>Cart Model"]
-    Checkout["Checkout"]
-    Order["Create Order<br/>Order Model"]
-    Transaction["Record Transaction<br/>Transaction Model"]
-    Database["MySQL<br/>orders, transactions,<br/>products tables"]
-    Notification["Confirmation"]
-    
-    User -->|1. Browse store| Browse
-    Browse -->|2. Add to cart| Cart
-    Cart -->|3. Update cart session| Cart
-    User -->|4. Proceed to checkout| Checkout
-    Checkout -->|5. Create order| Order
-    Order -->|6. Save order record| Database
-    Checkout -->|7. Process payment| Transaction
-    Transaction -->|8. Save transaction| Database
-    Database -->|9. Confirmation| Notification
-    Notification -->|10. Order summary| User
-    
-    style User fill:#e3f2fd
-    style Browse fill:#b2dfdb
-    style Cart fill:#b2dfdb
-    style Checkout fill:#b2dfdb
-    style Order fill:#fff9c4
-    style Transaction fill:#fff9c4
-    style Database fill:#c8e6c9
-    style Notification fill:#ffccbc
-```
-
----
-
-## Configuration & Environment
-
-### Key Configuration Files
-
-| File | Purpose | Variables |
-|------|---------|-----------|
-| `app/config/config.php` | Database connection settings | Host, Database, User, Password |
-| `public/index.php` | Application bootstrap | Error reporting, Session start, Autoloader |
-| `.env` (Docker) | Environment variables | DB credentials, ports |
-| `docker-compose.yaml` | Container orchestration | Services, volumes, networks |
-
-### Database Configuration
-```php
-// app/config/config.php structure
-define('DB_HOST', 'db');
-define('DB_NAME', 'reidhub');
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'password');
-```
-
----
-
-## Scalability & Performance Considerations
-
-### Current State
-- ✅ SPL autoloading (efficient class loading)
-- ✅ PDO prepared statements (SQL injection protection)
-- ✅ Logging infrastructure
-- ✅ Session-based authentication
-
-### Recommended Improvements
-- 📌 Add caching layer (Redis/Memcached) for frequently accessed data
-- 📌 Implement query optimization and indexing strategy
-- 📌 Add API rate limiting for public endpoints
-- 📌 Implement middleware for cross-cutting concerns (authentication, CORS)
-- 📌 Add database connection pooling for high traffic
-- 📌 Implement asset versioning and compression
-
----
-
 ## Security Architecture
 
 ### Authentication
@@ -516,13 +406,3 @@ define('DB_PASSWORD', 'password');
 - Application events tracked in `storage/logs/`
 
 ---
-
-## Summary
-
-ReidHub uses a **lightweight, custom-built MVC architecture** optimized for a campus community platform. The framework provides:
-- **Flexibility** - No external framework constraints
-- **Clarity** - Easy-to-understand request flow
-- **Modularity** - Feature-based organization
-- **Maintainability** - Clear separation of concerns
-
-This architecture balances simplicity with functionality, making it suitable for small to medium-sized teams developing feature-rich applications without the overhead of large frameworks.
