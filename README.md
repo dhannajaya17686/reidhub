@@ -19,6 +19,7 @@ Here is a comprehensive documentation for the codebase and guides on how to set 
 - [Contribution Guide](./docs/contribution.md)
 - [Development Issues and Troubleshooting Guide](./docs/dev-troubleshoot.md)
 - [Architechure](./docs/architecture.md)
+- [Frontend Guide](./docs/frontend-guide.md)
 
 ---
 
