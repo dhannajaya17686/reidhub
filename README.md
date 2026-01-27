@@ -21,6 +21,7 @@ Here is a comprehensive documentation for the codebase and guides on how to set 
 - [Architechure](./docs/architecture.md)
 - [Frontend Guide](./docs/frontend-guide.md)
 - [Database Schema](./docs/database-schema.md)
+- [Code Standered and Development Guide](./docs/code-standards.md)
 
 ---
 
