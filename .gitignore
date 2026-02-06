@@ -1,1 +1,2 @@
-storage/logs/*
+# Ignore entire storage directory (logs, uploads, temp files)
+storage/
