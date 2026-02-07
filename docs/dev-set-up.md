@@ -194,3 +194,70 @@ For testing and development, create these three user accounts **manually** in th
 | First Name | `Test` |
 | Last Name | `User Three` |
 
+---
+
+## 🌳 Git Branching Strategy
+
+This project follows a structured branching strategy to maintain code quality and organize development work efficiently.
+
+### Branch Types and Naming Conventions
+
+| Branch Prefix | Purpose | Merge Destination | Example |
+|---|---|---|---|
+| `feature/` | New functionality or enhancements | `develop` | `feature/user-auth`, `feature/marketplace-filters` |
+| `fix/` | Standard bug fixes found during development/testing | `develop` | `fix/header-alignment`, `fix/user-login-process` |
+| `docs/` | Changes strictly related to documentation, READMEs, or Wiki updates | `develop` or `main` | `docs/api-reference-update`, `docs/setup-guide` |
+| `hotfix/` | Critical bugs found in Production that need immediate patches | `main` & `develop` | `hotfix/payment-validation`, `hotfix/security-patch` |
+| `refactor/` | Code changes that neither fix a bug nor add a feature (cleanup, improvements) | `develop` | `refactor/database-queries`, `refactor/controller-structure` |
+
+### Workflow
+
+1. **Create a new branch** from the appropriate destination branch:
+   ```bash
+   # For features/fixes: branch from develop
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/your-feature-name
+   
+   # For hotfixes: branch from main
+   git checkout main
+   git pull origin main
+   git checkout -b hotfix/your-hotfix-name
+   ```
+
+2. **Make commits** with clear, descriptive messages:
+   ```bash
+   git commit -m "feat: add user authentication system"
+   git commit -m "fix: correct header alignment on mobile"
+   git commit -m "docs: update API reference"
+   ```
+
+3. **Push your branch**:
+   ```bash
+   git push origin your-branch-name
+   ```
+
+4. **Create a Pull Request** on GitHub with a clear description of changes
+
+5. **Merge** once PR is approved:
+   - Feature/Fix/Refactor branches merge to `develop`
+   - Hotfix branches merge to both `main` and `develop`
+   - Documentation branches merge to their destination (usually `develop`)
+
+### Branch Naming Best Practices
+
+- Use **lowercase** letters
+- Use **hyphens** to separate words (not underscores)
+- Keep names **descriptive but concise** (2-4 words)
+- Avoid special characters except hyphens
+
+✅ **Good Examples:**
+- `feature/two-factor-authentication`
+- `fix/cart-item-deletion`
+- `docs/authentication-guide`
+
+❌ **Bad Examples:**
+- `Feature/TwoFactorAuth` (mixed case, no hyphens)
+- `feature_auth_v2` (uses underscore)
+- `f/auth` (too abbreviated)
+
