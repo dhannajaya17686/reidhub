@@ -144,3 +144,53 @@ This provides a web-based interface for managing your MySQL database, creating t
 - Changes to your PHP code are reflected immediately (no need to rebuild)
 - Nginx configuration can be found in `./nginx/default.conf`
 - Database data persists between container restarts thanks to the `dbdata` volume
+
+---
+
+## 👥 Test User Accounts
+
+### Admin Account (Auto-created)
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@reidhub.com` |
+| Password | `admin@reid123` |
+| Created | Automatically when database initializes |
+| Encrypted Password | `$2y$10$xCO6LXIp9wlsb07zLP9pUeB/6Xg7.etvN0k/fWY9HvftBKgf8L6CS` |
+
+---
+
+### Test User Accounts (Manual Creation)
+
+For testing and development, create these three user accounts **manually** in the application:
+
+#### User 1
+
+| Field | Value |
+|-------|-------|
+| Email | `user1@reidhub.com` |
+| Password | `user1@reid123` |
+| Registration No | `2024IS001` |
+| First Name | `Test` |
+| Last Name | `User One` |
+
+#### User 2
+
+| Field | Value |
+|-------|-------|
+| Email | `user2@reidhub.com` |
+| Password | `user2@reid123` |
+| Registration No | `2024IS002` |
+| First Name | `Test` |
+| Last Name | `User Two` |
+
+#### User 3
+
+| Field | Value |
+|-------|-------|
+| Email | `user3@reidhub.com` |
+| Password | `user3@reid123` |
+| Registration No | `2024IS003` |
+| First Name | `Test` |
+| Last Name | `User Three` |
+
