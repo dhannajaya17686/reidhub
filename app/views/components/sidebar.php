@@ -356,26 +356,7 @@ if ($isAdmin) {
                                     </li>
                                 <?php endif; ?>
 
-                                <?php if ($isCommunitySection && $userIsClubAdmin): ?>
-                                    <!-- Club Admin Switch Button for community -->
-                                    <li class="sidebar-submenu-item">
-                                        <?php if ($isClubAdminMode): ?>
-                                            <a class="sidebar-submenu-link sidebar-account-switch" 
-                                               href="/dashboard/community/clubs"
-                                               title="Switch to Regular User">
-                                                <span class="account-switch-icon"><?php echo svg_icon('club-user'); ?></span>
-                                                <span class="account-switch-text">Switch to Regular User</span>
-                                            </a>
-                                        <?php else: ?>
-                                            <a class="sidebar-submenu-link sidebar-account-switch" 
-                                               href="/dashboard/club-admin/dashboard"
-                                               title="Switch to Club Admin">
-                                                <span class="account-switch-icon"><?php echo svg_icon('club-admin'); ?></span>
-                                                <span class="account-switch-text">Switch to Club Admin</span>
-                                            </a>
-                                        <?php endif; ?>
-                                    </li>
-                                <?php endif; ?>
+                                <!-- Club Admin mode removed - admins have full access on login -->
                             </ul>
                         <?php else: ?>
                             <a class="sidebar-nav-link<?php echo $active ? ' is-active' : ''; ?>"

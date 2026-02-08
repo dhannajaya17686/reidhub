@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../controllers/Auth/LoginController.php';
 require_once __DIR__ . '/../../models/CommunityPost.php';
 require_once __DIR__ . '/../../models/Club.php';
 require_once __DIR__ . '/../../models/Event.php';
+require_once __DIR__ . '/../../models/AdminRequest.php';
 
 class Community_CommunityUserController extends Controller
 {
@@ -60,13 +61,21 @@ class Community_CommunityUserController extends Controller
     private function checkIfClubAdmin(int $userId): bool
     {
         try {
+            // Check if user has approved club admin status in community_admins
             $db = Database::getInstance()->getConnection();
             $stmt = $db->prepare("SELECT COUNT(*) as count FROM community_admins WHERE user_id = ? AND role_type = 'club_admin'");
             $stmt->execute([$userId]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result && (int)$result['count'] > 0;
+            
+            if ($result && (int)$result['count'] > 0) {
+                return true;
+            }
+            
+            // Also check if they have an approved request
+            $adminRequestModel = new AdminRequest();
+            return $adminRequestModel->isApprovedClubAdmin($userId);
         } catch (Exception $e) {
-            // Table might not exist yet, return false
+            Logger::warning("Error checking club admin status: " . $e->getMessage());
             return false;
         }
     }
@@ -291,6 +300,67 @@ class Community_CommunityUserController extends Controller
         
         $this->viewApp('/User/community/clubs/view-club', $data, 'View Club - ReidHub');
     }
+    
+    /**
+     * Show admin request form for club admin access
+     */
+    public function showAdminRequestForm() {
+        $user = Auth_LoginController::getSessionUser(true);
+        
+        // Check if user is already a club admin
+        if ($this->checkIfClubAdmin($user['id'])) {
+            header('Location: /dashboard/community/clubs/create');
+            exit;
+        }
+        
+        // Check if user already has a pending request
+        $adminRequestModel = new AdminRequest();
+        $pendingRequest = $adminRequestModel->getPendingRequest($user['id'], 'club_admin');
+        
+        $data = [
+            'user' => $user,
+            'hasPendingRequest' => $pendingRequest !== null,
+            'pendingRequest' => $pendingRequest
+        ];
+        
+        $this->viewApp('/User/community/admin-request', $data, 'Request Club Admin - ReidHub');
+    }
+    
+    /**
+     * Submit admin request for club admin access
+     */
+    public function submitAdminRequest() {
+        header('Content-Type: application/json');
+        $user = Auth_LoginController::getSessionUser(true);
+        
+        try {
+            // Check if user is already a club admin
+            if ($this->checkIfClubAdmin($user['id'])) {
+                echo json_encode(['success' => false, 'message' => 'You are already a club admin']);
+                exit;
+            }
+            
+            // Check for required fields
+            if (empty($_POST['reason'])) {
+                echo json_encode(['success' => false, 'message' => 'Please provide a reason for your request']);
+                exit;
+            }
+            
+            // Create admin request
+            $adminRequestModel = new AdminRequest();
+            $requestId = $adminRequestModel->createRequest($user['id'], 'club_admin', $_POST['reason']);
+            
+            Logger::info("Admin request created: ID $requestId for user " . $user['email']);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Your request has been submitted to system administrators. You will be notified once it is reviewed.',
+                'requestId' => $requestId
+            ]);
+        } catch (Exception $e) {
+            Logger::error("Error in submitAdminRequest: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
+    }
 
     public function showCreateClub()
     {
@@ -298,7 +368,8 @@ class Community_CommunityUserController extends Controller
         
         // Check if user has club admin permission
         if (!$this->checkIfClubAdmin($user['id'])) {
-            header('Location: /dashboard/community/clubs');
+            Logger::warning("Non-admin user " . $user['email'] . " attempted to create club");
+            header('Location: /dashboard/community/request-admin');
             exit;
         }
         

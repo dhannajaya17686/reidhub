@@ -215,6 +215,14 @@ $routes['/dashboard/community/clubs/delete'] = [
     'POST' => 'Community_CommunityUserController@deleteClub'
 ];
 
+// ============ ADMIN REQUEST ROUTES ============
+$routes['/dashboard/community/request-admin'] = [
+    'GET' => 'Community_CommunityUserController@showAdminRequestForm'
+];
+$routes['/dashboard/community/submit-admin-request'] = [
+    'POST' => 'Community_CommunityUserController@submitAdminRequest'
+];
+
 // ============ CLUB ADMIN PORTAL ROUTES ============
 $routes['/dashboard/club-admin/dashboard'] = [
     'GET' => 'Community_CommunityUserController@showClubAdminDashboard'
