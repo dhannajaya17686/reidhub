@@ -237,10 +237,23 @@ $routes['/dashboard/community/events/view'] = [
     'GET' => 'Community_CommunityUserController@showViewEvent'
 ];
 $routes['/dashboard/community/events/create'] = [
-    'GET' => 'Community_CommunityUserController@showCreateEvent'
+    'GET' => 'Community_CommunityUserController@showCreateEvent',
+    'POST' => 'Community_CommunityUserController@createEvent'
 ];
 $routes['/dashboard/community/events/edit'] = [
     'GET' => 'Community_CommunityUserController@showEditEvent'
+];
+$routes['/dashboard/community/events/update'] = [
+    'POST' => 'Community_CommunityUserController@updateEvent'
+];
+$routes['/dashboard/community/events/delete'] = [
+    'POST' => 'Community_CommunityUserController@deleteEvent'
+];
+$routes['/dashboard/community/events/register'] = [
+    'POST' => 'Community_CommunityUserController@registerForEvent'
+];
+$routes['/dashboard/community/events/unregister'] = [
+    'POST' => 'Community_CommunityUserController@unregisterFromEvent'
 ];
 //---------------------------------------CLUB AND SOCIETY ROUTES END-----------------------------------//
 

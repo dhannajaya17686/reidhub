@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS events (
   category VARCHAR(100),
   max_attendees INT UNSIGNED,
   image_url VARCHAR(500),
+  google_form_url VARCHAR(500),
   status ENUM('upcoming', 'ongoing', 'completed', 'cancelled') DEFAULT 'upcoming',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
