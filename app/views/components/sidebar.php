@@ -9,6 +9,21 @@ $isSellerMode = str_contains($path, '/seller/');
 // Check if user is in club admin mode
 $isClubAdminMode = str_contains($path, '/club-admin/');
 
+// Check if user has club admin permission (granted by system admin)
+$userIsClubAdmin = false;
+if (isset($_SESSION['user_id'])) {
+    try {
+        require_once __DIR__ . '/../../core/Database.php';
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare("SELECT COUNT(*) as count FROM community_admins WHERE user_id = ? AND role_type = 'club_admin'");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $userIsClubAdmin = $result && (int)$result['count'] > 0;
+    } catch (Exception $e) {
+        $userIsClubAdmin = false;
+    }
+}
+
 // User sidebar items (buyer mode)
 $userItems = [
     [ 
@@ -131,10 +146,10 @@ $clubAdminItems = [
         'icon' => 'club-admin',
         'children' => [
             ['label' => 'Dashboard', 'href' => '/dashboard/club-admin/dashboard'],
-            ['label' => 'Members', 'href' => '/dashboard/club-admin/members'],
             ['label' => 'Events', 'href' => '/dashboard/club-admin/events'],
             ['label' => 'Announcements', 'href' => '/dashboard/club-admin/announcements'],
             ['label' => 'Applications', 'href' => '/dashboard/club-admin/applications'],
+            ['label' => '← Back to Community', 'href' => '/dashboard/community/clubs', 'is_switch' => true],
         ]
     ],
     [ 
@@ -306,11 +321,15 @@ if ($isAdmin) {
                             </button>
                             <ul class="sidebar-submenu<?php echo $isExpanded ? ' is-expanded' : ''; ?>" role="list">
                                 <?php foreach ($it['children'] as $child): ?>
-                                    <?php $childActive = is_active($child['href'], $path); ?>
+                                    <?php 
+                                        $childActive = is_active($child['href'], $path); 
+                                        $isSwitch = isset($child['is_switch']) && $child['is_switch'];
+                                    ?>
                                     <li class="sidebar-submenu-item">
-                                        <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?>"
+                                        <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?><?php echo $isSwitch ? ' sidebar-account-switch' : ''; ?>"
                                            href="<?php echo htmlspecialchars($child['href']); ?>"
-                                           <?php echo $childActive ? 'aria-current="page"' : ''; ?>>
+                                           <?php echo $childActive ? 'aria-current="page"' : ''; ?>
+                                           <?php echo $isSwitch ? 'style="margin-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.75rem;"' : ''; ?>>
                                             <?php echo htmlspecialchars($child['label']); ?>
                                         </a>
                                     </li>
@@ -337,7 +356,7 @@ if ($isAdmin) {
                                     </li>
                                 <?php endif; ?>
 
-                                <?php if ($isCommunitySection): ?>
+                                <?php if ($isCommunitySection && $userIsClubAdmin): ?>
                                     <!-- Club Admin Switch Button for community -->
                                     <li class="sidebar-submenu-item">
                                         <?php if ($isClubAdminMode): ?>

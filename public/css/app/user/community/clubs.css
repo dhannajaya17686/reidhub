@@ -383,7 +383,7 @@
   padding: 0.625rem 1.25rem;
   border-radius: 8px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
@@ -393,10 +393,13 @@
 .btn--primary {
   background-color: #0466C8;
   color: white;
+  border: 2px solid #0466C8;
 }
 
 .btn--primary:hover {
-  background-color: #0353a4;
+  background-color: white;
+  color: #0466C8;
+  border: 2px solid #0466C8;
 }
 
 .btn--small {

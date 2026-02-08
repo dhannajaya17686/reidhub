@@ -23,43 +23,153 @@
   
   <div class="blog-container">
     <header class="blog-header">
-      <h1 class="blog-title"><?= htmlspecialchars($data['club']['name'] ?? 'Technology Club') ?></h1>
+      <h1 class="blog-title"><?= htmlspecialchars($data['club']['name']) ?></h1>
       
       <div class="blog-image">
-        <img src="<?= htmlspecialchars($data['club']['image_path'] ?? 'https://via.placeholder.com/900x400/4A90E2/ffffff?text=Club') ?>" 
-             alt="<?= htmlspecialchars($data['club']['name'] ?? 'Club') ?>">
+        <img src="<?= htmlspecialchars($data['club']['image_url'] ?? 'https://via.placeholder.com/900x400/667EEA/ffffff?text=' . urlencode(substr($data['club']['name'], 0, 1))) ?>" 
+             alt="<?= htmlspecialchars($data['club']['name']) ?>">
       </div>
 
       <div class="blog-meta">
-        <span class="blog-author">Category: <?= htmlspecialchars($data['club']['category'] ?? 'General') ?></span>
+        <span class="blog-author">Category: <?= htmlspecialchars(ucfirst($data['club']['category'])) ?></span>
         <span class="blog-separator">•</span>
-        <span class="blog-published">50 members</span>
+        <span class="blog-published"><?= (int)($data['club']['actual_member_count'] ?? $data['club']['member_count'] ?? 0) ?> members</span>
         <span class="blog-separator">•</span>
-        <span class="blog-views">Meets Weekly</span>
+        <span class="blog-views">Created <?= date('M j, Y', strtotime($data['club']['created_at'])) ?></span>
+      </div>
+      
+      <div class="blog-creator">
+        <p><strong>Created by:</strong> <?= htmlspecialchars($data['club']['creator_first_name'] . ' ' . $data['club']['creator_last_name']) ?></p>
       </div>
     </header>
 
     <article class="blog-content">
-      <p><?= nl2br(htmlspecialchars($data['club']['description'] ?? 'Join our amazing club!')) ?></p>
+      <?php if (!empty($data['club']['description'])): ?>
+        <p><?= nl2br(htmlspecialchars($data['club']['description'])) ?></p>
+      <?php else: ?>
+        <p>No description available for this club yet.</p>
+      <?php endif; ?>
     </article>
 
     <div class="blog-interactions">
-      <button class="btn btn--primary">Join Club</button>
-      <button class="btn btn--secondary">Contact</button>
+      <?php if ($data['isMember']): ?>
+        <?php if ($data['isOwner']): ?>
+          <span class="badge-owner">You are the owner</span>
+        <?php elseif ($data['isAdmin']): ?>
+          <span class="badge-admin">You are an admin</span>
+          <button class="btn btn--danger" onclick="leaveClub(<?= $data['club']['id'] ?>)">Leave Club</button>
+        <?php else: ?>
+          <span class="badge-member">✓ Member</span>
+          <button class="btn btn--danger" onclick="leaveClub(<?= $data['club']['id'] ?>)">Leave Club</button>
+        <?php endif; ?>
+      <?php else: ?>
+        <button class="btn btn--primary" onclick="joinClub(<?= $data['club']['id'] ?>)">Join Club</button>
+      <?php endif; ?>
     </div>
 
-    <?php if (isset($data['isOwner']) && $data['isOwner']): ?>
+    <?php if ($data['isOwner'] || ($data['isAdmin'] && $data['isCommunityAdmin'])): ?>
     <div class="blog-actions">
-      <button class="btn btn--primary" onclick="window.location.href='/dashboard/community/clubs/edit?id=<?= $data['club']['id'] ?? 1 ?>'">Edit</button>
-      <button class="btn btn--danger" id="delete-club-btn" data-club-id="<?= $data['club']['id'] ?? 1 ?>">Delete</button>
+      <button class="btn btn--primary" onclick="window.location.href='/dashboard/community/clubs/edit?id=<?= $data['club']['id'] ?>'">Edit Club</button>
+      <?php if ($data['isOwner']): ?>
+      <button class="btn btn--danger" onclick="deleteClub(<?= $data['club']['id'] ?>)">Delete Club</button>
+      <?php endif; ?>
     </div>
     <?php else: ?>
     <div class="blog-report">
-      <button class="btn btn--outline" id="report-club-btn">Report</button>
+      <button class="btn btn--outline" onclick="reportClub(<?= $data['club']['id'] ?>)">Report Club</button>
     </div>
     <?php endif; ?>
   </div>
 
 </main>
 
-<script type="module" src="/js/app/community/club-view.js"></script>
+<style>
+.badge-owner, .badge-admin, .badge-member {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.badge-owner {
+  background: #0466C8;
+  color: white;
+}
+.badge-admin {
+  background: #f39c12;
+  color: white;
+}
+.badge-member {
+  background: #2ecc71;
+  color: white;
+}
+.blog-creator {
+  margin: 1rem 0;
+  color: #666;
+  font-size: 0.875rem;
+}
+</style>
+
+<script>
+function joinClub(clubId) {
+  if (!confirm('Do you want to join this club?')) return;
+  
+  fetch('/dashboard/community/clubs/join', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({club_id: clubId})
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      alert('Failed to join club: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => alert('Error: ' + err.message));
+}
+
+function leaveClub(clubId) {
+  if (!confirm('Are you sure you want to leave this club?')) return;
+  
+  fetch('/dashboard/community/clubs/leave', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({club_id: clubId})
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      location.reload();
+    } else {
+      alert('Failed to leave club: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => alert('Error: ' + err.message));
+}
+
+function deleteClub(clubId) {
+  if (!confirm('Are you sure you want to DELETE this club? This cannot be undone!')) return;
+  
+  fetch('/dashboard/community/clubs/delete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({club_id: clubId})
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = '/dashboard/community/clubs';
+    } else {
+      alert('Failed to delete club: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(err => alert('Error: ' + err.message));
+}
+
+function reportClub(clubId) {
+  alert('Report functionality coming soon!');
+}
+</script>
+
