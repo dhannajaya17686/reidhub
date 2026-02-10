@@ -1,31 +1,50 @@
-<link rel="stylesheet" href="/css/app/user/community/community.css">
-<link rel="stylesheet" href="/css/app/user/community/blogs.css">
+<link rel="stylesheet" href="/css/globals.css">
+<link rel="stylesheet" href="/css/app/user/community/blog-form.css">
+
+<!-- Breadcrumb Navigation -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol class="breadcrumb__list">
+    <li class="breadcrumb__item">
+      <a href="/dashboard" class="breadcrumb__link">Dashboard</a>
+    </li>
+    <li class="breadcrumb__item">
+      <a href="/dashboard/community" class="breadcrumb__link">Community</a>
+    </li>
+    <li class="breadcrumb__item">
+      <a href="/dashboard/community/blogs" class="breadcrumb__link">Blogs</a>
+    </li>
+    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
+      Edit Blog
+    </li>
+  </ol>
+</nav>
 
 <!-- Main Content Area -->
 <main class="blog-form-main" role="main" aria-label="Edit Blog">
   
-  <!-- Breadcrumb Navigation -->
-  <nav class="breadcrumb" aria-label="Breadcrumb">
-    <ol class="breadcrumb__list">
-      <li class="breadcrumb__item">
-        <a href="/dashboard/community" class="breadcrumb__link">Community & Social</a>
-      </li>
-      <li class="breadcrumb__item">
-        <a href="/dashboard/community/blogs" class="breadcrumb__link">Blogs</a>
-      </li>
-      <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-        Edit Blog
-      </li>
-    </ol>
-  </nav>
-
   <!-- Page Header -->
   <div class="page-header">
     <h1 class="page-title">Edit Blog</h1>
   </div>
 
+  <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert--error">
+      <?= htmlspecialchars($_SESSION['error']) ?>
+      <?php unset($_SESSION['error']); ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert--success">
+      <?= htmlspecialchars($_SESSION['success']) ?>
+      <?php unset($_SESSION['success']); ?>
+    </div>
+  <?php endif; ?>
+
   <!-- Blog Form -->
   <form class="blog-form" id="edit-blog-form" method="POST" action="/dashboard/community/blogs/edit" enctype="multipart/form-data">
+    <input type="hidden" name="blog_id" value="<?= htmlspecialchars($data['blog']['id']) ?>">
+    <input type="hidden" name="existing_image" value="<?= htmlspecialchars($data['blog']['image_path'] ?? '') ?>">
     
     <div class="form-container">
       <!-- Left Column -->
@@ -119,8 +138,9 @@
             name="description" 
             class="form-textarea" 
             rows="20"
+            placeholder="Write your blog content here..."
             required
-          ><?= htmlspecialchars($data['blog']['description']) ?></textarea>
+          ><?= htmlspecialchars($data['blog']['content']) ?></textarea>
           <div class="form-error" id="description-error"></div>
         </div>
 
@@ -128,9 +148,8 @@
     </div>
 
     <!-- Form Actions -->
-    <div class="form-actions">
-      <button type="button" class="btn btn--secondary btn--large" onclick="history.back()">Cancel</button>
-      <button type="submit" class="btn btn--primary btn--large">Update</button>
+    <dia href="/dashboard/community/blogs" class="btn btn--secondary btn--large">Cancel</a>
+      <button type="submit" class="btn btn--primary btn--large">Update Blog</button>
     </div>
 
   </form>

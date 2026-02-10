@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../models/CommunityPost.php';
 require_once __DIR__ . '/../../models/Club.php';
 require_once __DIR__ . '/../../models/Event.php';
 require_once __DIR__ . '/../../models/AdminRequest.php';
+require_once __DIR__ . '/../../models/Blog.php';
 
 class Community_CommunityUserController extends Controller
 {
@@ -217,8 +218,498 @@ class Community_CommunityUserController extends Controller
     public function showEditBlog()
     {
         $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
+        
+        $blogId = $_GET['id'] ?? null;
+        if (!$blogId) {
+            $_SESSION['error'] = 'Blog ID is required';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+        
+        $blogModel = new Blog();
+        $blog = $blogModel->getBlogById($blogId);
+        
+        if (!$blog) {
+            $_SESSION['error'] = 'Blog not found';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+        
+        // Check if user is the author
+        if ((int)$blog['author_id'] !== (int)$user['id']) {
+            $_SESSION['error'] = 'You are not authorized to edit this blog';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+        
+        // Process tags if JSON
+        if (!empty($blog['tags'])) {
+            $tagsArray = json_decode($blog['tags'], true);
+            $blog['tags'] = is_array($tagsArray) ? implode(', ', $tagsArray) : '';
+        } else {
+            $blog['tags'] = '';
+        }
+        
+        $data = [
+            'user' => $user,
+            'blog' => $blog,
+            'categories' => [
+                'academics' => 'Academics',
+                'campus-life' => 'Campus Life',
+                'student-tips' => 'Student Tips',
+                'events' => 'Events'
+            ]
+        ];
+        
         $this->viewApp('/User/community/blogs/edit-blog', $data, 'Edit Blog - ReidHub');
+    }
+
+    // ============ BLOG API ENDPOINTS ============
+    
+    /**
+     * API: Get all published blogs
+     */
+    public function getBlogsApi()
+    {
+        header('Content-Type: application/json');
+        error_log("getBlogsApi called");
+        
+        try {
+            // Check if Blog model exists
+            if (!class_exists('Blog')) {
+                throw new Exception('Blog model not found');
+            }
+            
+            $blogModel = new Blog();
+            error_log("Blog model instantiated");
+            
+            $blogs = $blogModel->getAllBlogs(100, 0);
+            error_log("Blogs fetched: " . count($blogs));
+            
+            echo json_encode([
+                'success' => true,
+                'blogs' => $blogs,
+                'count' => count($blogs)
+            ]);
+            exit;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            http_response_code(200); // Change to 200 so JS can parse the error
+            echo json_encode([
+                'success' => false,
+                'message' => 'Database error. Please ensure the blogs table exists.',
+                'error' => $e->getMessage(),
+                'sql_error' => true
+            ]);
+            exit;
+        } catch (Exception $e) {
+            error_log("Error fetching blogs: " . $e->getMessage());
+            http_response_code(200); // Change to 200 so JS can parse the error
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to fetch blogs: ' . $e->getMessage(),
+                'error' => $e->getMessage()
+            ]);
+            exit;
+        }
+    }
+    
+    /**
+     * API: Get current user's blogs
+     */
+    public function getMyBlogsApi()
+    {
+        header('Content-Type: application/json');
+        error_log("getMyBlogsApi called");
+        
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            error_log("User ID: " . $user['id']);
+            
+            if (!class_exists('Blog')) {
+                throw new Exception('Blog model not found');
+            }
+            
+            $blogModel = new Blog();
+            $blogs = $blogModel->getBlogsByAuthor($user['id']);
+            error_log("User blogs fetched: " . count($blogs));
+            
+            echo json_encode([
+                'success' => true,
+                'blogs' => $blogs
+            ]);
+            exit;
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            http_response_code(200);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Database error. Please ensure the blogs table exists.',
+                'error' => $e->getMessage(),
+                'sql_error' => true
+            ]);
+            exit;
+        } catch (Exception $e) {
+            error_log("Error fetching user blogs: " . $e->getMessage());
+            http_response_code(200);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Failed to fetch your blogs: ' . $e->getMessage(),
+                'error' => $e->getMessage()
+            ]);
+            exit;
+        }
+    }
+    
+    /**
+     * API: Search blogs
+     */
+    public function searchBlogsApi()
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            $query = $_GET['q'] ?? '';
+            $category = $_GET['category'] ?? 'all';
+            
+            $blogModel = new Blog();
+            
+            if (!empty($query)) {
+                $blogs = $blogModel->searchBlogs($query, $category);
+            } elseif ($category !== 'all') {
+                $blogs = $blogModel->getBlogsByCategory($category);
+            } else {
+                $blogs = $blogModel->getAllBlogs(100, 0);
+            }
+            
+            echo json_encode([
+                'success' => true,
+                'blogs' => $blogs
+            ]);
+        } catch (Exception $e) {
+            Logger::error("Blog search failed: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Search failed'
+            ]);
+        }
+    }
+    
+    /**
+     * API: Delete a blog post
+     */
+    public function deleteBlogApi()
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            
+            // Get JSON body
+            $input = json_decode(file_get_contents('php://input'), true);
+            $blogId = $input['id'] ?? null;
+            
+            if (!$blogId) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Blog ID is required'
+                ]);
+                return;
+            }
+            
+            $blogModel = new Blog();
+            
+            // Check if user is the author
+            if (!$blogModel->isAuthor($blogId, $user['id'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'You are not authorized to delete this blog'
+                ]);
+                return;
+            }
+            
+            $success = $blogModel->deleteBlog($blogId);
+            
+            if ($success) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Blog deleted successfully'
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Failed to delete blog'
+                ]);
+            }
+        } catch (Exception $e) {
+            Logger::error("Failed to delete blog: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'An error occurred'
+            ]);
+        }
+    }
+
+    /**
+     * Handle blog creation form submission
+     */
+    public function createBlog()
+    {
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            error_log("=== Blog Creation Started ===");
+            error_log("User ID: " . $user['id']);
+            
+            // Validate required fields
+            if (empty($_POST['blog_name']) || empty($_POST['description']) || empty($_POST['category'])) {
+                error_log("Validation failed: Missing required fields");
+                $_SESSION['error'] = 'All fields are required';
+                header('Location: /dashboard/community/blogs/create');
+                exit;
+            }
+            
+            error_log("Title: " . $_POST['blog_name']);
+            error_log("Category: " . $_POST['category']);
+            
+            // Handle file upload
+            $imagePath = null;
+            if (isset($_FILES['blog_image']) && $_FILES['blog_image']['error'] === UPLOAD_ERR_OK) {
+                error_log("File upload detected");
+                $imagePath = $this->handleImageUpload($_FILES['blog_image'], 'blogs');
+                if (!$imagePath) {
+                    error_log("⚠️ Image upload failed, but continuing without image");
+                    $_SESSION['warning'] = 'Image upload failed, but blog was created without image';
+                } else {
+                    error_log("✓ Image successfully uploaded: $imagePath");
+                }
+            } else if (isset($_FILES['blog_image']) && $_FILES['blog_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+                error_log("File upload error: " . $_FILES['blog_image']['error']);
+                $fileErrors = [
+                    1 => 'File too large (server limit)',
+                    2 => 'File too large (form limit)',
+                    3 => 'Partial upload',
+                    4 => 'No file selected',
+                    6 => 'No temp directory',
+                    7 => 'Cannot write to disk',
+                    8 => 'Upload blocked'
+                ];
+                $errMsg = $fileErrors[$_FILES['blog_image']['error']] ?? 'Unknown error';
+                $_SESSION['error'] = 'Failed to upload image: ' . $errMsg;
+                header('Location: /dashboard/community/blogs/create');
+                exit;
+            } else {
+                error_log("No image file uploaded");
+            }
+            
+            // Process tags
+            $tags = [];
+            if (!empty($_POST['tags'])) {
+                $tags = array_map('trim', explode(',', $_POST['tags']));
+                error_log("Tags: " . implode(', ', $tags));
+            }
+            
+            // Create blog
+            $blogModel = new Blog();
+            $blogData = [
+                'author_id' => $user['id'],
+                'title' => trim($_POST['blog_name']),
+                'content' => trim($_POST['description']),
+                'image_path' => $imagePath,
+                'category' => $_POST['category'],
+                'tags' => $tags,
+                'status' => 'published'
+            ];
+            
+            error_log("Creating blog with data...");
+            $blogId = $blogModel->createBlog($blogData);
+            
+            if ($blogId) {
+                error_log("✓✓✓ Blog created successfully! ID: $blogId");
+                if ($imagePath) {
+                    error_log("Image path stored: $imagePath");
+                }
+                $_SESSION['success'] = 'Blog created successfully!';
+                header('Location: /dashboard/community/blogs');
+            } else {
+                error_log("❌ Blog creation failed");
+                $_SESSION['error'] = 'Failed to create blog';
+                header('Location: /dashboard/community/blogs/create');
+            }
+            exit;
+            
+        } catch (Exception $e) {
+            error_log("❌ Exception in createBlog: " . $e->getMessage());
+            Logger::error("Failed to create blog: " . $e->getMessage());
+            $_SESSION['error'] = 'An error occurred while creating the blog: ' . $e->getMessage();
+            header('Location: /dashboard/community/blogs/create');
+            exit;
+        }
+    }
+
+    /**
+     * Handle blog update form submission
+     */
+    public function updateBlog()
+    {
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            error_log("=== Blog Update Started ===");
+            
+            $blogId = $_POST['blog_id'] ?? null;
+            if (!$blogId) {
+                error_log("❌ No blog ID provided");
+                $_SESSION['error'] = 'Blog ID is required';
+                header('Location: /dashboard/community/blogs');
+                exit;
+            }
+            
+            error_log("Blog ID: $blogId, User ID: " . $user['id']);
+            
+            $blogModel = new Blog();
+            
+            // Check if user is the author
+            if (!$blogModel->isAuthor($blogId, $user['id'])) {
+                error_log("❌ User not authorized to edit blog $blogId");
+                $_SESSION['error'] = 'You are not authorized to edit this blog';
+                header('Location: /dashboard/community/blogs');
+                exit;
+            }
+            
+            // Validate required fields
+            if (empty($_POST['blog_name']) || empty($_POST['description']) || empty($_POST['category'])) {
+                error_log("❌ Validation failed: Missing required fields");
+                $_SESSION['error'] = 'All fields are required';
+                header('Location: /dashboard/community/blogs/edit?id=' . $blogId);
+                exit;
+            }
+            
+            error_log("Title: " . $_POST['blog_name']);
+            
+            // Handle file upload (optional for edit)
+            $imagePath = $_POST['existing_image'] ?? null;
+            error_log("Existing image: " . ($imagePath ?? 'none'));
+            
+            if (isset($_FILES['blog_image']) && $_FILES['blog_image']['error'] === UPLOAD_ERR_OK) {
+                error_log("New image file uploaded");
+                $newImagePath = $this->handleImageUpload($_FILES['blog_image'], 'blogs');
+                if ($newImagePath) {
+                    error_log("✓ New image uploaded: $newImagePath");
+                    // Delete old image if exists
+                    if ($imagePath && file_exists($_SERVER['DOCUMENT_ROOT'] . $imagePath)) {
+                        error_log("Deleting old image: $imagePath");
+                        unlink($_SERVER['DOCUMENT_ROOT'] . $imagePath);
+                    }
+                    $imagePath = $newImagePath;
+                } else {
+                    error_log("⚠️ New image upload failed, keeping existing");
+                }
+            }
+            
+            // Process tags
+            $tags = [];
+            if (!empty($_POST['tags'])) {
+                $tags = array_map('trim', explode(',', $_POST['tags']));
+                error_log("Tags: " . implode(', ', $tags));
+            }
+            
+            // Update blog
+            $blogData = [
+                'title' => trim($_POST['blog_name']),
+                'content' => trim($_POST['description']),
+                'image_path' => $imagePath,
+                'category' => $_POST['category'],
+                'tags' => $tags,
+                'status' => 'published'
+            ];
+            
+            error_log("Updating blog with image_path: " . ($imagePath ?? 'null'));
+            $success = $blogModel->updateBlog($blogId, $blogData);
+            
+            if ($success) {
+                error_log("✓✓✓ Blog updated successfully!");
+                $_SESSION['success'] = 'Blog updated successfully!';
+                header('Location: /dashboard/community/blogs');
+            } else {
+                error_log("❌ Blog update failed");
+                $_SESSION['error'] = 'Failed to update blog';
+                header('Location: /dashboard/community/blogs/edit?id=' . $blogId);
+            }
+            exit;
+            
+        } catch (Exception $e) {
+            Logger::error("Failed to update blog: " . $e->getMessage());
+            $_SESSION['error'] = 'An error occurred while updating the blog';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+    }
+
+    /**
+     * Handle image upload for blogs
+     */
+    private function handleImageUpload($file, $subfolder = 'blogs')
+    {
+        try {
+            error_log("=== Image Upload Debug ===");
+            error_log("File name: " . $file['name']);
+            error_log("File type: " . $file['type']);
+            error_log("File size: " . $file['size'] . " bytes");
+            error_log("DOCUMENT_ROOT: " . $_SERVER['DOCUMENT_ROOT']);
+            
+            // Validate file
+            $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!in_array($file['type'], $allowedTypes)) {
+                error_log("❌ Invalid file type: " . $file['type']);
+                return false;
+            }
+            
+            // Check file size (5MB max)
+            if ($file['size'] > 5 * 1024 * 1024) {
+                error_log("❌ File too large: " . ($file['size'] / 1024 / 1024) . " MB (max 5 MB)");
+                return false;
+            }
+            
+            // Create upload directory if it doesn't exist
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . "/storage/{$subfolder}/";
+            error_log("Upload directory: $uploadDir");
+            
+            if (!is_dir($uploadDir)) {
+                error_log("Creating directory...");
+                if (!mkdir($uploadDir, 0777, true)) {
+                    error_log("❌ Failed to create directory");
+                    return false;
+                }
+                error_log("✓ Directory created");
+            } else {
+                error_log("✓ Directory exists");
+            }
+            
+            // Generate unique filename
+            $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $filename = 'blog_' . time() . '_' . uniqid() . '.' . $extension;
+            $uploadPath = $uploadDir . $filename;
+            
+            error_log("Generated filename: $filename");
+            error_log("Full upload path: $uploadPath");
+            
+            // Move uploaded file
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $storagePath = "/storage/{$subfolder}/{$filename}";
+                error_log("✓ File uploaded successfully");
+                error_log("Storage path: $storagePath");
+                return $storagePath;
+            } else {
+                error_log("❌ move_uploaded_file() failed");
+                error_log("Temp path exists: " . (file_exists($file['tmp_name']) ? 'yes' : 'no'));
+                error_log("Directory writable: " . (is_writable($uploadDir) ? 'yes' : 'no'));
+                return false;
+            }
+            
+        } catch (Exception $e) {
+            error_log("❌ Exception in handleImageUpload: " . $e->getMessage());
+            Logger::error("Image upload failed: " . $e->getMessage());
+            return false;
+        }
     }
 
     // ============ CLUBS ============

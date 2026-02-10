@@ -19,10 +19,12 @@
 <main class="blogs-main" role="main" aria-label="Clubs Dashboard">
   
   <div class="page-header">
-    <h1 class="page-title">Clubs & Societies</h1>
-    <p class="page-subtitle">
-      Join clubs, meet new people, and explore your interests
-    </p>
+    <div class="page-header__content">
+      <h1 class="page-title">Clubs & Societies</h1>
+      <p class="page-subtitle">
+        Join clubs, meet new people, and explore your interests
+      </p>
+    </div>
     <?php if ($data['isClubAdmin']): ?>
     <a href="/dashboard/community/clubs/create" class="btn btn--primary">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -185,57 +187,6 @@
   </div>
 
 </main>
-
-<style>
-.empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-.empty-state h3 {
-  font-size: 1.5rem;
-  margin: 0 0 0.5rem;
-}
-.empty-state p {
-  color: #666;
-  margin: 0 0 1.5rem;
-}
-.badge-role {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: #667eea;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-.blog-card__excerpt {
-  color: #666;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  margin: 0.5rem 0;
-}
-.blog-card__category {
-  background: #f0f0f0;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-}
-</style>
 
 <script>
   window.COMMUNITY_MODULE = 'clubs';

@@ -21,10 +21,17 @@
   
   <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">Blogs</h1>
+    <h1 class="page-title">Community Blogs</h1>
     <p class="page-subtitle">
       Discover stories, thinking, and expertise from writers on campus
     </p>
+    <a href="/dashboard/community/blogs/create" class="btn btn--primary">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Write a Blog
+    </a>
   </div>
 
   <!-- Tab Navigation -->
@@ -34,7 +41,7 @@
         All Blogs
       </button>
       <button class="tab-button" data-tab="manage">
-        Manage Blogs
+        My Blogs
       </button>
     </div>
   </nav>
@@ -63,9 +70,13 @@
     </div>
 
     <!-- Blog Posts Grid -->
-    <section class="content-section">
-      <div class="content-grid" id="blogs-grid">
-        <div class="loading-state">Loading blogs...</div>
+    <section class="blogs-section">
+      <div class="blogs-grid" id="blogs-grid">
+        <div class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <h3>Loading blogs...</h3>
+          <p>Please wait while we fetch the blogs</p>
+        </div>
       </div>
     </section>
   </div>
@@ -73,7 +84,7 @@
   <!-- Manage Blogs Tab Content -->
   <div class="tab-content is-hidden" data-tab-content="manage">
     
-    <section class="manage-section">
+    <section class="blogs-section">
       <div class="section-header">
         <h2 class="section-title">My Blogs</h2>
         <a href="/dashboard/community/blogs/create" class="btn btn--primary">
@@ -81,12 +92,16 @@
             <line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
-          Upload a new blog
+          Write New Blog
         </a>
       </div>
 
-      <div class="content-grid" id="my-blogs-grid">
-        <div class="loading-state">Loading your blogs...</div>
+      <div class="blogs-grid" id="my-blogs-grid">
+        <div class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <h3>Loading your blogs...</h3>
+          <p>Please wait</p>
+        </div>
       </div>
     </section>
 

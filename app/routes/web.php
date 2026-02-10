@@ -184,10 +184,26 @@ $routes['/dashboard/community/blogs/view'] = [
     'GET' => 'Community_CommunityUserController@showViewBlog'
 ];
 $routes['/dashboard/community/blogs/create'] = [
-    'GET' => 'Community_CommunityUserController@showCreateBlog'
+    'GET' => 'Community_CommunityUserController@showCreateBlog',
+    'POST' => 'Community_CommunityUserController@createBlog'
 ];
 $routes['/dashboard/community/blogs/edit'] = [
-    'GET' => 'Community_CommunityUserController@showEditBlog'
+    'GET' => 'Community_CommunityUserController@showEditBlog',
+    'POST' => 'Community_CommunityUserController@updateBlog'
+];
+
+// Blog API endpoints
+$routes['/dashboard/community/blogs/api/all'] = [
+    'GET' => 'Community_CommunityUserController@getBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/my-blogs'] = [
+    'GET' => 'Community_CommunityUserController@getMyBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/search'] = [
+    'GET' => 'Community_CommunityUserController@searchBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/delete'] = [
+    'POST' => 'Community_CommunityUserController@deleteBlogApi'
 ];
 
 // ============ COMMUNITY CLUBS ROUTES ============

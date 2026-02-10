@@ -24,7 +24,21 @@
     <h1 class="page-title">Upload a New Blog</h1>
   </div>
 
-  <form class="blog-form" id="create-blog-form" method="POST" enctype="multipart/form-data">
+  <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert--error">
+      <?= htmlspecialchars($_SESSION['error']) ?>
+      <?php unset($_SESSION['error']); ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert--success">
+      <?= htmlspecialchars($_SESSION['success']) ?>
+      <?php unset($_SESSION['success']); ?>
+    </div>
+  <?php endif; ?>
+
+  <form class="blog-form" id="create-blog-form" method="POST" action="/dashboard/community/blogs/create" enctype="multipart/form-data">
     
     <div class="form-container">
       <!-- Left Column -->
@@ -75,9 +89,9 @@
 
         <!-- Blog Image -->
         <div class="form-group">
-          <label class="form-label">Blog Image</label>
+          <label class="form-label">Blog Image <span style="color: var(--text-muted); font-size: 0.875rem;">(Optional)</span></label>
           <div class="file-upload-area" id="file-upload-area">
-            <input type="file" id="blog-image" name="blog_image" accept="image/png,image/jpeg,image/jpg" class="file-input" required>
+            <input type="file" id="blog-image" name="blog_image" accept="image/png,image/jpeg,image/jpg" class="file-input">
             <div class="file-upload-content">
               <button type="button" class="btn btn--primary" id="upload-trigger">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -132,7 +146,4 @@
   </form>
 </main>
 
-<script>
-  window.BLOG_API_BASE = '/api/community/blogs';
-</script>
 <script type="module" src="/js/app/community/blog-form.js"></script>

@@ -4,6 +4,27 @@
    BLOG FORM STYLES
    ================================ */
 
+/* Alert Messages */
+.alert {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.alert--error {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+}
+
+.alert--success {
+  background-color: #D1FAE5;
+  color: #059669;
+  border: 1px solid #6EE7B7;
+}
+
 .blog-form-main {
   padding: var(--space-xl) var(--space-lg);
   max-width: 900px;
