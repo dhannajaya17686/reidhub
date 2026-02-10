@@ -1,5 +1,9 @@
 <?php
 
+// Load required helper classes
+require_once __DIR__ . '/../../helpers/EmailHelper.php';
+require_once __DIR__ . '/../../helpers/RateLimiter.php';
+
 class Auth_LoginController extends Controller
 {
      /**
@@ -192,19 +196,33 @@ class Auth_LoginController extends Controller
             $this->view('Auth/sign-up-view', ['errors' => $fail]);
             return;
         }
-        Logger::info("New user signed up with email: $email and ID: $userId");        
+        
+        Logger::info("New user signed up with email: $email and ID: $userId");
+        
+        // Generate and send OTP for email verification
+        $userModel = new User();
+        $otpCode = $userModel->generateAndSaveOTP($email);
+
+        if ($otpCode) {
+            $emailHelper = new EmailHelper();
+            $emailHelper->sendOTPEmail($email, $otpCode, $firstName);
+            Logger::info("OTP generated and sent to: $email");
+        } else {
+            Logger::error("Failed to generate OTP for: $email");
+        }
+
+        // Store unverified email in session
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
-        $_SESSION['user_id'] = $userId;
-        Logger::info("New session started for user ID: $userId");
-        $isAjax = $this->isAjax();
+        $_SESSION['unverified_email'] = $email;
+
         if ($isAjax) {
             header('Content-Type: application/json');
-            echo json_encode(['ok' => true, 'redirect' => '/dashboard/user']);
+            echo json_encode(['ok' => true, 'redirect' => '/verify-email']);
             return;
         }
 
-        header('Location: /dashboard/user', true, 303);
-    exit;
+        header('Location: /verify-email', true, 303);
+        exit;
     }
 
     public function logout()
@@ -302,5 +320,251 @@ class Auth_LoginController extends Controller
     {
         if (session_status() === PHP_SESSION_NONE) { session_start(); }
         return isset($_SESSION['admin_id']) && (int)$_SESSION['admin_id'] > 0;
+    }
+
+    // ==================== OTP VERIFICATION FLOW ====================
+
+    /**
+     * Show OTP verification form
+     * Called after successful signup - user must verify email before accessing dashboard
+     */
+    public function showVerifyEmailForm()
+    {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        
+        // Get unverified email from session
+        $unverifiedEmail = $_SESSION['unverified_email'] ?? null;
+        
+        if (!$unverifiedEmail) {
+            header('Location: /signup', true, 302);
+            exit;
+        }
+
+        $this->view('Auth/verify-email-view', [
+            'email' => $unverifiedEmail,
+            'canResend' => true
+        ]);
+    }
+
+    /**
+     * Send OTP to student email
+     * Called after successful signup
+     *
+     * @return void
+     */
+    public function sendOTP()
+    {
+        $email = trim($_POST['email'] ?? '');
+        $firstName = trim($_POST['first_name'] ?? '');
+
+        $errors = [];
+        $isAjax = $this->isAjax();
+
+        if (!$email) {
+            $errors['email'] = 'Email is required.';
+        }
+
+        if (!empty($errors)) {
+            if ($isAjax) {
+                http_response_code(422);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'errors' => $errors]);
+                return;
+            }
+            $this->view('Auth/sign-up-view', ['errors' => $errors]);
+            return;
+        }
+
+        // Generate OTP
+        $userModel = new User();
+        $otpCode = $userModel->generateAndSaveOTP($email);
+
+        if (!$otpCode) {
+            $fail = ['general' => 'Could not generate OTP. Please try again.'];
+            if ($isAjax) {
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'errors' => $fail]);
+                return;
+            }
+            $this->view('Auth/sign-up-view', ['errors' => $fail]);
+            return;
+        }
+
+        // Send OTP via email
+        $emailHelper = new EmailHelper();
+        $emailSent = $emailHelper->sendOTPEmail($email, $otpCode, $firstName);
+
+        if (!$emailSent) {
+            Logger::warning("Failed to send OTP email to: $email");
+            // Still return success - OTP was saved, email may recover later
+        }
+
+        Logger::info("OTP sent to email: $email");
+
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        $_SESSION['unverified_email'] = $email;
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => true, 'redirect' => '/verify-email']);
+            return;
+        }
+
+        header('Location: /verify-email', true, 303);
+        exit;
+    }
+
+    /**
+     * Verify OTP code and complete signup
+     * Once verified, redirect to dashboard with session
+     *
+     * @return void
+     */
+    public function verifyEmail()
+    {
+        $otpCode = trim($_POST['otp_code'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+
+        $errors = [];
+        $isAjax = $this->isAjax();
+
+        if (!$otpCode) {
+            $errors['otp_code'] = 'OTP code is required.';
+        }
+        if (!$email) {
+            $errors['email'] = 'Email is required.';
+        }
+
+        if (!empty($errors)) {
+            if ($isAjax) {
+                http_response_code(422);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'errors' => $errors]);
+                return;
+            }
+            $this->view('Auth/verify-email-view', ['errors' => $errors, 'email' => $email]);
+            return;
+        }
+
+        // Verify OTP
+        $userModel = new User();
+        $isValid = $userModel->verifyOTPCode($email, $otpCode);
+
+        if (!$isValid) {
+            $fail = ['otp_code' => 'Invalid or expired OTP. Please try again.'];
+            
+            // Check if max attempts exceeded
+            $otp = $userModel->getLatestUnverifiedOTP($email);
+            if ($otp && $otp['attempt_count'] >= 5) {
+                $fail['otp_code'] = 'Too many failed attempts. Please request a new OTP.';
+            }
+
+            if ($isAjax) {
+                http_response_code(401);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'errors' => $fail]);
+                return;
+            }
+            $this->view('Auth/verify-email-view', ['errors' => $fail, 'email' => $email]);
+            return;
+        }
+
+        // OTP verified - get or find user, start session, redirect
+        $user = $userModel->findByEmail($email);
+
+        if (!$user) {
+            $fail = ['general' => 'User account not found. Please sign up again.'];
+            if ($isAjax) {
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'errors' => $fail]);
+                return;
+            }
+            $this->view('Auth/verify-email-view', ['errors' => $fail, 'email' => $email]);
+            return;
+        }
+
+        // Start session for verified user
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = (int)$user['id'];
+        $_SESSION['user'] = $user;
+        unset($_SESSION['unverified_email']);
+
+        Logger::info("Email verified and user logged in: user_id=" . $_SESSION['user_id']);
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => true, 'redirect' => '/dashboard/user']);
+            return;
+        }
+
+        header('Location: /dashboard/user', true, 303);
+        exit;
+    }
+
+    /**
+     * Resend OTP to email (rate-limited)
+     *
+     * @return void
+     */
+    public function resendOTP()
+    {
+        $email = trim($_POST['email'] ?? '');
+        $isAjax = $this->isAjax();
+
+        if (!$email) {
+            if ($isAjax) {
+                http_response_code(422);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'error' => 'Email is required.']);
+                return;
+            }
+            return;
+        }
+
+        $config = require __DIR__ . '/../../config/config.php';
+        $resendWaitSeconds = $config['OTP_RESEND_WAIT_SECONDS'] ?? 30;
+
+        // Check if user has OTP and if enough time passed since creation
+        $userModel = new User();
+        $otp = $userModel->getLatestUnverifiedOTP($email);
+
+        if ($otp && strtotime($otp['created_at']) > (time() - $resendWaitSeconds)) {
+            $waitTime = $resendWaitSeconds - (time() - strtotime($otp['created_at']));
+            if ($isAjax) {
+                http_response_code(429);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'error' => "Please wait {$waitTime} seconds before requesting a new OTP."]);
+                return;
+            }
+            return;
+        }
+
+        // Generate new OTP
+        $otpCode = $userModel->generateAndSaveOTP($email);
+
+        if (!$otpCode) {
+            if ($isAjax) {
+                http_response_code(500);
+                header('Content-Type: application/json');
+                echo json_encode(['ok' => false, 'error' => 'Could not generate OTP. Please try again.']);
+                return;
+            }
+            return;
+        }
+
+        // Send OTP
+        $emailHelper = new EmailHelper();
+        $emailHelper->sendOTPEmail($email, $otpCode);
+
+        Logger::info("OTP resent to email: $email");
+
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => true, 'message' => 'OTP resent successfully!']);
+            return;
+        }
     }
 }

@@ -24,6 +24,10 @@ $routes['/verify-email'] = [
     'POST' => 'Auth_LoginController@verifyEmail'
 ];
 
+$routes['/resend-otp'] = [
+    'POST' => 'Auth_LoginController@resendOTP'
+];
+
 
 $routes['/logout'] = [
     'POST' => 'Auth_LoginController@logout'
