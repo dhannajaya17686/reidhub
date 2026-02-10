@@ -171,7 +171,7 @@ For testing and development, create these three user accounts **manually** in th
 | Email | `user1@reidhub.com` |
 | Password | `user1@reid123` |
 | Registration No | `2024IS001` |
-| First Name | `Test` |
+| First Name | `Test1` |
 | Last Name | `User One` |
 
 #### User 2
@@ -181,7 +181,7 @@ For testing and development, create these three user accounts **manually** in th
 | Email | `user2@reidhub.com` |
 | Password | `user2@reid123` |
 | Registration No | `2024IS002` |
-| First Name | `Test` |
+| First Name | `Test2` |
 | Last Name | `User Two` |
 
 #### User 3
@@ -191,7 +191,7 @@ For testing and development, create these three user accounts **manually** in th
 | Email | `user3@reidhub.com` |
 | Password | `user3@reid123` |
 | Registration No | `2024IS003` |
-| First Name | `Test` |
+| First Name | `Test3` |
 | Last Name | `User Three` |
 
 ---

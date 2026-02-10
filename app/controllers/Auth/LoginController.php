@@ -199,11 +199,11 @@ class Auth_LoginController extends Controller
         $isAjax = $this->isAjax();
         if ($isAjax) {
             header('Content-Type: application/json');
-            echo json_encode(['ok' => true, 'redirect' => '/dashboard']);
+            echo json_encode(['ok' => true, 'redirect' => '/dashboard/user']);
             return;
         }
 
-        header('Location: /dashboard', true, 303);
+        header('Location: /dashboard/user', true, 303);
     exit;
     }
 
