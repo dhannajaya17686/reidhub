@@ -107,10 +107,12 @@ class ClubFormManager {
       isValid = false;
     } else this.clearError('category-error');
 
-    if (!contactEmail.value.trim() || !this.isValidEmail(contactEmail.value)) {
-      this.showError('contact-email-error', 'Valid email is required');
-      isValid = false;
-    } else this.clearError('contact-email-error');
+    if (contactEmail) {
+      if (!contactEmail.value.trim() || !this.isValidEmail(contactEmail.value)) {
+        this.showError('contact-email-error', 'Valid email is required');
+        isValid = false;
+      } else this.clearError('contact-email-error');
+    }
 
     if (!description.value.trim()) {
       this.showError('description-error', 'Description is required');

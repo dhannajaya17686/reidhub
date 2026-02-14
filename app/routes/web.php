@@ -34,6 +34,11 @@ $routes['/dashboard/user'] = [
 $routes['/dashboard/admin'] = [
     'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
 ];
+
+// Debug route (temporary)
+$routes['/debug-session'] = [
+    'GET' => 'Auth_LoginController@showDebugSession'
+];
 //-----------------------------------AUTH ROUTER END--------------------------------------------//
 
 //-----------------------------------MARKETPLACE ROUTES-----------------------------------//
@@ -154,6 +159,23 @@ $routes['/dashboard/marketplace/cart/payment-method'] = [
 
 //---------------------------------------CLUB AND SOCIETY ROUTER START---------------------------------//
 
+// ============ MAIN COMMUNITY FEED ROUTE ============
+$routes['/dashboard/community'] = [
+    'GET' => 'Community_CommunityUserController@showCommunityDashboard'
+];
+
+// ============ COMMUNITY ADMIN POST MANAGEMENT ============
+$routes['/dashboard/community/create-post'] = [
+    'GET' => 'Community_CommunityUserController@showCreatePost',
+    'POST' => 'Community_CommunityUserController@createPost'
+];
+$routes['/dashboard/community/my-posts'] = [
+    'GET' => 'Community_CommunityUserController@showMyPosts'
+];
+$routes['/dashboard/community/delete-post'] = [
+    'POST' => 'Community_CommunityUserController@deletePost'
+];
+
 // ============ COMMUNITY BLOGS ROUTES (MATCHING MARKETPLACE PATTERN) ============
 $routes['/dashboard/community/blogs'] = [
     'GET' => 'Community_CommunityUserController@showAllBlogs'
@@ -162,10 +184,34 @@ $routes['/dashboard/community/blogs/view'] = [
     'GET' => 'Community_CommunityUserController@showViewBlog'
 ];
 $routes['/dashboard/community/blogs/create'] = [
-    'GET' => 'Community_CommunityUserController@showCreateBlog'
+    'GET' => 'Community_CommunityUserController@showCreateBlog',
+    'POST' => 'Community_CommunityUserController@createBlog'
 ];
 $routes['/dashboard/community/blogs/edit'] = [
-    'GET' => 'Community_CommunityUserController@showEditBlog'
+    'GET' => 'Community_CommunityUserController@showEditBlog',
+    'POST' => 'Community_CommunityUserController@updateBlog'
+];
+
+// Blog API endpoints
+$routes['/dashboard/community/blogs/api/all'] = [
+    'GET' => 'Community_CommunityUserController@getBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/my-blogs'] = [
+    'GET' => 'Community_CommunityUserController@getMyBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/search'] = [
+    'GET' => 'Community_CommunityUserController@searchBlogsApi'
+];
+$routes['/dashboard/community/blogs/api/delete'] = [
+    'POST' => 'Community_CommunityUserController@deleteBlogApi'
+];
+
+// ============ COMMUNITY REPORT API ROUTES ============
+$routes['/api/community/blogs/report'] = [
+    'POST' => 'Community_CommunityUserController@submitBlogReport'
+];
+$routes['/api/community/events/report'] = [
+    'POST' => 'Community_CommunityUserController@submitEventReport'
 ];
 
 // ============ COMMUNITY CLUBS ROUTES ============
@@ -176,10 +222,43 @@ $routes['/dashboard/community/clubs/view'] = [
     'GET' => 'Community_CommunityUserController@showViewClub'
 ];
 $routes['/dashboard/community/clubs/create'] = [
-    'GET' => 'Community_CommunityUserController@showCreateClub'
+    'GET' => 'Community_CommunityUserController@showCreateClub',
+    'POST' => 'Community_CommunityUserController@createClub'
 ];
 $routes['/dashboard/community/clubs/edit'] = [
-    'GET' => 'Community_CommunityUserController@showEditClub'
+    'GET' => 'Community_CommunityUserController@showEditClub',
+    'POST' => 'Community_CommunityUserController@editClub'
+];
+$routes['/dashboard/community/clubs/join'] = [
+    'POST' => 'Community_CommunityUserController@joinClub'
+];
+$routes['/dashboard/community/clubs/leave'] = [
+    'POST' => 'Community_CommunityUserController@leaveClub'
+];
+$routes['/dashboard/community/clubs/delete'] = [
+    'POST' => 'Community_CommunityUserController@deleteClub'
+];
+
+// ============ ADMIN REQUEST ROUTES ============
+$routes['/dashboard/community/request-admin'] = [
+    'GET' => 'Community_CommunityUserController@showAdminRequestForm'
+];
+$routes['/dashboard/community/submit-admin-request'] = [
+    'POST' => 'Community_CommunityUserController@submitAdminRequest'
+];
+
+// ============ CLUB ADMIN PORTAL ROUTES ============
+$routes['/dashboard/club-admin/dashboard'] = [
+    'GET' => 'Community_CommunityUserController@showClubAdminDashboard'
+];
+$routes['/dashboard/club-admin/events'] = [
+    'GET' => 'Community_CommunityUserController@showClubAdminEvents'
+];
+$routes['/dashboard/club-admin/announcements'] = [
+    'GET' => 'Community_CommunityUserController@showClubAdminAnnouncements'
+];
+$routes['/dashboard/club-admin/applications'] = [
+    'GET' => 'Community_CommunityUserController@showClubAdminApplications'
 ];
 
 // ============ COMMUNITY EVENTS ROUTES ============
@@ -190,10 +269,23 @@ $routes['/dashboard/community/events/view'] = [
     'GET' => 'Community_CommunityUserController@showViewEvent'
 ];
 $routes['/dashboard/community/events/create'] = [
-    'GET' => 'Community_CommunityUserController@showCreateEvent'
+    'GET' => 'Community_CommunityUserController@showCreateEvent',
+    'POST' => 'Community_CommunityUserController@createEvent'
 ];
 $routes['/dashboard/community/events/edit'] = [
     'GET' => 'Community_CommunityUserController@showEditEvent'
+];
+$routes['/dashboard/community/events/update'] = [
+    'POST' => 'Community_CommunityUserController@updateEvent'
+];
+$routes['/dashboard/community/events/delete'] = [
+    'POST' => 'Community_CommunityUserController@deleteEvent'
+];
+$routes['/dashboard/community/events/register'] = [
+    'POST' => 'Community_CommunityUserController@registerForEvent'
+];
+$routes['/dashboard/community/events/unregister'] = [
+    'POST' => 'Community_CommunityUserController@unregisterFromEvent'
 ];
 //---------------------------------------CLUB AND SOCIETY ROUTES END-----------------------------------//
 
@@ -225,7 +317,7 @@ $routes['/dashboard/lost-and-found/items'] = [
     'GET' => 'LostAndFound_LostAndFoundUserController@showLostAndFoundItems'
 ];
 $routes['/dashboard/community/admin'] = [
-    'GET' => 'Forum_ForumAdminController@showCommunityAdminDashboard'
+    'GET' => 'Community_CommunityAdminController@showCommunityAdminDashboard'
 ];
 $routes['/dashboard/lost-and-found/admin'] = [
     'GET' => 'Forum_ForumAdminController@manageLostAndFound'
