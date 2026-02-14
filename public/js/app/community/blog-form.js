@@ -106,7 +106,7 @@ class BlogFormManager {
     this.form.addEventListener('submit', (e) => {
       console.log('🔵 Form submission started');
       e.preventDefault();
-      
+
       // Clear any previous errors first
       this.clearError('blog-name-error');
       this.clearError('category-error');
@@ -124,9 +124,9 @@ class BlogFormManager {
         }
         return false;
       }
-      
+
       console.log('✓ Form validation passed, submitting via traditional form submission');
-      
+
       // Add loading state to submit button
       const submitBtn = this.form.querySelector('button[type="submit"]');
       if (submitBtn) {
@@ -135,12 +135,12 @@ class BlogFormManager {
         submitBtn.textContent = 'Submitting...';
         console.log('Submit button disabled, showing "Submitting..." state');
       }
-      
+
       // Submit the form using traditional method (FormData with multipart for file upload)
       console.log('📤 Submitting form data...');
       console.log('Form action:', this.form.action);
       console.log('Form method:', this.form.method);
-      
+
       // Use traditional form submission to handle file uploads
       this.form.submit();
     });
@@ -172,7 +172,7 @@ class BlogFormManager {
 
     // Validate image (optional for both create and edit)
     // Images are not required
-    
+
     return isValid;
   }
 

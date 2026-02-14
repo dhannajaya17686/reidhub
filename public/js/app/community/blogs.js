@@ -9,7 +9,7 @@ class BlogsManager {
     this.setupSearch();
     this.setupCategoryFilters();
     this.setupDeleteButtons();
-    
+
     // Load initial data
     console.log('BlogsManager: Loading blogs...');
     await this.loadAllBlogs();
@@ -23,10 +23,10 @@ class BlogsManager {
       const response = await fetch('/dashboard/community/blogs/api/all');
       console.log('Response status:', response.status);
       console.log('Response ok:', response.ok);
-      
+
       const text = await response.text();
       console.log('Raw response:', text);
-      
+
       let data;
       try {
         data = JSON.parse(text);
@@ -34,15 +34,15 @@ class BlogsManager {
         console.error('Failed to parse JSON:', e);
         throw new Error('Invalid JSON response: ' + text.substring(0, 100));
       }
-      
+
       console.log('Parsed data:', data);
-      
+
       if (data.success) {
         console.log('Rendering', data.blogs.length, 'blogs');
         this.renderBlogs(data.blogs, 'blogs-grid');
       } else {
         console.error('API returned error:', data);
-        const errorMsg = data.sql_error 
+        const errorMsg = data.sql_error
           ? 'Database table not found. Please run the SQL file to create the blogs table.'
           : (data.message || 'Failed to load blogs');
         document.getElementById('blogs-grid').innerHTML = `
@@ -70,14 +70,14 @@ class BlogsManager {
   async loadMyBlogs() {
     try {
       const response = await fetch('/dashboard/community/blogs/api/my-blogs');
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('My blogs response:', data);
-      
+
       if (data.success) {
         this.renderMyBlogs(data.blogs, 'my-blogs-grid');
       } else {
@@ -92,13 +92,13 @@ class BlogsManager {
 
   renderBlogs(blogs, containerId) {
     const container = document.getElementById(containerId);
-    
+
     if (!Array.isArray(blogs)) {
       console.error('Blogs is not an array:', blogs);
       container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>Invalid data received</p></div>';
       return;
     }
-    
+
     if (blogs.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
@@ -116,22 +116,18 @@ class BlogsManager {
 
   renderMyBlogs(blogs, containerId) {
     const container = document.getElementById(containerId);
-    
+
     if (!Array.isArray(blogs)) {
       console.error('Blogs is not an array:', blogs);
       container.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Error</h3><p>Invalid data received</p></div>';
       return;
     }
-    
+
     if (blogs.length === 0) {
       container.innerHTML = `
         <div class="upload-card">
           <a href="/dashboard/community/blogs/create" class="upload-card__link">
-            <svg class="upload-card__icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
-              <line x1="24" y1="14" x2="24" y2="34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <line x1="14" y1="24" x2="34" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <span class="material-symbols-outlined upload-card__icon" aria-hidden="true">add_circle</span>
             <span class="upload-card__text">Upload a new blog</span>
           </a>
         </div>
@@ -143,16 +139,12 @@ class BlogsManager {
     const uploadCard = `
       <div class="upload-card">
         <a href="/dashboard/community/blogs/create" class="upload-card__link">
-          <svg class="upload-card__icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
-            <line x1="24" y1="14" x2="24" y2="34" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <line x1="14" y1="24" x2="34" y2="24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <span class="material-symbols-outlined upload-card__icon" aria-hidden="true">add_circle</span>
           <span class="upload-card__text">Upload a new blog</span>
         </a>
       </div>
     `;
-    
+
     container.innerHTML = blogsHtml + uploadCard;
     this.setupDeleteButtons();
   }
@@ -160,16 +152,16 @@ class BlogsManager {
   createBlogCard(blog) {
     const date = new Date(blog.created_at);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    
+
     // Use image path if available, otherwise use a colored placeholder
     const imageSrc = blog.image_path ? blog.image_path : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';
-    
+
     // Debug logging
     console.log(`Blog "${blog.title}" - Image path from API: ${blog.image_path || 'null/undefined'}`);
     if (blog.image_path) {
       console.log(`  Full image URL: ${window.location.origin}${blog.image_path}`);
     }
-    
+
     return `
       <article class="blog-card" data-category="${blog.category}">
         <a href="/dashboard/community/blogs/view?id=${blog.id}" class="blog-card__link">
@@ -193,16 +185,16 @@ class BlogsManager {
   createMyBlogCard(blog) {
     const date = new Date(blog.created_at);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    
+
     // Use image path if available, otherwise use a colored placeholder
     const imageSrc = blog.image_path ? blog.image_path : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';
-    
+
     // Debug logging
     console.log(`[My Blogs] Blog "${blog.title}" (ID:${blog.id}) - Image path: ${blog.image_path || 'null/undefined'}`);
     if (blog.image_path) {
       console.log(`  Full image URL: ${window.location.origin}${blog.image_path}`);
     }
-    
+
     return `
       <article class="blog-card blog-card--owned">
         <div class="blog-card__image">
@@ -226,7 +218,7 @@ class BlogsManager {
 
   setupTabs() {
     const tabButtons = document.querySelectorAll('.tab-button');
-    
+
     tabButtons.forEach(button => {
       button.addEventListener('click', () => {
         const tabName = button.getAttribute('data-tab');
@@ -269,7 +261,7 @@ class BlogsManager {
 
   async searchBlogs(query) {
     const activeCategory = document.querySelector('.pill--active').getAttribute('data-category');
-    
+
     try {
       const response = await fetch(`/dashboard/community/blogs/api/search?q=${encodeURIComponent(query)}&category=${activeCategory}`);
       const data = await response.json();

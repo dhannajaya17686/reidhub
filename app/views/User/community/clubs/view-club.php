@@ -76,12 +76,37 @@
     </div>
     <?php else: ?>
     <div class="blog-report">
-      <button class="btn btn--outline" onclick="reportClub(<?= $data['club']['id'] ?>)">Report Club</button>
+      <button class="report-icon" id="report-club-btn" data-report-type="club" data-id="<?= $data['club']['id'] ?>" title="Report" aria-label="Report club">
+        <span class="material-symbols-outlined" aria-hidden="true">report</span>
+      </button>
     </div>
     <?php endif; ?>
   </div>
 
 </main>
+
+<!-- Shared Report Modal -->
+<div class="modal-overlay" id="report-modal" role="dialog" aria-labelledby="report-title" aria-modal="true" style="display: none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="report-title" class="modal-title">Report</h2>
+      <button class="modal-close" aria-label="Close modal">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <form class="modal-body" id="report-form">
+      <div class="form-group">
+        <label for="report-description" class="form-label">Description</label>
+        <textarea id="report-description" name="description" class="form-textarea" rows="6" placeholder="Tell us what's wrong..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn--primary">Submit Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="/js/app/community/blog-view.js"></script>
 
 <style>
 .badge-owner, .badge-admin, .badge-member {

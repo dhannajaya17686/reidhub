@@ -1,5 +1,6 @@
 <link rel="stylesheet" href="/css/globals.css">
 <link rel="stylesheet" href="/css/app/user/community/blogs.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
 
 <!-- Breadcrumb Navigation -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -26,10 +27,7 @@
       Discover stories, thinking, and expertise from writers on campus
     </p>
     <a href="/dashboard/community/blogs/create" class="btn btn--primary">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
+      <span class="material-symbols-outlined" aria-hidden="true">add</span>
       Write a Blog
     </a>
   </div>
@@ -52,10 +50,7 @@
     <!-- Search Bar -->
     <div class="search-section">
       <div class="search-bar">
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
-          <line x1="14" y1="14" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+        <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
         <input type="text" id="blog-search" class="search-input" placeholder="Search blog posts">
       </div>
     </div>
@@ -88,10 +83,7 @@
       <div class="section-header">
         <h2 class="section-title">My Blogs</h2>
         <a href="/dashboard/community/blogs/create" class="btn btn--primary">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <span class="material-symbols-outlined" aria-hidden="true">add</span>
           Write New Blog
         </a>
       </div>

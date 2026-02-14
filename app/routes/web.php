@@ -206,6 +206,14 @@ $routes['/dashboard/community/blogs/api/delete'] = [
     'POST' => 'Community_CommunityUserController@deleteBlogApi'
 ];
 
+// ============ COMMUNITY REPORT API ROUTES ============
+$routes['/api/community/blogs/report'] = [
+    'POST' => 'Community_CommunityUserController@submitBlogReport'
+];
+$routes['/api/community/events/report'] = [
+    'POST' => 'Community_CommunityUserController@submitEventReport'
+];
+
 // ============ COMMUNITY CLUBS ROUTES ============
 $routes['/dashboard/community/clubs'] = [
     'GET' => 'Community_CommunityUserController@showAllClubs'

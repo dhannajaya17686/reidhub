@@ -119,6 +119,9 @@
         </svg>
         Add to Calendar
       </button>
+      <button class="report-icon" id="report-event-btn" data-report-type="event" data-id="<?= $data['event']['id'] ?>" title="Report" aria-label="Report event" style="margin-left:8px;">
+        <span class="material-symbols-outlined" aria-hidden="true">report</span>
+      </button>
     </div>
 
     <?php if ($data['isCreator']): ?>
@@ -352,3 +355,26 @@ END:VCALENDAR`;
   document.body.removeChild(link);
 }
 </script>
+
+<!-- Shared Report Modal -->
+<div class="modal-overlay" id="report-modal" role="dialog" aria-labelledby="report-title" aria-modal="true" style="display: none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="report-title" class="modal-title">Report</h2>
+      <button class="modal-close" aria-label="Close modal">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <form class="modal-body" id="report-form">
+      <div class="form-group">
+        <label for="report-description" class="form-label">Description</label>
+        <textarea id="report-description" name="description" class="form-textarea" rows="6" placeholder="Tell us what's wrong..." required></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn--primary">Submit Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="/js/app/community/blog-view.js"></script>

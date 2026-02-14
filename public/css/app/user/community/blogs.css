@@ -165,6 +165,11 @@
   color: var(--text-muted);
 }
 
+.search-icon.material-symbols-outlined {
+  font-size: 20px;
+  line-height: 1;
+}
+
 .search-input {
   width: 100%;
   padding: var(--space-sm) var(--space-md) var(--space-sm) calc(var(--space-md) * 3);
@@ -394,6 +399,16 @@
 .upload-card__icon {
   color: var(--text-muted);
   transition: color var(--transition-smooth);
+}
+
+.upload-card__icon.material-symbols-outlined {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.btn .material-symbols-outlined {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .upload-card:hover .upload-card__icon {

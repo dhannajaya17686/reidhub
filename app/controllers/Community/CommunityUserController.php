@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../models/Club.php';
 require_once __DIR__ . '/../../models/Event.php';
 require_once __DIR__ . '/../../models/AdminRequest.php';
 require_once __DIR__ . '/../../models/Blog.php';
+require_once __DIR__ . '/../../models/Report.php';
 
 class Community_CommunityUserController extends Controller
 {
@@ -193,10 +194,60 @@ class Community_CommunityUserController extends Controller
         $this->viewApp('/User/community/blogs/all-blogs', $data, 'Blogs - ReidHub');
     }
 
+    private function checkIfBlogReported(int $blogId): bool
+    {
+        try {
+            $reportModel = new Report();
+            $reports = $reportModel->getReportsByType('blog');
+            
+            foreach ($reports as $report) {
+                if ($report['content_id'] == $blogId) {
+                    return true;
+                }
+            }
+            
+            return false;
+        } catch (Exception $e) {
+            Logger::warning("Error checking if blog is reported: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function showViewBlog()
     {
         $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
+        $blogId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if ($blogId <= 0) {
+            $_SESSION['error'] = 'Blog ID is required';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+
+        $blogModel = new Blog();
+        $blog = $blogModel->getBlogById($blogId);
+
+        if (!$blog) {
+            $_SESSION['error'] = 'Blog not found';
+            header('Location: /dashboard/community/blogs');
+            exit;
+        }
+
+        $blogModel->incrementViews($blogId);
+        $blog['views'] = (int)($blog['views'] ?? 0) + 1;
+
+        $data = [
+            'user' => $user,
+            'blog' => $blog,
+            'interactions' => [
+                'likes' => 0,
+                'dislikes' => 0
+            ],
+            'comments' => [],
+            'isOwner' => (int)$blog['author_id'] === (int)$user['id'],
+            'hasReports' => $this->checkIfBlogReported($blogId)
+        ];
+
         $this->viewApp('/User/community/blogs/view-blog', $data, 'View Blog - ReidHub');
     }
 
@@ -1713,4 +1764,144 @@ class Community_CommunityUserController extends Controller
             echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
         }
     }
+
+    /**
+     * Submit a report for a blog post
+     */
+    public function submitBlogReport()
+    {
+        // Clean any output buffer to prevent issues with JSON
+        if (ob_get_level()) ob_clean();
+        
+        header('Content-Type: application/json');
+        
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            
+            // Get JSON input
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            Logger::info("submitBlogReport called with input: " . json_encode($input));
+            
+            $blogId = $input['id'] ?? null;
+            $description = $input['description'] ?? null;
+            
+            if (!$blogId || !$description) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Missing blog ID or description']);
+                Logger::warning("submitBlogReport: Missing blog ID or description");
+                exit;
+            }
+            
+            // Prevent user from reporting their own blog
+            $blogModel = new Blog();
+            $blog = $blogModel->getBlogById($blogId);
+            
+            if (!$blog) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Blog not found']);
+                Logger::warning("submitBlogReport: Blog $blogId not found");
+                exit;
+            }
+            
+            if ($blog['author_id'] == $user['id']) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'You cannot report your own blog']);
+                Logger::warning("submitBlogReport: User {$user['id']} tried to report their own blog");
+                exit;
+            }
+            
+            // Create report
+            $reportModel = new Report();
+            $reportModel->report_type = 'blog';
+            $reportModel->content_id = $blogId;
+            $reportModel->user_id = $user['id'];
+            $reportModel->description = $description;
+            
+            if ($reportModel->create()) {
+                Logger::info("Report submitted for blog $blogId by user " . $user['email']);
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Report submitted successfully']);
+            } else {
+                Logger::error("Failed to create report for blog $blogId");
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Failed to submit report']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            Logger::error("Error in submitBlogReport: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Submit a report for an event
+     */
+    public function submitEventReport()
+    {
+        // Clean any output buffer to prevent issues with JSON
+        if (ob_get_level()) ob_clean();
+        
+        header('Content-Type: application/json');
+        
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            
+            // Get JSON input
+            $input = json_decode(file_get_contents('php://input'), true);
+            
+            Logger::info("submitEventReport called with input: " . json_encode($input));
+            
+            $eventId = $input['id'] ?? null;
+            $description = $input['description'] ?? null;
+            
+            if (!$eventId || !$description) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Missing event ID or description']);
+                Logger::warning("submitEventReport: Missing event ID or description");
+                exit;
+            }
+            
+            // Prevent user from reporting their own event
+            $eventModel = new Event();
+            $event = $eventModel->getEventById($eventId);
+            
+            if (!$event) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Event not found']);
+                Logger::warning("submitEventReport: Event $eventId not found");
+                exit;
+            }
+            
+            if ($event['creator_id'] == $user['id']) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'You cannot report your own event']);
+                Logger::warning("submitEventReport: User {$user['id']} tried to report their own event");
+                exit;
+            }
+            
+            // Create report
+            $reportModel = new Report();
+            $reportModel->report_type = 'event';
+            $reportModel->content_id = $eventId;
+            $reportModel->user_id = $user['id'];
+            $reportModel->description = $description;
+            
+            if ($reportModel->create()) {
+                Logger::info("Report submitted for event $eventId by user " . $user['email']);
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Report submitted successfully']);
+            } else {
+                Logger::error("Failed to create report for event $eventId");
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Failed to submit report']);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            Logger::error("Error in submitEventReport: " . $e->getMessage() . "\n" . $e->getTraceAsString());
+            echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
+    }
+
+
 }
