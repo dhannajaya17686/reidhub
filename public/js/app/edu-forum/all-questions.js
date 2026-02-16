@@ -18,8 +18,16 @@ class TabNavigation {
     });
   }
 
-  handleTabClick(event) {
+ /* handleTabClick(event) {
     event.preventDefault();
+    const tab = event.target;
+    this.setActiveTab(tab);
+  }*/
+
+    handleTabClick(event) {
+    // We REMOVE event.preventDefault() so the browser follows the href link
+    // and reloads the page with the new filter.
+    
     const tab = event.target;
     this.setActiveTab(tab);
   }

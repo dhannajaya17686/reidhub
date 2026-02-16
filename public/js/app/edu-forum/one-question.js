@@ -1,9 +1,7 @@
-
 /**
  * Question Detail Page Interactive Behaviors
  * ==========================================
- * 
- * Provides enhanced interactivity for the question detail view including
+ * * Provides enhanced interactivity for the question detail view including
  * voting, answer submission, and improved user interactions.
  */
 
@@ -131,7 +129,8 @@ class VoteSystem {
 /**
  * Answer Input Controller
  * ----------------------
- * Handles the answer submission form with enhanced UX.
+ * Handles the answer submission form.
+ * UPDATED: Allows standard form submission to PHP backend.
  */
 class AnswerInput {
   constructor() {
@@ -146,7 +145,18 @@ class AnswerInput {
 
     this.textarea.addEventListener('input', () => this.handleInput());
     this.textarea.addEventListener('keydown', (e) => this.handleKeydown(e));
-    this.submitButton.addEventListener('click', (e) => this.handleSubmit(e));
+
+    // Bind to the FORM submit event instead of the button click. This
+    // ensures the browser performs a normal POST when validation passes
+    // and avoids accidental preventDefault() swallowing the submission.
+    const form = this.submitButton.closest('form');
+    this.form = form;
+    if (form) {
+      form.addEventListener('submit', (e) => this.handleSubmit(e));
+    } else {
+      // Fallback: still bind click if form not found (very unlikely)
+      this.submitButton.addEventListener('click', (e) => this.handleSubmit(e));
+    }
     
     // Auto-resize textarea
     this.setupAutoResize();
@@ -163,9 +173,15 @@ class AnswerInput {
   handleKeydown(event) {
     // Submit with Ctrl/Cmd + Enter
     if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-      event.preventDefault();
+      // For the shortcut, we need to prevent the default newline
+      event.preventDefault(); 
       if (!this.submitButton.disabled) {
-        this.handleSubmit();
+        // Trigger the form submit directly to avoid click handlers
+        if (this.form) {
+          this.form.submit();
+        } else {
+          this.submitButton.click();
+        }
       }
     }
   }
@@ -218,18 +234,23 @@ class AnswerInput {
   }
 
   handleSubmit(event) {
-    if (event) event.preventDefault();
+    // --- CRITICAL FIX START ---
     
     const content = this.textarea.value.trim();
-    if (content.length < this.minLength) return;
     
-    // Show loading state
+    // 1. If content is invalid, stop the form.
+    if (content.length < this.minLength) {
+        if (event) event.preventDefault();
+        return;
+    }
+    
+    // 2. If content is valid, DO NOT preventDefault.
+    // Let the HTML form send the POST request to your PHP Controller.
+    
+    // 3. Optional: Show loading state while the page is reloading
     this.setLoadingState(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      this.submitAnswer(content);
-    }, 1000);
+    // --- CRITICAL FIX END ---
   }
 
   setLoadingState(isLoading) {
@@ -244,111 +265,6 @@ class AnswerInput {
       if (buttonText) buttonText.textContent = 'Post Answer';
       if (buttonIcon) buttonIcon.style.animation = 'none';
     }
-  }
-
-  submitAnswer(content) {
-    // Create new answer element
-    const newAnswer = this.createAnswerElement(content);
-    
-    // Add to answers list
-    const answersList = document.querySelector('.answers-section');
-    const answerInput = document.querySelector('.answer-input-section');
-    
-    if (answersList && answerInput) {
-      answersList.insertBefore(newAnswer, answerInput);
-    }
-    
-    // Clear form
-    this.textarea.value = '';
-    this.setLoadingState(false);
-    this.updateSubmitButton();
-    
-    // Update answer count
-    this.updateAnswerCount();
-    
-    // Show success message
-    this.showSuccessMessage();
-    
-    // Scroll to new answer
-    newAnswer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  createAnswerElement(content) {
-    const answerDiv = document.createElement('div');
-    answerDiv.className = 'answer-card fade-in';
-    answerDiv.innerHTML = `
-      <div class="answer-header">
-        <img class="answer-author-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%230466C8'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-family='Arial' font-size='14' font-weight='bold'%3E${this.getCurrentUserInitials()}%3C/text%3E%3C/svg%3E" alt="Your avatar">
-        <div class="answer-author-info">
-          <div class="answer-author-name">dhannajaya17686</div>
-          <div class="answer-timestamp">just now</div>
-        </div>
-      </div>
-      <div class="answer-content">
-        <p>${this.escapeHtml(content)}</p>
-      </div>
-      <div class="answer-actions">
-        <div class="answer-vote">
-          <button class="answer-vote-btn upvote" aria-label="Upvote answer">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1l2.5 5h5.5l-4.5 3.5 1.5 5.5-4.5-3.5-4.5 3.5 1.5-5.5-4.5-3.5h5.5z"/>
-            </svg>
-          </button>
-          <span class="answer-vote-count">0</span>
-        </div>
-        <button class="reply-button">Reply</button>
-      </div>
-    `;
-    
-    return answerDiv;
-  }
-
-  getCurrentUserInitials() {
-    return 'DM'; // Based on "dhannajaya17686"
-  }
-
-  escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  updateAnswerCount() {
-    const countElement = document.querySelector('.answers-count');
-    if (countElement) {
-      const currentCount = parseInt(countElement.textContent) || 0;
-      countElement.textContent = currentCount + 1;
-    }
-  }
-
-  showSuccessMessage() {
-    const message = document.createElement('div');
-    message.className = 'success-message';
-    message.textContent = 'Your answer has been posted!';
-    message.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #10B981;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-weight: 500;
-      font-size: 14px;
-      z-index: 1000;
-      animation: slideInRight 0.3s ease-out;
-    `;
-    
-    document.body.appendChild(message);
-    
-    setTimeout(() => {
-      message.style.animation = 'slideOutRight 0.3s ease-in forwards';
-      setTimeout(() => {
-        if (message.parentElement) {
-          message.parentElement.removeChild(message);
-        }
-      }, 300);
-    }, 3000);
   }
 }
 
@@ -477,7 +393,6 @@ document.head.appendChild(styleSheet);
 document.addEventListener('DOMContentLoaded', () => {
   new VoteSystem();
   new AnswerInput();
-  new MobileSidebar();
   new ReportSystem();
   
   // Add entrance animations

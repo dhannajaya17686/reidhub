@@ -212,6 +212,55 @@ $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];
 
+// NEW: Action Routes (Handle clicks)
+$routes['/dashboard/forum/vote'] = [
+    'POST' => 'Forum_ForumUserController@vote'
+];
+$routes['/dashboard/forum/report'] = [
+    'POST' => 'Forum_ForumUserController@report'
+];
+
+// Route to handle answer submission
+$routes['/dashboard/forum/answer/create'] = [
+    'POST' => 'Forum_ForumUserController@createAnswer'
+];
+
+$routes['/dashboard/forum/create'] = [
+    'POST' => 'Forum_ForumUserController@createQuestion'
+];
+
+$routes['/dashboard/forum/bookmark'] = [
+    'POST' => 'Forum_ForumUserController@bookmark'
+];
+
+
+// Edit & Delete
+$routes['/dashboard/forum/delete'] = [
+    'POST' => 'Forum_ForumUserController@deleteContent'
+];
+$routes['/dashboard/forum/update'] = [
+    'POST' => 'Forum_ForumUserController@updateContent'
+];
+
+// Comments
+$routes['/dashboard/forum/comment/create'] = [
+    'POST' => 'Forum_ForumUserController@createComment'
+];
+
+$routes['/dashboard/forum/comment/delete'] = [
+    'POST' => 'Forum_ForumUserController@deleteComment'
+];
+
+// Add this inside the Forum section
+$routes['/dashboard/forum/answer/accept'] = [
+    'POST' => 'Forum_ForumUserController@acceptAnswer'
+];
+
+// Search Suggestions
+$routes['/dashboard/forum/search-similar'] = [
+    'GET' => 'Forum_ForumUserController@searchSimilar'
+];
+
 //--------------------------------------FORUM ROUTES END---------------------------------------------//
 
 //-------------------------------------LOST AND FOUND ROUTES START--------------------------------------//
@@ -230,6 +279,8 @@ $routes['/dashboard/community/admin'] = [
 $routes['/dashboard/lost-and-found/admin'] = [
     'GET' => 'Forum_ForumAdminController@manageLostAndFound'
 ];
+
+
 
 //---------------------------------------HOME ROUTES START------------------------------------------//
 $routes['/'] = [

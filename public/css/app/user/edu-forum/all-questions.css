@@ -511,6 +511,13 @@
   }
 }
 
+.bookmark-btn.active {
+    color: #EAB308; /* Gold */
+}
+.bookmark-btn.active svg {
+    fill: #EAB308; /* Fill the star/bookmark icon */
+}
+
 @media (min-width: 1024px) {
   /* Enhanced large screen question cards */
   .question-card {

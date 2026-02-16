@@ -1,0 +1,10 @@
+-- 2. Forum Answers Table
+CREATE TABLE IF NOT EXISTS forum_answers (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    question_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    content TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (question_id) REFERENCES forum_questions(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
