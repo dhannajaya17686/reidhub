@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS admins (
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Insert default admin (email: admin@reidhub.com, password: admin123)
+-- Insert default admin (email: admin@reidhub.com, password: admin@reid123)
 INSERT INTO admins (email, password) VALUES (
   'admin@reidhub.com',
-  '$2y$10$wH6QwQwQwQwQwQwQwQwQOeQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw' -- bcrypt for 'admin123'
+  '$2y$10$xCO6LXIp9wlsb07zLP9pUeB/6Xg7.etvN0k/fWY9HvftBKgf8L6CS' -- bcrypt for 'admin@reid123'
 );
 

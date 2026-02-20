@@ -144,3 +144,120 @@ This provides a web-based interface for managing your MySQL database, creating t
 - Changes to your PHP code are reflected immediately (no need to rebuild)
 - Nginx configuration can be found in `./nginx/default.conf`
 - Database data persists between container restarts thanks to the `dbdata` volume
+
+---
+
+## 👥 Test User Accounts
+
+### Admin Account (Auto-created)
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@reidhub.com` |
+| Password | `admin@reid123` |
+| Created | Automatically when database initializes |
+| Encrypted Password | `$2y$10$xCO6LXIp9wlsb07zLP9pUeB/6Xg7.etvN0k/fWY9HvftBKgf8L6CS` |
+
+---
+
+### Test User Accounts (Manual Creation)
+
+For testing and development, create these three user accounts **manually** in the application:
+
+#### User 1
+
+| Field | Value |
+|-------|-------|
+| Email | `user1@reidhub.com` |
+| Password | `user1@reid123` |
+| Registration No | `2024IS001` |
+| First Name | `Test1` |
+| Last Name | `User One` |
+
+#### User 2
+
+| Field | Value |
+|-------|-------|
+| Email | `user2@reidhub.com` |
+| Password | `user2@reid123` |
+| Registration No | `2024IS002` |
+| First Name | `Test2` |
+| Last Name | `User Two` |
+
+#### User 3
+
+| Field | Value |
+|-------|-------|
+| Email | `user3@reidhub.com` |
+| Password | `user3@reid123` |
+| Registration No | `2024IS003` |
+| First Name | `Test3` |
+| Last Name | `User Three` |
+
+---
+
+## 🌳 Git Branching Strategy
+
+This project follows a structured branching strategy to maintain code quality and organize development work efficiently.
+
+### Branch Types and Naming Conventions
+
+| Branch Prefix | Purpose | Merge Destination | Example |
+|---|---|---|---|
+| `feature/` | New functionality or enhancements | `develop` | `feature/user-auth`, `feature/marketplace-filters` |
+| `fix/` | Standard bug fixes found during development/testing | `develop` | `fix/header-alignment`, `fix/user-login-process` |
+| `docs/` | Changes strictly related to documentation, READMEs, or Wiki updates | `develop` or `main` | `docs/api-reference-update`, `docs/setup-guide` |
+| `hotfix/` | Critical bugs found in Production that need immediate patches | `main` & `develop` | `hotfix/payment-validation`, `hotfix/security-patch` |
+| `refactor/` | Code changes that neither fix a bug nor add a feature (cleanup, improvements) | `develop` | `refactor/database-queries`, `refactor/controller-structure` |
+
+### Workflow
+
+1. **Create a new branch** from the appropriate destination branch:
+   ```bash
+   # For features/fixes: branch from develop
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/your-feature-name
+   
+   # For hotfixes: branch from main
+   git checkout main
+   git pull origin main
+   git checkout -b hotfix/your-hotfix-name
+   ```
+
+2. **Make commits** with clear, descriptive messages:
+   ```bash
+   git commit -m "feat: add user authentication system"
+   git commit -m "fix: correct header alignment on mobile"
+   git commit -m "docs: update API reference"
+   ```
+
+3. **Push your branch**:
+   ```bash
+   git push origin your-branch-name
+   ```
+
+4. **Create a Pull Request** on GitHub with a clear description of changes
+
+5. **Merge** once PR is approved:
+   - Feature/Fix/Refactor branches merge to `develop`
+   - Hotfix branches merge to both `main` and `develop`
+   - Documentation branches merge to their destination (usually `develop`)
+
+### Branch Naming Best Practices
+
+- Use **lowercase** letters
+- Use **hyphens** to separate words (not underscores)
+- Keep names **descriptive but concise** (2-4 words)
+- Avoid special characters except hyphens
+
+✅ **Good Examples:**
+- `feature/two-factor-authentication`
+- `fix/cart-item-deletion`
+- `docs/authentication-guide`
+
+❌ **Bad Examples:**
+- `Feature/TwoFactorAuth` (mixed case, no hyphens)
+- `feature_auth_v2` (uses underscore)
+- `f/auth` (too abbreviated)
+
