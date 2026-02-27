@@ -207,6 +207,19 @@
   gap: var(--space-lg);
 }
 
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--space-3xl) var(--space-xl);
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
 .item-card {
   display: flex;
   gap: var(--space-lg);

@@ -110,7 +110,11 @@
     <!-- Items Grid -->
     <div class="items-section">
       <div class="items-grid" id="items-grid">
-        <!-- Items will be populated by JavaScript -->
+        <!-- Loading spinner -->
+        <div class="loading-spinner" id="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading items...</p>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -152,110 +156,39 @@
   </div>
 </main>
 
-<!-- Report Modal -->
-<div class="modal-overlay" id="report-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
-  <div class="modal-backdrop"></div>
-  <div class="modal-container">
-    <div class="modal-header">
-      <h2 class="modal-title" id="modal-title">Report Item</h2>
-      <button class="modal-close" aria-label="Close modal">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M18 6L6 18M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-    
-    <div class="modal-content">
-      <form class="report-form" id="report-form">
-        <div class="form-group">
-          <label for="report-type">Item Type</label>
-          <select id="report-type" name="type" required>
-            <option value="lost">Lost Item</option>
-            <option value="found">Found Item</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="item-title">Item Title</label>
-          <input type="text" id="item-title" name="title" required placeholder="e.g., Black iPhone 14 Pro">
-        </div>
-        
-        <div class="form-group">
-          <label for="item-category">Category</label>
-          <select id="item-category" name="category" required>
-            <option value="">Select a category</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing & Accessories</option>
-            <option value="bags">Bags & Wallets</option>
-            <option value="books">Books & Stationery</option>
-            <option value="jewelry">Jewelry</option>
-            <option value="keys">Keys & Cards</option>
-            <option value="sports">Sports Equipment</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="item-location">Location</label>
-          <select id="item-location" name="location" required>
-            <option value="">Select a location</option>
-            <option value="library">Library</option>
-            <option value="cafeteria">Cafeteria</option>
-            <option value="classroom">Classroom</option>
-            <option value="parking">Parking Area</option>
-            <option value="sports-complex">Sports Complex</option>
-            <option value="dormitory">Dormitory</option>
-            <option value="admin-building">Admin Building</option>
-            <option value="other-location">Other</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label for="item-description">Description</label>
-          <textarea id="item-description" name="description" required placeholder="Provide detailed description including color, brand, distinctive features, where/when you lost/found it..."></textarea>
-          <div class="char-counter">
-            <span id="char-count">0</span>/500
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="item-image">Photo (Optional)</label>
-          <div class="file-upload-area" id="file-upload-area">
-            <div class="upload-placeholder">
-              <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-              </svg>
-              <p>Click to upload or drag and drop</p>
-              <small>PNG, JPG up to 5MB</small>
-            </div>
-            <div class="upload-preview" id="upload-preview" style="display: none;">
-              <img id="preview-image" src="" alt="Upload preview">
-              <button type="button" class="remove-image" id="remove-image">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <input type="file" id="item-image" name="image" accept="image/*" style="display: none;">
-        </div>
-        
-        <div class="form-group">
-          <label for="contact-method">Preferred Contact Method</label>
-          <select id="contact-method" name="contact_method" required>
-            <option value="email">Email</option>
-            <option value="phone">Phone</option>
-            <option value="both">Both Email & Phone</option>
-          </select>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" class="btn btn--secondary" onclick="closeReportModal()">Cancel</button>
-          <button type="submit" class="btn btn--primary">Submit Report</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<style>
+.loading-spinner {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
 
+.loading-spinner .spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  margin-top: 16px;
+  color: #6b7280;
+  font-size: 14px;
+}
+</style>
+
+<script>
+  // Expose current user ID to JavaScript
+  window.currentUserId = <?php echo isset($user['id']) ? (int)$user['id'] : 'null'; ?>;
+</script>
 <script src="/js/app/lost-and-found/lost-and-found-items.js"></script>

@@ -39,11 +39,15 @@
       <h2 class="section-title">Manage Lost Items</h2>
       <div class="section-stats">
         <span class="stat-item">
-          <span class="stat-number">24</span>
+          <span class="stat-number">0</span>
+          <span class="stat-label">All Items</span>
+        </span>
+        <span class="stat-item">
+          <span class="stat-number">0</span>
           <span class="stat-label">Active</span>
         </span>
         <span class="stat-item">
-          <span class="stat-number">12</span>
+          <span class="stat-number">0</span>
           <span class="stat-label">Resolved</span>
         </span>
       </div>
@@ -51,15 +55,19 @@
 
     <!-- Lost Items Filter Tabs -->
     <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterLostItems('active')">Active Items</button>
-      <button class="filter-tab" onclick="filterLostItems('resolved')">Resolved Items</button>
-      <button class="filter-tab" onclick="filterLostItems('expired')">Expired Items</button>
+      <button class="filter-tab active" onclick="filterLostItems('all', event)">All Items</button>
+      <button class="filter-tab" onclick="filterLostItems('active', event)">Active Items</button>
+      <button class="filter-tab" onclick="filterLostItems('resolved', event)">Resolved Items</button>
+      <button class="filter-tab" onclick="filterLostItems('expired', event)">Expired Items</button>
     </div>
 
     <!-- Lost Items Content -->
     <div class="items-container">
-      <div class="items-grid active" id="lost-items-active">
+      <div class="items-grid active" id="lost-items-all">
         <!-- Items will be loaded here by JavaScript -->
+      </div>
+      <div class="items-grid" id="lost-items-active" style="display: none;">
+        <!-- Active items will be loaded here -->
       </div>
       <div class="items-grid" id="lost-items-resolved" style="display: none;">
         <!-- Resolved items will be loaded here -->
@@ -76,11 +84,15 @@
       <h2 class="section-title">Manage Found Items</h2>
       <div class="section-stats">
         <span class="stat-item">
-          <span class="stat-number">18</span>
+          <span class="stat-number">0</span>
+          <span class="stat-label">All Items</span>
+        </span>
+        <span class="stat-item">
+          <span class="stat-number">0</span>
           <span class="stat-label">Active</span>
         </span>
         <span class="stat-item">
-          <span class="stat-number">8</span>
+          <span class="stat-number">0</span>
           <span class="stat-label">Returned</span>
         </span>
       </div>
@@ -88,15 +100,19 @@
 
     <!-- Found Items Filter Tabs -->
     <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterFoundItems('active')">Active Items</button>
-      <button class="filter-tab" onclick="filterFoundItems('returned')">Returned Items</button>
-      <button class="filter-tab" onclick="filterFoundItems('expired')">Expired Items</button>
+      <button class="filter-tab active" onclick="filterFoundItems('all', event)">All Items</button>
+      <button class="filter-tab" onclick="filterFoundItems('active', event)">Active Items</button>
+      <button class="filter-tab" onclick="filterFoundItems('returned', event)">Returned Items</button>
+      <button class="filter-tab" onclick="filterFoundItems('expired', event)">Expired Items</button>
     </div>
 
     <!-- Found Items Content -->
     <div class="items-container">
-      <div class="items-grid active" id="found-items-active">
-        <!-- Items will be loaded here by JavaScript -->
+      <div class="items-grid" id="found-items-all" style="display: grid;">
+        <div class="empty-state"><p>Loading found items...</p></div>
+      </div>
+      <div class="items-grid" id="found-items-active" style="display: none;">
+        <!-- Active items will be loaded here -->
       </div>
       <div class="items-grid" id="found-items-returned" style="display: none;">
         <!-- Returned items will be loaded here -->
@@ -116,11 +132,11 @@
 
     <!-- Reports Filter Tabs -->
     <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterLFReports('all')">All Reports</button>
-      <button class="filter-tab" onclick="filterLFReports('lost')">Lost Items</button>
-      <button class="filter-tab" onclick="filterLFReports('found')">Found Items</button>
-      <button class="filter-tab" onclick="filterLFReports('pending')">Pending Items for Approvals</button>
-      <button class="filter-tab" onclick="filterLFReports('rejected')">Rejected</button>
+      <button class="filter-tab active" onclick="filterLFReports('all', event)">All Reports</button>
+      <button class="filter-tab" onclick="filterLFReports('lost', event)">Lost Items</button>
+      <button class="filter-tab" onclick="filterLFReports('found', event)">Found Items</button>
+      <button class="filter-tab" onclick="filterLFReports('pending', event)">Pending Items for Approvals</button>
+      <button class="filter-tab" onclick="filterLFReports('rejected', event)">Rejected</button>
     </div>
 
     <!-- Search and Filters -->
@@ -256,51 +272,82 @@
 
 <!-- New Report Modal -->
 <div class="modal-overlay" id="new-report-modal">
-  <div class="modal">
+  <div class="modal modal-form">
     <button class="modal-close" onclick="closeNewReportModal()">×</button>
     
     <div class="modal-section">
       <div class="modal-section-title">Create New Report</div>
+      <p class="modal-subtitle">Submit a lost or found item report on behalf of a user</p>
       <div class="modal-section-content">
-        <form class="new-report-form">
+        <form class="new-report-form" id="new-report-form" enctype="multipart/form-data">
+          <div class="form-error-global" id="form-error-global" style="display: none;"></div>
+          
           <div class="form-group">
-            <label>Report Type</label>
-            <select class="form-control">
+            <label>Report Type *</label>
+            <select class="form-control" id="report-type" name="type" required>
               <option value="lost">Lost Item</option>
               <option value="found">Found Item</option>
             </select>
           </div>
           
           <div class="form-group">
-            <label>Item Name</label>
-            <input type="text" class="form-control" placeholder="Enter item name">
+            <label>Item Name *</label>
+            <input type="text" class="form-control" id="item-name" name="item_name" placeholder="e.g., Backpack, Laptop, Phone" required maxlength="100">
           </div>
           
           <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" rows="4" placeholder="Describe the item and circumstances"></textarea>
+            <label>Category *</label>
+            <select class="form-control" id="category" name="category" required>
+              <option value="">Select Category</option>
+              <option value="electronics">Electronics</option>
+              <option value="bags">Bags & Backpacks</option>
+              <option value="clothing">Clothing</option>
+              <option value="accessories">Accessories</option>
+              <option value="books">Books & Stationery</option>
+              <option value="documents">Documents & IDs</option>
+              <option value="keys">Keys</option>
+              <option value="jewelry">Jewelry</option>
+              <option value="sports">Sports Equipment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea class="form-control" id="description" name="description" rows="4" placeholder="Describe the item and circumstances in detail..." required maxlength="500"></textarea>
+            <div class="char-count"><span id="desc-char-count">0</span>/500</div>
           </div>
           
           <div class="form-row">
             <div class="form-group">
-              <label>Location</label>
-              <input type="text" class="form-control" placeholder="Where was it lost/found?">
+              <label>Location *</label>
+              <input type="text" class="form-control" id="location" name="location" placeholder="Where was it lost/found?" required maxlength="100">
             </div>
             <div class="form-group">
-              <label>Date & Time</label>
-              <input type="datetime-local" class="form-control">
+              <label>Date *</label>
+              <input type="date" class="form-control" id="incident-date" name="incident_date" required max="<?php echo date('Y-m-d'); ?>">
             </div>
           </div>
           
           <div class="form-group">
-            <label>Contact Information</label>
-            <input type="email" class="form-control" placeholder="Email address">
-            <input type="tel" class="form-control" placeholder="Phone number" style="margin-top: 8px;">
+            <label>Contact Email *</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="contact@example.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Contact Phone *</label>
+            <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="+94 71 234 5678" required maxlength="15">
+          </div>
+          
+          <div class="form-group">
+            <label>Upload Image (Optional)</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            <small style="color: #6b7280; font-size: 12px;">Max 5MB, JPG/PNG/WebP</small>
           </div>
           
           <div class="form-actions">
             <button type="button" class="modal-btn btn-secondary" onclick="closeNewReportModal()">Cancel</button>
-            <button type="submit" class="modal-btn btn-primary">Create Report</button>
+            <button type="submit" class="modal-btn btn-primary" id="submit-new-report">Create Report</button>
           </div>
         </form>
       </div>
@@ -309,3 +356,223 @@
 </div>
 
 <script src="/js/app/admin/lost-and-found.js"></script>
+
+<style>
+/* Additional styles for dynamic content */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.status-active {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-resolved {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.item-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f3f4f6;
+  flex-shrink: 0;
+}
+
+.item-meta {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #2563eb;
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.item-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.item-description {
+  font-size: 14px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* New Report Modal Form Styles */
+.modal-form {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.new-report-form .form-group {
+  margin-bottom: 16px;
+}
+
+.new-report-form label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.new-report-form .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.new-report-form .form-control:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.new-report-form textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.new-report-form select.form-control {
+  cursor: pointer;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.form-error-global {
+  background: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-form {
+    max-width: 95%;
+  }
+}
+</style>

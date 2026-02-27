@@ -12,7 +12,7 @@
   </div>
 
   <!-- Report Lost Item Form -->
-  <form class="report-lost-form" id="report-lost-form" method="POST" action="/dashboard/lost-found/report" enctype="multipart/form-data">
+  <form class="report-lost-form" id="report-lost-form" method="POST" action="/dashboard/lost-and-found/report-lost-item" enctype="multipart/form-data">
     
     <!-- Basic Information Section -->
     <div class="form-section">
