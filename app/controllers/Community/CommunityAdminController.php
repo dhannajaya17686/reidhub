@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../../controllers/Auth/LoginController.php';
 require_once __DIR__ . '/../../models/CommunityAdmin.php';
+require_once __DIR__ . '/../../models/Blog.php';
+require_once __DIR__ . '/../../models/Club.php';
+require_once __DIR__ . '/../../models/Event.php';
+require_once __DIR__ . '/../../models/Report.php';
 
 class Community_CommunityAdminController extends Controller
 {
@@ -78,7 +82,7 @@ class Community_CommunityAdminController extends Controller
             $userId = (int)($input['user_id'] ?? 0);
             $roleType = trim((string)($input['role_type'] ?? ''));
 
-            $allowedRoles = ['club_admin', 'event_coordinator', 'moderator'];
+            $allowedRoles = ['club_admin', 'event_coordinator', 'community_admin'];
 
             if ($userId <= 0 || !in_array($roleType, $allowedRoles, true)) {
                 http_response_code(422);
@@ -269,6 +273,113 @@ class Community_CommunityAdminController extends Controller
             Logger::error('deleteEvent failed: ' . $e->getMessage());
             http_response_code(500);
             $this->jsonResponse(false, null, 'Failed to delete event');
+        }
+    }
+
+    public function showViewBlog()
+    {
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $blogId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if ($blogId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
+
+        try {
+            $blogModel = new Blog();
+            $blog = $blogModel->getBlogById($blogId);
+            if (!$blog) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
+
+            $reportModel = new Report();
+            $reports = $reportModel->getReportsByType('blog');
+            $hasReports = false;
+            foreach ($reports as $report) {
+                if ((int)($report['content_id'] ?? 0) === $blogId) {
+                    $hasReports = true;
+                    break;
+                }
+            }
+
+            $data = [
+                'admin' => $admin,
+                'blog' => $blog,
+                'hasReports' => $hasReports
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-blog', $data, 'View Blog - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewBlog failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
+    }
+
+    public function showViewClub()
+    {
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $clubId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if ($clubId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
+
+        try {
+            $clubModel = new Club();
+            $club = $clubModel->getClubById($clubId);
+            if (!$club) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
+
+            $data = [
+                'admin' => $admin,
+                'club' => $club
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-club', $data, 'View Club - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewClub failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
+    }
+
+    public function showViewEvent()
+    {
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $eventId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if ($eventId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
+
+        try {
+            $eventModel = new Event();
+            $event = $eventModel->getEventById($eventId);
+            if (!$event) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
+
+            $attendees = $eventModel->getEventAttendees($eventId);
+
+            $data = [
+                'admin' => $admin,
+                'event' => $event,
+                'attendees' => $attendees
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-event', $data, 'View Event - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewEvent failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
         }
     }
 }

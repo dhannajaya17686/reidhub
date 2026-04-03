@@ -319,6 +319,15 @@ $routes['/dashboard/lost-and-found/items'] = [
 $routes['/dashboard/community/admin'] = [
     'GET' => 'Community_CommunityAdminController@showCommunityAdminDashboard'
 ];
+$routes['/dashboard/community/admin/blogs/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewBlog'
+];
+$routes['/dashboard/community/admin/clubs/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewClub'
+];
+$routes['/dashboard/community/admin/events/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewEvent'
+];
 
 // ============ COMMUNITY ADMIN API ROUTES ============
 $routes['/api/admin/community/admins/list'] = [

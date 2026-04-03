@@ -3,6 +3,7 @@ class CommunityAdminPage {
     this.selectedUserId = null;
     this.userSearchResults = [];
     this.currentTab = 'community-admins';
+    this.userSearchDebounce = null;
     this.init();
   }
 
@@ -10,7 +11,25 @@ class CommunityAdminPage {
     this.bindTabNavigation();
     this.bindAdminActions();
     this.bindSearchInputs();
-    this.loadCurrentTabData();
+    if (!this.applyTabFromUrl()) {
+      this.loadCurrentTabData();
+    }
+  }
+
+  applyTabFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (!tab) {
+      return false;
+    }
+
+    const target = document.querySelector(`.tab-button[data-tab="${tab}"]`);
+    if (!target) {
+      return false;
+    }
+
+    target.click();
+    return true;
   }
 
   bindTabNavigation() {
@@ -22,6 +41,10 @@ class CommunityAdminPage {
         const tab = button.dataset.tab;
         this.currentTab = tab;
 
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tab);
+        window.history.replaceState({}, '', url.toString());
+
         tabButtons.forEach((btn) => {
           const isActive = btn === button;
           btn.classList.toggle('tab-button--active', isActive);
@@ -29,7 +52,9 @@ class CommunityAdminPage {
         });
 
         tabContents.forEach((content) => {
-          content.classList.toggle('active', content.id === `${tab}-content`);
+          const isTarget = content.id === `${tab}-content`;
+          content.classList.toggle('active', isTarget);
+          content.classList.toggle('is-hidden', !isTarget);
         });
 
         this.loadCurrentTabData();
@@ -45,7 +70,10 @@ class CommunityAdminPage {
 
     const userSearchInput = document.getElementById('admin-user-search');
     if (userSearchInput) {
-      userSearchInput.addEventListener('input', () => this.handleUserSearchInput());
+      userSearchInput.addEventListener('input', () => {
+        clearTimeout(this.userSearchDebounce);
+        this.userSearchDebounce = setTimeout(() => this.handleUserSearchInput(), 120);
+      });
       userSearchInput.addEventListener('change', () => this.resolveSelectedUser());
       userSearchInput.addEventListener('blur', () => this.resolveSelectedUser());
     }
@@ -76,6 +104,12 @@ class CommunityAdminPage {
       if (deleteEventBtn) {
         const id = parseInt(deleteEventBtn.getAttribute('data-delete-event-id'), 10);
         this.handleDeleteEvent(id);
+        return;
+      }
+
+      const userSearchWrap = document.querySelector('.admin-user-search-wrap');
+      if (userSearchWrap && !userSearchWrap.contains(event.target)) {
+        this.hideUserSearchResults();
       }
     });
   }
@@ -166,16 +200,16 @@ class CommunityAdminPage {
 
   async handleUserSearchInput() {
     const input = document.getElementById('admin-user-search');
-    const datalist = document.getElementById('admin-user-results');
-    if (!input || !datalist) {
+    const resultsBox = document.getElementById('admin-user-results');
+    if (!input || !resultsBox) {
       return;
     }
 
     const query = input.value.trim();
     this.selectedUserId = null;
 
-    if (query.length < 2) {
-      datalist.innerHTML = '';
+    if (query.length < 1) {
+      this.hideUserSearchResults();
       this.userSearchResults = [];
       return;
     }
@@ -183,15 +217,55 @@ class CommunityAdminPage {
     try {
       const users = await this.apiGet(`/api/admin/community/users/search?q=${encodeURIComponent(query)}`);
       this.userSearchResults = users;
-
-      datalist.innerHTML = users.map((user) => {
-        const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-        const label = `${fullName} (${user.email})${user.is_community_admin === 1 ? ' - already admin' : ''}`;
-        return `<option value="${this.escapeHtml(label)}"></option>`;
-      }).join('');
+      this.renderUserSearchResults(users);
     } catch (error) {
+      this.hideUserSearchResults();
       this.showToast(error.message, 'error');
     }
+  }
+
+  renderUserSearchResults(users) {
+    const resultsBox = document.getElementById('admin-user-results');
+    const input = document.getElementById('admin-user-search');
+    if (!resultsBox || !input) {
+      return;
+    }
+
+    if (!users.length) {
+      resultsBox.innerHTML = '<div class="admin-user-result-item" style="cursor: default; color: var(--text-secondary);">No users found</div>';
+      resultsBox.classList.remove('is-hidden');
+      return;
+    }
+
+    resultsBox.innerHTML = users.map((user, index) => {
+      const label = this.escapeHtml(this.formatUserSearchLabel(user));
+      return `<button type="button" class="admin-user-result-item" data-user-index="${index}">${label}</button>`;
+    }).join('');
+
+    resultsBox.classList.remove('is-hidden');
+
+    resultsBox.querySelectorAll('[data-user-index]').forEach((btn) => {
+      btn.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        const idx = parseInt(btn.getAttribute('data-user-index'), 10);
+        const user = users[idx];
+        if (!user) {
+          return;
+        }
+
+        input.value = this.formatUserSearchLabel(user);
+        this.selectedUserId = parseInt(user.id, 10);
+        this.hideUserSearchResults();
+      });
+    });
+  }
+
+  hideUserSearchResults() {
+    const resultsBox = document.getElementById('admin-user-results');
+    if (!resultsBox) {
+      return;
+    }
+    resultsBox.classList.add('is-hidden');
   }
 
   resolveSelectedUser() {
@@ -201,10 +275,17 @@ class CommunityAdminPage {
     }
 
     const value = input.value.trim();
+    const normalizedValue = value.toLowerCase();
     const match = this.userSearchResults.find((user) => {
-      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-      const label = `${fullName} (${user.email})${user.is_community_admin === 1 ? ' - already admin' : ''}`;
-      return label === value;
+      const label = this.formatUserSearchLabel(user).toLowerCase();
+      const email = (user.email || '').toLowerCase();
+      const regNo = (user.reg_no || '').toLowerCase();
+      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim().toLowerCase();
+
+      return label === normalizedValue
+        || email === normalizedValue
+        || regNo === normalizedValue
+        || fullName === normalizedValue;
     });
 
     this.selectedUserId = match ? parseInt(match.id, 10) : null;
@@ -213,12 +294,11 @@ class CommunityAdminPage {
   async handleAddAdmin() {
     this.resolveSelectedUser();
 
-    const roleSelect = document.getElementById('admin-role-select');
     const userInput = document.getElementById('admin-user-search');
 
-    const roleType = roleSelect ? roleSelect.value : '';
-    if (!this.selectedUserId || !roleType) {
-      this.showToast('Select a user and permission first', 'error');
+    const roleType = 'club_admin';
+    if (!this.selectedUserId) {
+      this.showToast('Select a user first', 'error');
       return;
     }
 
@@ -231,10 +311,8 @@ class CommunityAdminPage {
       if (userInput) {
         userInput.value = '';
       }
-      if (roleSelect) {
-        roleSelect.value = '';
-      }
       this.selectedUserId = null;
+      this.hideUserSearchResults();
 
       this.showToast('Community admin added', 'success');
       await this.loadCommunityAdmins();
@@ -333,13 +411,14 @@ class CommunityAdminPage {
       tbody.innerHTML = admins.map((admin) => {
         const addedAt = admin.created_at ? new Date(admin.created_at).toLocaleDateString() : '-';
         const fullName = `${admin.first_name || ''} ${admin.last_name || ''}`.trim();
+        const normalizedRole = (admin.role_type || '') === 'moderator' ? 'community_admin' : (admin.role_type || '');
 
         return `
           <tr class="table-row">
             <td class="blog-id">#${admin.id}</td>
             <td class="blog-name">${this.escapeHtml(fullName)}</td>
             <td>${this.escapeHtml(admin.email || '-')}</td>
-            <td><span class="status-badge active">${this.escapeHtml((admin.role_type || '').replaceAll('_', ' '))}</span></td>
+            <td><span class="status-badge active">${this.escapeHtml(normalizedRole.replaceAll('_', ' '))}</span></td>
             <td class="date-placed">${this.escapeHtml(addedAt)}</td>
             <td class="actions">
               <button class="action-btn remove-btn" data-remove-admin-id="${admin.id}" type="button">Remove</button>
@@ -379,6 +458,7 @@ class CommunityAdminPage {
             <td><span class="status-badge reported">${this.escapeHtml(blog.status || '-')}</span></td>
             <td>${blog.report_count || 0}</td>
             <td class="actions">
+              <a class="action-btn view-btn" href="/dashboard/community/admin/blogs/view?id=${blog.id}">View</a>
               <button class="action-btn remove-btn" data-delete-blog-id="${blog.id}" type="button">Delete</button>
             </td>
           </tr>
@@ -414,6 +494,7 @@ class CommunityAdminPage {
             <td>${club.member_count || 0}</td>
             <td><span class="status-badge active">${this.escapeHtml(club.status || '-')}</span></td>
             <td class="actions">
+              <a class="action-btn view-btn" href="/dashboard/community/admin/clubs/view?id=${club.id}">View</a>
               <button class="action-btn remove-btn" data-delete-club-id="${club.id}" type="button">Delete</button>
             </td>
           </tr>
@@ -452,6 +533,7 @@ class CommunityAdminPage {
             <td class="event-date">${this.escapeHtml(date)}</td>
             <td><span class="status-badge upcoming">${this.escapeHtml(eventItem.status || '-')}</span></td>
             <td class="actions">
+              <a class="action-btn view-btn" href="/dashboard/community/admin/events/view?id=${eventItem.id}">View</a>
               <button class="action-btn remove-btn" data-delete-event-id="${eventItem.id}" type="button">Delete</button>
             </td>
           </tr>
@@ -474,6 +556,13 @@ class CommunityAdminPage {
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
+  }
+
+  formatUserSearchLabel(user) {
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+    const regNo = user.reg_no ? ` | ${user.reg_no}` : '';
+    const adminSuffix = user.is_community_admin === 1 ? ' - already admin' : '';
+    return `${fullName} (${user.email})${regNo}${adminSuffix}`;
   }
 
   showToast(message, type = 'info') {
