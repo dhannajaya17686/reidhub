@@ -10,9 +10,6 @@
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="breadcrumb__list">
       <li class="breadcrumb__item">
-        <a href="/dashboard/community" class="breadcrumb__link">Community & Social</a>
-      </li>
-      <li class="breadcrumb__item">
         <a href="/dashboard/community/blogs" class="breadcrumb__link">Blogs</a>
       </li>
       <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">

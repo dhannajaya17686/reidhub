@@ -5,12 +5,6 @@
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol class="breadcrumb__list">
     <li class="breadcrumb__item">
-      <a href="/dashboard" class="breadcrumb__link">Dashboard</a>
-    </li>
-    <li class="breadcrumb__item">
-      <a href="/dashboard/community" class="breadcrumb__link">Community</a>
-    </li>
-    <li class="breadcrumb__item">
       <a href="/dashboard/community/events" class="breadcrumb__link">Events</a>
     </li>
     <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
