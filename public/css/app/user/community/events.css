@@ -584,7 +584,7 @@
   padding: 0.625rem 1.25rem;
   border-radius: 8px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
@@ -594,19 +594,25 @@
 .btn--primary {
   background-color: #0466C8;
   color: white;
+  border: 2px solid #0466C8;
 }
 
 .btn--primary:hover {
-  background-color: #0353a4;
+  background-color: white;
+  color: #0466C8;
+  border: 2px solid #0466C8;
 }
 
 .btn--secondary {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #0466C8;
+  color: white;
+  border: 2px solid #0466C8;
 }
 
 .btn--secondary:hover {
-  background-color: #e5e7eb;
+  background-color: white;
+  color: #0466C8;
+  border: 2px solid #0466C8;
 }
 
 .btn--small {
@@ -615,8 +621,8 @@
 }
 
 .btn--large {
-  padding: 0.875rem 1.75rem;
-  font-size: 1rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
 }
 
 .btn--icon {

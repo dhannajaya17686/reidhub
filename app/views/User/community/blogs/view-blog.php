@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="/css/app/user/community/community.css">
 <link rel="stylesheet" href="/css/app/user/community/blogs.css">
 <link rel="stylesheet" href="/css/app/user/community/blog-view.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
 
 <!-- Main Content Area -->
 <main class="blog-view-main" role="main" aria-label="Blog Post">
@@ -27,9 +28,16 @@
     <header class="blog-header">
       <h1 class="blog-title"><?= htmlspecialchars($data['blog']['title']) ?></h1>
       
+      <?php if ($data['hasReports'] ?? false): ?>
+      <div class="reported-tag" style="background: #FEE2E2; border: 1px solid #FCA5A5; color: #DC2626; padding: 8px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 0.875rem; font-weight: 500;">
+        <span class="material-symbols-outlined" style="font-size: 18px;">flag</span>
+        <span>This post has been reported</span>
+      </div>
+      <?php endif; ?>
+      
       <!-- Blog Image -->
       <div class="blog-image">
-        <img src="<?= htmlspecialchars($data['blog']['image_path'] ?? '/public/images/placeholder-blog.jpg') ?>" 
+        <img src="<?= htmlspecialchars($data['blog']['image_path'] ?? '/assets/placeholders/product.jpeg') ?>" 
              alt="<?= htmlspecialchars($data['blog']['title']) ?>">
       </div>
 
@@ -40,125 +48,25 @@
         <span class="blog-published">Published on <?= date('F j, Y', strtotime($data['blog']['created_at'])) ?></span>
         <span class="blog-separator">•</span>
         <span class="blog-views"><?= number_format($data['blog']['views'] ?? 0) ?> views</span>
+        <?php if (!$data['isOwner']): ?>
+        <span class="blog-separator">•</span>
+        <button class="blog-report-icon" id="report-blog-btn" data-report-type="blog" data-id="<?= $data['blog']['id'] ?>" title="Report" aria-label="Report blog" style="background: none; border: none; cursor: pointer; padding: 0; color: var(--text-muted); transition: color 0.2s;">
+          <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">flag</span>
+        </button>
+        <?php endif; ?>
       </div>
     </header>
 
     <!-- Blog Content -->
     <article class="blog-content">
-      <?= nl2br(htmlspecialchars($data['blog']['description'])) ?>
+      <?= nl2br(htmlspecialchars($data['blog']['content'] ?? '')) ?>
     </article>
-
-    <!-- Blog Interactions -->
-    <div class="blog-interactions">
-      <button class="interaction-btn interaction-btn--like" data-action="like" data-blog-id="<?= $data['blog']['id'] ?>">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M14 2a4 4 0 00-3.464 6H6a4 4 0 00-4 4v0a4 4 0 004 4h8a4 4 0 004-4v-6a4 4 0 00-4-4z" stroke="currentColor" stroke-width="2"/>
-          <path d="M6 8v8" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        <span class="interaction-count"><?= $data['interactions']['likes'] ?></span>
-      </button>
-      
-      <button class="interaction-btn interaction-btn--dislike" data-action="dislike" data-blog-id="<?= $data['blog']['id'] ?>">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M14 18a4 4 0 003.464-6H6a4 4 0 01-4-4v0a4 4 0 014-4h8a4 4 0 014 4v6a4 4 0 01-4 4z" stroke="currentColor" stroke-width="2"/>
-          <path d="M6 12V4" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        <span class="interaction-count"><?= $data['interactions']['dislikes'] ?></span>
-      </button>
-    </div>
-
-    <!-- Comments Section -->
-    <section class="comments-section">
-      <h2 class="comments-title">Comments (<?= count($data['comments']) ?>)</h2>
-
-      <?php if (!empty($data['comments'])): ?>
-        <?php 
-        // Helper function to format time
-        function timeAgo($datetime) {
-          $time = strtotime($datetime);
-          $diff = time() - $time;
-          
-          if ($diff < 60) return 'Just now';
-          if ($diff < 3600) return floor($diff / 60) . ' minutes ago';
-          if ($diff < 86400) return floor($diff / 3600) . ' hours ago';
-          if ($diff < 604800) return floor($diff / 86400) . ' days ago';
-          return date('M j, Y', $time);
-        }
-        ?>
-        
-        <?php foreach ($data['comments'] as $comment): ?>
-          <?php if (!$comment['parent_id']): ?>
-          <article class="comment" data-comment-id="<?= $comment['id'] ?>">
-            <div class="comment-avatar">
-              <img src="<?= htmlspecialchars($comment['profile_picture'] ?? '/public/images/default-avatar.png') ?>" 
-                   alt="<?= htmlspecialchars($comment['first_name'] . ' ' . $comment['last_name']) ?>">
-            </div>
-            <div class="comment-content">
-              <div class="comment-header">
-                <span class="comment-author"><?= htmlspecialchars($comment['first_name'] . ' ' . $comment['last_name']) ?></span>
-                <span class="comment-time"><?= timeAgo($comment['created_at']) ?></span>
-              </div>
-              <p class="comment-text"><?= nl2br(htmlspecialchars($comment['content'])) ?></p>
-              <div class="comment-actions">
-                <button class="comment-action-btn" data-action="like" data-comment-id="<?= $comment['id'] ?>">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                    <path d="M14 2a4 4 0 00-3.464 6H6a4 4 0 00-4 4v0a4 4 0 004 4h8a4 4 0 004-4v-6a4 4 0 00-4-4z" stroke="currentColor" stroke-width="2"/>
-                </button>
-                <button class="comment-action-btn" data-action="dislike" data-comment-id="<?= $comment['id'] ?>">
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                    <path d="M14 18a4 4 0 003.464-6H6a4 4 0 01-4-4v0a4 4 0 014-4h8a4 4 0 014 4v6a4 4 0 01-4 4z" stroke="currentColor" stroke-width="2"/>
-                </button>
-              </div>
-            </div>
-          </article>
-
-          <!-- Nested Comments -->
-          <?php foreach ($data['comments'] as $reply): ?>
-            <?php if ($reply['parent_id'] == $comment['id']): ?>
-            <article class="comment comment--nested" data-comment-id="<?= $reply['id'] ?>">
-              <div class="comment-avatar">
-                <img src="<?= htmlspecialchars($reply['profile_picture'] ?? '/public/images/default-avatar.png') ?>" 
-                     alt="<?= htmlspecialchars($reply['first_name'] . ' ' . $reply['last_name']) ?>">
-              </div>
-              <div class="comment-content">
-                <div class="comment-header">
-                  <span class="comment-author"><?= htmlspecialchars($reply['first_name'] . ' ' . $reply['last_name']) ?></span>
-                  <span class="comment-time"><?= timeAgo($reply['created_at']) ?></span>
-                </div>
-                <p class="comment-text"><?= nl2br(htmlspecialchars($reply['content'])) ?></p>
-                <div class="comment-actions">
-                  <button class="comment-action-btn" data-action="like" data-comment-id="<?= $reply['id'] ?>">
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                      <path d="M14 2a4 4 0 00-3.464 6H6a4 4 0 00-4 4v0a4 4 0 004 4h8a4 4 0 004-4v-6a4 4 0 00-4-4z" stroke="currentColor" stroke-width="2"/>
-                  </button>
-                  <button class="comment-action-btn" data-action="dislike" data-comment-id="<?= $reply['id'] ?>">
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-                      <path d="M14 18a4 4 0 003.464-6H6a4 4 0 01-4-4v0a4 4 0 014-4h8a4 4 0 014 4v6a4 4 0 01-4 4z" stroke="currentColor" stroke-width="2"/>
-                  </button>
-                </div>
-              </div>
-            </article>
-            <?php endif; ?>
-          <?php endforeach; ?>
-
-          <?php endif; ?>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p class="no-comments">No comments yet. Be the first to comment!</p>
-      <?php endif; ?>
-
-    </section>
-
+    
     <!-- Blog Actions (for owner) -->
     <?php if ($data['isOwner']): ?>
     <div class="blog-actions" id="blog-actions">
       <button class="btn btn--primary" onclick="window.location.href='/dashboard/community/blogs/edit'">Edit Blog</button>
       <button class="btn btn--danger" id="delete-blog-btn" data-blog-id="<?= $data['blog']['id'] ?>">Delete Blog</button>
-    </div>
-    <?php else: ?>
-    <!-- Report Button (for non-owners) -->
-    <div class="blog-report" id="blog-report">
-      <button class="btn btn--outline" id="report-blog-btn" data-blog-id="<?= $data['blog']['id'] ?>">Report Post</button>
     </div>
     <?php endif; ?>
 
@@ -170,9 +78,7 @@
       <div class="modal-header">
         <h2 id="report-title" class="modal-title">Report Blog Post</h2>
         <button class="modal-close" aria-label="Close modal">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
       
@@ -195,9 +101,7 @@
       <div class="modal-header">
         <h2 id="delete-title" class="modal-title">Delete Blog Post</h2>
         <button class="modal-close" aria-label="Close modal">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
         </button>
       </div>
       
@@ -214,6 +118,92 @@
 
 </main>
 
+<script>
+// Inline report handler
+document.addEventListener('DOMContentLoaded', function() {
+  const reportBtn = document.getElementById('report-blog-btn');
+  const reportForm = document.getElementById('report-form');
+  let currentReportData = { type: null, id: null };
+  
+  if (reportBtn) {
+    reportBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      currentReportData.type = 'blog';
+      currentReportData.id = reportBtn.getAttribute('data-id');
+      const modal = document.getElementById('report-modal');
+      if (modal) modal.style.display = 'flex';
+    });
+  }
+  
+  // Handle form submission
+  if (reportForm) {
+    reportForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const description = document.getElementById('report-description').value;
+      if (!description) {
+        alert('Please enter a description');
+        return;
+      }
+      
+      const payload = { 
+        description: description, 
+        id: currentReportData.id 
+      };
+      
+      console.log('Submitting report:', payload);
+      
+      try {
+        const response = await fetch('/api/community/blogs/report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const textResponse = await response.text();
+        console.log('Response:', textResponse);
+        
+        const data = JSON.parse(textResponse);
+        
+        if (data.success) {
+          alert('Report submitted successfully!');
+          reportForm.reset();
+          document.getElementById('report-modal').style.display = 'none';
+          
+          // Add a reported tag to the blog
+          const blogHeader = document.querySelector('.blog-header');
+          if (blogHeader && !document.querySelector('.reported-tag')) {
+            const tag = document.createElement('div');
+            tag.className = 'reported-tag';
+            tag.innerHTML = '<span class="material-symbols-outlined">flag</span> Reported';
+            tag.style.cssText = 'background: #FEE2E2; border: 1px solid #FCA5A5; color: #DC2626; padding: 8px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 0.875rem; font-weight: 500;';
+            blogHeader.appendChild(tag);
+          }
+        } else {
+          alert('Failed to submit report: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Report error:', error);
+        alert('Error submitting report: ' + error.message);
+      }
+    });
+  }
+  
+  // Close modals
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const overlay = this.closest('.modal-overlay');
+      if (overlay) overlay.style.display = 'none';
+    });
+  });
+  
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.style.display = 'none';
+    });
+  });
+});
+</script>
+
 <script type="module" src="/js/app/community/blog-view.js"></script>
 <script type="module" src="/js/app/community/community.js"></script>
-<script type="module" src="/js/app/community/blog-view.js"></script>

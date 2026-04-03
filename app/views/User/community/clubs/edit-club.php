@@ -11,87 +11,52 @@
       <a href="/dashboard/community" class="breadcrumb__link">Community</a>
     </li>
     <li class="breadcrumb__item">
-      <a href="/dashboard/community/blogs" class="breadcrumb__link">Blogs</a>
+      <a href="/dashboard/community/clubs" class="breadcrumb__link">Clubs</a>
+    </li>
+    <li class="breadcrumb__item">
+      <a href="/dashboard/community/clubs/view?id=<?= $data['club']['id'] ?>" class="breadcrumb__link"><?= htmlspecialchars($data['club']['name']) ?></a>
     </li>
     <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-      Create Blog
+      Edit Club
     </li>
   </ol>
 </nav>
 
-<main class="blog-form-main" role="main" aria-label="Create Blog">
+<main class="blog-form-main" role="main" aria-label="Edit Club">
+  
   <div class="page-header">
-    <h1 class="page-title">Upload a New Blog</h1>
+    <h1 class="page-title">Edit Club</h1>
   </div>
 
-  <?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert--error">
-      <?= htmlspecialchars($_SESSION['error']) ?>
-      <?php unset($_SESSION['error']); ?>
-    </div>
-  <?php endif; ?>
-
-  <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert--success">
-      <?= htmlspecialchars($_SESSION['success']) ?>
-      <?php unset($_SESSION['success']); ?>
-    </div>
-  <?php endif; ?>
-
-  <form class="blog-form" id="create-blog-form" method="POST" action="/dashboard/community/blogs/create" enctype="multipart/form-data">
+  <form class="blog-form" id="edit-club-form" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="club_id" value="<?= $data['club']['id'] ?>">
     
     <div class="form-container">
-      <!-- Left Column -->
       <div class="form-column form-column--left">
         
-        <!-- Blog Name -->
         <div class="form-group">
-          <label for="blog-name" class="form-label">Blog Name</label>
-          <input 
-            type="text" 
-            id="blog-name" 
-            name="blog_name" 
-            class="form-input" 
-            placeholder="Enter blog title"
-            required
-            maxlength="200"
-          >
-          <div class="form-error" id="blog-name-error"></div>
+          <label for="club-name" class="form-label">Club Name</label>
+          <input type="text" id="club-name" name="club_name" class="form-input" placeholder="Enter club name" value="<?= htmlspecialchars($data['club']['name']) ?>" required maxlength="200">
+          <div class="form-error" id="club-name-error"></div>
         </div>
 
-        <!-- Category -->
         <div class="form-group">
           <label for="category" class="form-label">Category</label>
           <select id="category" name="category" class="form-select" required>
             <option value="">Select Category</option>
             <?php if (isset($data['categories'])): ?>
               <?php foreach ($data['categories'] as $key => $label): ?>
-                <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
+                <option value="<?= htmlspecialchars($key) ?>" <?= $data['club']['category'] === $key ? 'selected' : '' ?> ><?= htmlspecialchars($label) ?></option>
               <?php endforeach; ?>
             <?php endif; ?>
           </select>
           <div class="form-error" id="category-error"></div>
         </div>
 
-        <!-- Tags -->
         <div class="form-group">
-          <label for="tags" class="form-label">Tags</label>
-          <input 
-            type="text" 
-            id="tags" 
-            name="tags" 
-            class="form-input" 
-            placeholder="Enter keywords"
-          >
-          <div class="form-hint">Separate tags with commas</div>
-          <div class="form-error" id="tags-error"></div>
-        </div>
-
-        <!-- Blog Image -->
-        <div class="form-group">
-          <label class="form-label">Blog Image <span style="color: var(--text-muted); font-size: 0.875rem;">(Optional)</span></label>
+          <label class="form-label">Club Logo</label>
           <div class="file-upload-area" id="file-upload-area">
-            <input type="file" id="blog-image" name="blog_image" accept="image/png,image/jpeg,image/jpg" class="file-input">
+            <input type="file" id="club-image" name="club_image" accept="image/png,image/jpeg,image/jpg" class="file-input">
             <div class="file-upload-content">
               <button type="button" class="btn btn--primary" id="upload-trigger">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -104,8 +69,8 @@
               <p class="upload-hint">Supported formats: png, jpeg, jpg</p>
             </div>
           </div>
-          <div class="file-preview" id="file-preview" style="display: none;">
-            <img id="preview-image" src="" alt="Preview" class="preview-image">
+          <div class="file-preview" id="file-preview" <?= $data['club']['image_url'] ? '' : 'style="display: none;"' ?>>
+            <img id="preview-image" src="<?= htmlspecialchars($data['club']['image_url'] ?? '') ?>" alt="Preview" class="preview-image">
             <button type="button" class="preview-remove" id="preview-remove">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <line x1="5" y1="5" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -113,37 +78,30 @@
               </svg>
             </button>
           </div>
-          <div class="form-error" id="blog-image-error"></div>
+          <div class="form-error" id="club-image-error"></div>
         </div>
 
       </div>
 
-      <!-- Right Column -->
       <div class="form-column form-column--right">
-        
-        <!-- Description -->
         <div class="form-group form-group--full">
-          <label for="description" class="form-label">Description</label>
-          <textarea 
-            id="description" 
-            name="description" 
-            class="form-textarea" 
-            rows="20"
-            placeholder="Write your blog content here..."
-            required
-          ></textarea>
+          <label for="description" class="form-label">Club Description</label>
+          <textarea id="description" name="description" class="form-textarea" rows="20" placeholder="Describe your club..." required><?= htmlspecialchars($data['club']['description'] ?? '') ?></textarea>
           <div class="form-error" id="description-error"></div>
         </div>
-
       </div>
     </div>
 
-    <!-- Form Actions -->
     <div class="form-actions">
-      <button type="submit" class="btn btn--primary btn--large">Submit</button>
+      <button type="button" class="btn btn--secondary btn--large" onclick="window.location.href='/dashboard/community/clubs/view?id=<?= $data['club']['id'] ?>'">Cancel</button>
+      <button type="submit" class="btn btn--primary btn--large">Save Changes</button>
     </div>
 
   </form>
+
 </main>
 
-<script type="module" src="/js/app/community/blog-form.js"></script>
+<script>
+  window.CLUB_API_BASE = '/api/community/clubs';
+</script>
+<script type="module" src="/js/app/community/club-form.js"></script>
