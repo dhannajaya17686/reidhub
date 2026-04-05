@@ -71,16 +71,6 @@ $userItems = [
             ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items']
         ]
     ],
-    [ 
-        'label' => 'Help & Feedback', 
-        'href' => '/dashboard/help', 
-        'icon' => 'help',
-        'children' => [
-            ['label' => 'Ask Your Question', 'href' => '/dashboard/help'],
-            ['label' => 'My Questions', 'href' => '/dashboard/help/my-questions'],
-            ['label' => 'FAQs', 'href' => '/dashboard/help/faq']
-        ]
-    ],
 ];
 
 // Seller sidebar items
@@ -216,15 +206,6 @@ $adminItems = [
         'label' => 'Lost & Found', 
         'href' => '/dashboard/lost-and-found/admin', 
         'icon' => 'lost',
-    ],
-    [ 
-        'label' => 'Help & Feedback', 
-        'href' => '/dashboard/admin/help', 
-        'icon' => 'help',
-        'children' => [
-            ['label' => 'Questions', 'href' => '/dashboard/admin/help'],
-            ['label' => 'FAQ Management', 'href' => '/dashboard/admin/faq'],
-        ]
     ],
     /*[ 
         'label' => 'User Management', 
