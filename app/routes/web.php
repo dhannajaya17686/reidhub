@@ -35,6 +35,20 @@ $routes['/dashboard/admin'] = [
     'GET' => 'Dashboard_AdminDashboardController@showAdminDashboard'
 ];
 
+//-----------------------------------PROFILE ROUTES-----------------------------------//
+$routes['/dashboard/profile'] = [
+    'GET' => 'Dashboard_ProfileController@showProfile'
+];
+$routes['/dashboard/profile/edit'] = [
+    'GET' => 'Dashboard_ProfileController@showEditProfile',
+    'POST' => 'Dashboard_ProfileController@updateProfile'
+];
+$routes['/dashboard/profile/change-password'] = [
+    'GET' => 'Dashboard_ProfileController@showChangePassword',
+    'POST' => 'Dashboard_ProfileController@updatePassword'
+];
+//-----------------------------------PROFILE ROUTES END-----------------------------------//
+
 // Debug route (temporary)
 $routes['/debug-session'] = [
     'GET' => 'Auth_LoginController@showDebugSession'

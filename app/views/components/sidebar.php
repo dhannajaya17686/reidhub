@@ -32,6 +32,11 @@ $userItems = [
         'icon' => 'dashboard' 
     ],
     [ 
+        'label' => 'My Profile', 
+        'href' => '/dashboard/profile', 
+        'icon' => 'profile' 
+    ],
+    [ 
         'label' => 'Edu Hub', 
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
@@ -91,6 +96,11 @@ $sellerItems = [
         'icon' => 'dashboard' 
     ],
     [ 
+        'label' => 'My Profile', 
+        'href' => '/dashboard/profile', 
+        'icon' => 'profile' 
+    ],
+    [ 
         'label' => 'Edu Hub', 
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
@@ -142,6 +152,11 @@ $clubAdminItems = [
         'icon' => 'dashboard' 
     ],
     [ 
+        'label' => 'My Profile', 
+        'href' => '/dashboard/profile', 
+        'icon' => 'profile' 
+    ],
+    [ 
         'label' => 'Edu Hub', 
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
@@ -191,6 +206,11 @@ $adminItems = [
         'label' => 'Dashboard', 
         'href' => '/dashboard/admin', 
         'icon' => 'dashboard' 
+    ],
+    [ 
+        'label' => 'My Profile', 
+        'href' => '/dashboard/profile', 
+        'icon' => 'profile' 
     ],
     [ 
         'label' => 'Forum', 
@@ -291,6 +311,8 @@ function svg_icon(string $name): string {
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
         case 'club-user':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 13c2.67 0 8 1.34 8 4v2H-1v-2c0-2.66 5.33-4 8-4Zm9-0.95A8.2 8.2 0 0 1 20 16v2h-4v-2c0-.7-.1-1.3-.3-1.95Z"/></svg>';
+        case 'profile':
+            return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 2c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4z"/></svg>';
         case 'chevron':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>';
         default:

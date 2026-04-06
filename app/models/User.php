@@ -162,11 +162,92 @@ class User extends Model
     public function findById(int $id): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT id, first_name, last_name, email, reg_no, created_at, updated_at
+            SELECT id, first_name, last_name, email, reg_no, profile_picture, created_at, updated_at
             FROM {$this->table}
             WHERE id = ? LIMIT 1
         ");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+    }
+
+    /**
+     * Update user profile information.
+     * @param int $id User ID.
+     * @param array $data Data to update: first_name, last_name, email, profile_picture.
+     * @return bool True on success, false on failure.
+     */
+    public function updateProfile(int $id, array $data): bool
+    {
+        try {
+            $updates = [];
+            $values = [];
+
+            // Build dynamic update statement
+            if (isset($data['first_name'])) {
+                $updates[] = 'first_name = ?';
+                $values[] = $data['first_name'];
+            }
+            if (isset($data['last_name'])) {
+                $updates[] = 'last_name = ?';
+                $values[] = $data['last_name'];
+            }
+            if (isset($data['email'])) {
+                $updates[] = 'email = ?';
+                $values[] = $data['email'];
+            }
+            if (isset($data['profile_picture'])) {
+                $updates[] = 'profile_picture = ?';
+                $values[] = $data['profile_picture'];
+            }
+
+            if (empty($updates)) {
+                return false;
+            }
+
+            $updates[] = 'updated_at = NOW()';
+            $values[] = $id;
+
+            $sql = "UPDATE {$this->table} SET " . implode(', ', $updates) . " WHERE id = ?";
+            
+            $stmt = $this->db->prepare($sql);
+            $success = $stmt->execute($values);
+
+            if ($success) {
+                Logger::info("User profile updated successfully for ID: $id");
+            } else {
+                Logger::error("Failed to update user profile for ID: $id - " . implode(' | ', $stmt->errorInfo()));
+            }
+
+            return $success;
+        } catch (Throwable $e) {
+            Logger::error("DB error updating user profile: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update user password.
+     * @param int $id User ID.
+     * @param string $newPassword New password (plain text, will be hashed).
+     * @return bool True on success, false on failure.
+     */
+    public function updatePassword(int $id, string $newPassword): bool
+    {
+        try {
+            $hashed = password_hash($newPassword, PASSWORD_BCRYPT);
+            $stmt = $this->db->prepare("UPDATE {$this->table} SET password = ?, updated_at = NOW() WHERE id = ?");
+            $success = $stmt->execute([$hashed, $id]);
+
+            if ($success) {
+                Logger::info("Password updated successfully for user ID: $id");
+            } else {
+                Logger::error("Failed to update password for user ID: $id - " . implode(' | ', $stmt->errorInfo()));
+            }
+
+            return $success;
+        } catch (Throwable $e) {
+            Logger::error("DB error updating password: " . $e->getMessage());
+            return false;
+        }
     }
 }
