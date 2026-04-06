@@ -1,4 +1,4 @@
--- Quick Setup Script for Community Feature
+-- Seed Data for Community Feature
 -- Run this after logging in as a user
 
 -- 1. Make a user a community admin (replace USER_ID with your actual user ID)

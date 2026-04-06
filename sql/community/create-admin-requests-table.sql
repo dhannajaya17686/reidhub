@@ -18,8 +18,3 @@ CREATE TABLE IF NOT EXISTS admin_requests (
   INDEX idx_user (user_id),
   INDEX idx_request_type (request_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Update community_admins to track if approved via request
-ALTER TABLE community_admins 
-ADD COLUMN IF NOT EXISTS approval_status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
-ADD COLUMN IF NOT EXISTS request_id BIGINT UNSIGNED;
