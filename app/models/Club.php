@@ -6,7 +6,7 @@ class Club extends Model
     /**
      * Get all active clubs
      */
-    public function getAllClubs(string $category = null): array
+    public function getAllClubs(?string $category = null): array
     {
         $sql = "SELECT 
                     c.*,

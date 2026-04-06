@@ -11,20 +11,6 @@ if (!empty($data['events'])) {
 }
 ?>
 
-<!-- Breadcrumb Navigation -->
-<nav class="breadcrumb" aria-label="Breadcrumb">
-  <ol class="breadcrumb__list">
-    <li class="breadcrumb__item">
-      <a href="/dashboard" class="breadcrumb__link">Dashboard</a>
-    </li>
-    <li class="breadcrumb__item">
-      <a href="/dashboard/community" class="breadcrumb__link">Community</a>
-    </li>
-    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-      Events
-    </li>
-  </ol>
-</nav>
 
 <main class="blogs-main" role="main" aria-label="Events Dashboard">
   
@@ -47,7 +33,8 @@ if (!empty($data['events'])) {
   <nav class="tab-navigation" aria-label="Event filters">
     <div class="tab-list" role="tablist">
       <button class="tab-button tab-button--active" data-tab="all">All Events</button>
-      <button class="tab-button" data-tab="registered">My Events</button>
+      <button class="tab-button" data-tab="registered">Attending Events</button>
+      <button class="tab-button" data-tab="my-events">My Events</button>
       <button class="tab-button" data-tab="calendar" style="margin-left: auto;">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="display: inline; margin-right: 4px;">
           <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
@@ -136,7 +123,7 @@ if (!empty($data['events'])) {
         <div class="empty-icon">📋</div>
         <h3>You haven't registered for any events yet</h3>
         <p>Browse events and join ones that interest you!</p>
-        <button class="btn btn--primary" onclick="document.querySelector('[data-tab=\"all\"]').click()">Browse Events</button>
+        <button class="btn btn--primary" onclick="document.querySelector('[data-tab=&quot;all&quot;]').click()">Browse Events</button>
       </div>
       <?php else: ?>
       <div class="blogs-grid">

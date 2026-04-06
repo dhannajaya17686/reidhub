@@ -1,21 +1,6 @@
 <link rel="stylesheet" href="/css/globals.css">
 <link rel="stylesheet" href="/css/app/user/community/blogs.css">
 
-<!-- Breadcrumb Navigation -->
-<nav class="breadcrumb" aria-label="Breadcrumb">
-  <ol class="breadcrumb__list">
-    <li class="breadcrumb__item">
-      <a href="/dashboard" class="breadcrumb__link">Dashboard</a>
-    </li>
-    <li class="breadcrumb__item">
-      <a href="/dashboard/community" class="breadcrumb__link">Community</a>
-    </li>
-    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-      Clubs
-    </li>
-  </ol>
-</nav>
-
 <main class="blogs-main" role="main" aria-label="Clubs Dashboard">
   
   <div class="page-header">

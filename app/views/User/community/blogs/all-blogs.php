@@ -2,21 +2,6 @@
 <link rel="stylesheet" href="/css/app/user/community/blogs.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
 
-<!-- Breadcrumb Navigation -->
-<nav class="breadcrumb" aria-label="Breadcrumb">
-  <ol class="breadcrumb__list">
-    <li class="breadcrumb__item">
-      <a href="/dashboard" class="breadcrumb__link">Dashboard</a>
-    </li>
-    <li class="breadcrumb__item">
-      <a href="/dashboard/community" class="breadcrumb__link">Community</a>
-    </li>
-    <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
-      Blogs
-    </li>
-  </ol>
-</nav>
-
 <!-- Main Blogs Content Area -->
 <main class="blogs-main" role="main" aria-label="Blogs Dashboard">
   
@@ -27,7 +12,7 @@
       Discover stories, thinking, and expertise from writers on campus
     </p>
     <a href="/dashboard/community/blogs/create" class="btn btn--primary">
-      <span class="material-symbols-outlined" aria-hidden="true">add</span>
+      <span class="material-symbols-outlined" aria-hidden="true"></span>
       Write a Blog
     </a>
   </div>
@@ -82,10 +67,6 @@
     <section class="blogs-section">
       <div class="section-header">
         <h2 class="section-title">My Blogs</h2>
-        <a href="/dashboard/community/blogs/create" class="btn btn--primary">
-          <span class="material-symbols-outlined" aria-hidden="true">add</span>
-          Write New Blog
-        </a>
       </div>
 
       <div class="blogs-grid" id="my-blogs-grid">

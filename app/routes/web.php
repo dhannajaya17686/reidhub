@@ -319,6 +319,50 @@ $routes['/dashboard/lost-and-found/items'] = [
 $routes['/dashboard/community/admin'] = [
     'GET' => 'Community_CommunityAdminController@showCommunityAdminDashboard'
 ];
+$routes['/dashboard/community/admin/blogs/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewBlog'
+];
+$routes['/dashboard/community/admin/clubs/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewClub'
+];
+$routes['/dashboard/community/admin/events/view'] = [
+    'GET' => 'Community_CommunityAdminController@showViewEvent'
+];
+
+// ============ COMMUNITY ADMIN API ROUTES ============
+$routes['/api/admin/community/admins/list'] = [
+    'GET' => 'Community_CommunityAdminController@getCommunityAdmins'
+];
+$routes['/api/admin/community/admins/add'] = [
+    'POST' => 'Community_CommunityAdminController@addCommunityAdmin'
+];
+$routes['/api/admin/community/admins/remove'] = [
+    'POST' => 'Community_CommunityAdminController@removeCommunityAdmin'
+];
+$routes['/api/admin/community/users/search'] = [
+    'GET' => 'Community_CommunityAdminController@searchUsers'
+];
+
+$routes['/api/admin/community/blogs/reported'] = [
+    'GET' => 'Community_CommunityAdminController@getReportedBlogs'
+];
+$routes['/api/admin/community/blogs/delete'] = [
+    'POST' => 'Community_CommunityAdminController@deleteBlog'
+];
+
+$routes['/api/admin/community/clubs/list'] = [
+    'GET' => 'Community_CommunityAdminController@getClubs'
+];
+$routes['/api/admin/community/clubs/delete'] = [
+    'POST' => 'Community_CommunityAdminController@deleteClub'
+];
+
+$routes['/api/admin/community/events/list'] = [
+    'GET' => 'Community_CommunityAdminController@getEvents'
+];
+$routes['/api/admin/community/events/delete'] = [
+    'POST' => 'Community_CommunityAdminController@deleteEvent'
+];
 $routes['/dashboard/lost-and-found/admin'] = [
     'GET' => 'Forum_ForumAdminController@manageLostAndFound'
 ];
