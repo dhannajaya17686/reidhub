@@ -2,6 +2,22 @@
 
 class Forum_ForumUserController extends Controller
 {
+    private function ensureUserCanPostToForum(): bool
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        $forumModel = new ForumModel();
+        if ($forumModel->isUserSuspended((int)$_SESSION['user_id'])) {
+            header('Location: /dashboard/forum/all?error=suspended');
+            exit;
+        }
+
+        return true;
+    }
+
     // ==================================================================
     // 1. PAGE DISPLAY METHODS (GET Requests)
     // ==================================================================
@@ -102,11 +118,7 @@ class Forum_ForumUserController extends Controller
     // Handle "Post Answer" Form Submission
     public function createAnswer()
     {
-        // Security: Check if user is logged in
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->ensureUserCanPostToForum();
 
         // Only handle POST requests
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -159,11 +171,7 @@ class Forum_ForumUserController extends Controller
     // Handle "Post Question" Submission
     public function createQuestion()
     {
-        // 1. Security Check
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->ensureUserCanPostToForum();
 
         // 2. Save Data
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -388,7 +396,7 @@ class Forum_ForumUserController extends Controller
     // ==================================================================
 
     public function createComment() {
-        if (!isset($_SESSION['user_id'])) header('Location: /login');
+        $this->ensureUserCanPostToForum();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $parentType = $_POST['parent_type']; // 'question' or 'answer'
@@ -475,5 +483,30 @@ class Forum_ForumUserController extends Controller
         $results = $forumModel->findSimilarQuestions($query);
         
         echo json_encode(['status' => 'success', 'results' => $results]);
+    }
+
+    // ... inside ForumUserController class ...
+
+    // Show "My Bookmarks" Page
+    public function showBookmarks()
+    {
+        // 1. Security Check
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        $forumModel = new ForumModel();
+        $eduModel = new EduResourceModel();
+        
+        // 2. Fetch Data
+        $bookmarks = $forumModel->getBookmarkedQuestions($_SESSION['user_id']);
+        $resourceBookmarks = $eduModel->getBookmarkedResources($_SESSION['user_id']);
+
+        // 3. Pass to View
+        $this->viewApp('User/edu-forum/bookmarks-view', [
+            'questions' => $bookmarks,
+            'resources' => $resourceBookmarks
+        ], 'My Bookmarks - ReidHub');
     }
 }

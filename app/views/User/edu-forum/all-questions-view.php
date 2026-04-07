@@ -1,4 +1,55 @@
 <link href="/css/app/user/edu-forum/all-questions.css" rel="stylesheet">
+<?php
+if (!function_exists('renderQuestionPreviewHtml')) {
+    function renderQuestionPreviewHtml($text, $maxLength = 220) {
+        $plain = trim((string)$text);
+        if ($plain === '') return '';
+
+        // Normalize obvious markdown noise first.
+        $plain = preg_replace('/^\s*[*_`-]{3,}\s*$/m', '', $plain); // lines like **** or ----
+        $plain = preg_replace('/\n{3,}/', "\n\n", $plain);
+
+        $wasTruncated = mb_strlen($plain) > $maxLength;
+        $snippet = $wasTruncated ? mb_substr($plain, 0, $maxLength) : $plain;
+
+        // If truncated in the middle of markdown token, trim trailing marker chars.
+        $snippet = rtrim($snippet, "*_`");
+        if ($wasTruncated) $snippet .= '...';
+
+        // Escape first, then apply small markdown-style formatting safely.
+        $html = htmlspecialchars($snippet, ENT_QUOTES, 'UTF-8');
+        $html = preg_replace('/\*\*([^\*]+)\*\*/', '<strong>$1</strong>', $html);
+        $html = preg_replace('/\*([^\*]+)\*/', '<em>$1</em>', $html);
+        $html = preg_replace('/`([^`]+)`/', '<code>$1</code>', $html);
+        $html = preg_replace('/(^|[\s>])([*_`]{2,})(?=\s|$)/m', '$1', $html); // orphan tokens
+
+        $lines = preg_split('/\r\n|\r|\n/', $html);
+        $out = [];
+        $inList = false;
+
+        foreach ($lines as $line) {
+            if (preg_match('/^\s*[-*]\s+(.+)$/', $line, $m)) {
+                if (!$inList) {
+                    $out[] = '<ul class="question-preview-list">';
+                    $inList = true;
+                }
+                $out[] = '<li>' . $m[1] . '</li>';
+            } else {
+                if ($inList) {
+                    $out[] = '</ul>';
+                    $inList = false;
+                }
+                if (trim($line) !== '') {
+                    $out[] = '<p>' . $line . '</p>';
+                }
+            }
+        }
+        if ($inList) $out[] = '</ul>';
+
+        return implode('', $out);
+    }
+}
+?>
 
 <main class="forum-main" role="main">
 
@@ -89,8 +140,8 @@
                             </div>
                         </div>
                         
-                        <div class="question-content">
-                            <p><?= htmlspecialchars(substr(strip_tags($q['content']), 0, 150)) ?>...</p>
+                        <div class="question-content question-preview-content">
+                            <?= renderQuestionPreviewHtml($q['content'], 220) ?>
                         </div>
                         
                         <footer class="question-stats">

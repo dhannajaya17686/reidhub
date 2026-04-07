@@ -12,42 +12,36 @@ class ForumModel extends Model {
         $sql = "SELECT q.*, u.first_name, u.last_name, 
                 (SELECT COALESCE(SUM(CASE WHEN vote_type = 'up' THEN 1 WHEN vote_type = 'down' THEN -1 ELSE 0 END), 0) 
                  FROM forum_votes v WHERE v.target_type = 'question' AND v.target_id = q.id) as vote_count,
-                (SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id) as answer_count
+                (SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id AND a.moderation_status = 'active') as answer_count
                 FROM forum_questions q
-                JOIN users u ON q.user_id = u.id";
+                JOIN users u ON q.user_id = u.id
+                WHERE q.moderation_status = 'active'";
         
         $params = [];
         $whereClauses = [];
 
         // 1. Search Logic
         if ($search) {
-            // If the search term is short (3 chars or less), use LIKE (Slower but finds "PHP")
-            if (strlen($search) <= 3) {
-                $whereClauses[] = "(q.title LIKE :search OR q.content LIKE :search)";
-                $params[':search'] = "%$search%";
-            } 
-            // Otherwise use the High-Performance Full-Text Search
-            else {
-                $whereClauses[] = "MATCH(q.title, q.content) AGAINST(:search IN NATURAL LANGUAGE MODE)";
-                $params[':search'] = $search;
-            }
+            // Use LIKE so the query works even when FULLTEXT indexes are not configured.
+            $whereClauses[] = "(q.title LIKE :search OR q.content LIKE :search)";
+            $params[':search'] = "%$search%";
         }
 
-        // 2. Tag Filter (High Performance Boolean Search)
+        // 2. Tag Filter
         if ($tag) {
-            // Boolean Mode allows precise matching. 
-            $whereClauses[] = "MATCH(q.tags) AGAINST(:tag IN BOOLEAN MODE)";
-            $params[':tag'] = '+"' . $tag . '"'; 
+            // Use LIKE to avoid dependency on FULLTEXT index on tags.
+            $whereClauses[] = "q.tags LIKE :tag";
+            $params[':tag'] = "%$tag%";
         }
 
         // 3. Unanswered Filter (Specific Filter Logic)
         if ($filter === 'unanswered') {
-            $whereClauses[] = "(SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id) = 0";
+            $whereClauses[] = "(SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id AND a.moderation_status = 'active') = 0";
         }
 
         // Apply WHERE clauses
         if (!empty($whereClauses)) {
-            $sql .= " WHERE " . implode(' AND ', $whereClauses);
+            $sql .= " AND " . implode(' AND ', $whereClauses);
         }
 
         // 4. Sorting Logic
@@ -91,6 +85,7 @@ class ForumModel extends Model {
         $sql = "SELECT COUNT(*) as total FROM forum_questions q";
         $whereClauses = [];
         $params = [];
+        $whereClauses[] = "q.moderation_status = 'active'";
         
         if ($search) {
              $whereClauses[] = "(title LIKE :search OR content LIKE :search)";
@@ -103,7 +98,7 @@ class ForumModel extends Model {
         
         // Fix: Ensure the count respects the 'unanswered' filter
         if ($filter === 'unanswered') {
-            $whereClauses[] = "(SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id) = 0";
+            $whereClauses[] = "(SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id AND a.moderation_status = 'active') = 0";
         }
         
         if (!empty($whereClauses)) {
@@ -122,7 +117,7 @@ class ForumModel extends Model {
                  FROM forum_votes v WHERE v.target_type = 'question' AND v.target_id = q.id) as vote_count
                 FROM forum_questions q 
                 JOIN users u ON q.user_id = u.id 
-                WHERE q.id = :id";
+                WHERE q.id = :id AND q.moderation_status = 'active'";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -132,8 +127,11 @@ class ForumModel extends Model {
     public function findSimilarQuestions($query, $limit = 3) {
         // Matches against title or content using Full-Text Search, or a simple LIKE fallback
         $sql = "SELECT id, title FROM forum_questions 
-                WHERE MATCH(title, content) AGAINST(:query IN NATURAL LANGUAGE MODE) 
-                OR title LIKE :likeQuery
+                WHERE moderation_status = 'active'
+                AND (
+                    MATCH(title, content) AGAINST(:query IN NATURAL LANGUAGE MODE) 
+                    OR title LIKE :likeQuery
+                )
                 LIMIT :limit";
         
         $stmt = $this->db->prepare($sql);
@@ -175,6 +173,7 @@ class ForumModel extends Model {
                 FROM forum_answers a
                 JOIN users u ON a.user_id = u.id
                 WHERE a.question_id = :qid
+                AND a.moderation_status = 'active'
                 ORDER BY a.is_accepted DESC, a.created_at ASC";
         
         $stmt = $this->db->prepare($sql);
@@ -278,6 +277,25 @@ class ForumModel extends Model {
         }
     }
 
+    // --- NEW: Get User's Bookmarked Questions ---
+    public function getBookmarkedQuestions($userId) {
+        // Joins the bookmarks table to filter only saved questions
+        $sql = "SELECT q.*, u.first_name, u.last_name, 
+                (SELECT COALESCE(SUM(CASE WHEN vote_type = 'up' THEN 1 WHEN vote_type = 'down' THEN -1 ELSE 0 END), 0) 
+                 FROM forum_votes v WHERE v.target_type = 'question' AND v.target_id = q.id) as vote_count,
+                (SELECT COUNT(*) FROM forum_answers a WHERE a.question_id = q.id AND a.moderation_status = 'active') as answer_count
+                FROM forum_questions q
+                JOIN forum_bookmarks b ON q.id = b.question_id
+                JOIN users u ON q.user_id = u.id
+                WHERE b.user_id = :uid
+                AND q.moderation_status = 'active'
+                ORDER BY b.created_at DESC"; // Show recently bookmarked first
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':uid' => $userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // ==================================================================
     // 5. REPORTING LOGIC
     // ==================================================================
@@ -352,6 +370,7 @@ class ForumModel extends Model {
                 FROM forum_comments c
                 JOIN users u ON c.user_id = u.id
                 WHERE c.parent_type = :ptype AND c.parent_id = :pid
+                AND c.moderation_status = 'active'
                 ORDER BY c.created_at ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':ptype' => $parentType, ':pid' => $parentId]);
@@ -418,6 +437,18 @@ class ForumModel extends Model {
         $stmt->execute([':uid' => $userId]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['count'] : 0;
+    }
+
+    public function isUserSuspended($userId) {
+        $sql = "SELECT id
+                FROM forum_user_suspensions
+                WHERE user_id = :uid
+                  AND is_active = 1
+                  AND (is_permanent = 1 OR ends_at IS NULL OR ends_at > NOW())
+                LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':uid' => $userId]);
+        return (bool)$stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     // --- NEW: Mark a specific notification as read ---

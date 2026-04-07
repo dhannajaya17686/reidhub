@@ -208,8 +208,44 @@ $routes['/dashboard/forum/question'] = [
 $routes['/dashboard/forum/all'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
+
+// --- NEW ROUTE: My Bookmarks ---
+$routes['/dashboard/forum/bookmarks'] = [
+    'GET' => 'Forum_ForumUserController@showBookmarks'
+];
+
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
+];
+$routes['/dashboard/forum/admin/question/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateQuestion'
+];
+$routes['/dashboard/forum/admin/answer/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateAnswer'
+];
+$routes['/dashboard/forum/admin/comment/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateComment'
+];
+$routes['/dashboard/forum/admin/question/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateQuestionMetadata'
+];
+$routes['/dashboard/forum/admin/answer/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateAnswer'
+];
+$routes['/dashboard/forum/admin/comment/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateComment'
+];
+$routes['/dashboard/forum/admin/report/review'] = [
+    'POST' => 'Forum_ForumAdminController@reviewReport'
+];
+$routes['/dashboard/forum/admin/user/suspend'] = [
+    'POST' => 'Forum_ForumAdminController@suspendUser'
+];
+$routes['/dashboard/forum/admin/user/lift-suspension'] = [
+    'POST' => 'Forum_ForumAdminController@liftSuspension'
+];
+$routes['/dashboard/forum/admin/user/message'] = [
+    'POST' => 'Forum_ForumAdminController@sendUserMessage'
 ];
 
 // NEW: Action Routes (Handle clicks)
@@ -263,6 +299,59 @@ $routes['/dashboard/forum/search-similar'] = [
 
 //--------------------------------------FORUM ROUTES END---------------------------------------------//
 
+// ------------------ EDU VIDEO ARCHIVE ROUTES ------------------ //
+
+// Public Archive (View All)
+$routes['/dashboard/edu-archive'] = [
+    'GET' => 'EduArchive_EduController@index'
+];
+
+// Upload Content
+$routes['/dashboard/edu-archive/upload'] = [
+    'GET' => 'EduArchive_EduController@showUploadForm',
+    'POST' => 'EduArchive_EduController@handleUpload'
+];
+
+// My Submissions (Track Status)
+$routes['/dashboard/edu-archive/my-submissions'] = [
+    'GET' => 'EduArchive_EduController@showMySubmissions'
+];
+
+// Edit Submission (pending only)
+$routes['/dashboard/edu-archive/edit'] = [
+    'GET' => 'EduArchive_EduController@showEditForm'
+];
+
+// Update Submission (pending only)
+$routes['/dashboard/edu-archive/update'] = [
+    'POST' => 'EduArchive_EduController@updateSubmission'
+];
+
+// Delete Submission
+$routes['/dashboard/edu-archive/delete'] = [
+    'POST' => 'EduArchive_EduController@deleteSubmission'
+];
+
+// Bookmark Resource
+$routes['/dashboard/edu-archive/bookmark'] = [
+    'POST' => 'EduArchive_EduController@bookmark'
+];
+
+// Edu Archive Admin
+$routes['/dashboard/edu-archive/admin'] = [
+    'GET' => 'EduArchive_EduAdminController@showManageArchive'
+];
+
+$routes['/dashboard/edu-archive/admin/moderate'] = [
+    'POST' => 'EduArchive_EduAdminController@moderateResource'
+];
+
+$routes['/dashboard/edu-archive/admin/tags'] = [
+    'POST' => 'EduArchive_EduAdminController@manageFilterTag'
+];
+
+// -------------------------------------------------------------- //
+
 //-------------------------------------LOST AND FOUND ROUTES START--------------------------------------//
 $routes['/dashboard/lost-and-found/report-lost-item'] = [
     'GET' => 'LostAndFound_LostAndFoundUserController@showReportLostItem'
@@ -287,7 +376,5 @@ $routes['/'] = [
     'GET' => 'Home_HomeController@index'
 ];
 //---------------------------------------HOME ROUTES END -------------------------------------------//
-
-// Add this to your existing routes in web.php
 
 return $routes;
