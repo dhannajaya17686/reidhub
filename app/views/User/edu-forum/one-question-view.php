@@ -6,40 +6,246 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 <link href="/css/app/user/edu-forum/one-question.css" rel="stylesheet">
 
 <style>
-    /* Owner Actions */
+    /* =========================================
+       1. Global & Layout 
+       ========================================= */
+    :root {
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --text-muted: #94a3b8;
+        --surface-hover: #f1f5f9;
+        --border-color: #e2e8f0;
+    }
+
+    /* =========================================
+       2. Owner Actions (Edit/Delete)
+       ========================================= */
     .owner-actions { margin-top: 10px; display: flex; gap: 10px; }
     
-    .btn-delete { background: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+    .btn-delete { 
+        background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; 
+        padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500;
+        transition: all 0.2s;
+    }
     .btn-delete:hover { background: #fecaca; }
 
-    .btn-edit { background: #e0f2fe; color: #0284c7; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; }
+    .btn-edit { 
+        background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; 
+        padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 500;
+        transition: all 0.2s;
+    }
     .btn-edit:hover { background: #bae6fd; }
-    
-    /* Comment Styling */
-    .comments-section { margin-top: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 3px solid #cbd5e1; }
-    .comment-item { font-size: 0.9rem; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: flex-start; }
-    .comment-author { font-weight: 600; color: #334155; margin-right: 5px; }
-    .comment-text { color: #475569; }
-    .comment-form { display: flex; gap: 8px; margin-top: 10px; }
-    .comment-input { flex: 1; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 0.85rem; }
-    .btn-comment { background: var(--secondary-color); color: white; border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.8rem; }
-    
-    /* Delete X Button */
-    .btn-delete-comment { color: #ef4444; background: none; border: none; font-size: 1.0rem; cursor: pointer; padding: 0 5px; line-height: 1; font-weight: bold; }
-    .btn-delete-comment:hover { color: #dc2626; }
 
-    /* Interactive States */
+    /* =========================================
+       3. Modern Comment Section Styling
+       ========================================= */
+    .comments-wrapper {
+        margin-top: 25px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+    }
+
+    .comments-header-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .comments-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .comments-count-badge {
+        background: var(--surface-hover);
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    /* Comment List */
+    .comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .comment-item {
+        display: flex;
+        gap: 12px;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .comment-avatar img {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .comment-content {
+        flex-grow: 1;
+        background: #F8FAFC;
+        padding: 10px 14px;
+        border-radius: 12px;
+        border-top-left-radius: 2px; /* Chat bubble effect */
+    }
+
+    .comment-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        font-size: 0.85rem;
+    }
+
+    .author-name { font-weight: 700; color: var(--text-primary); }
+    .time-ago { color: var(--text-muted); font-size: 0.75rem; }
+
+    .comment-text {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .comment-actions-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .btn-delete-comment {
+        color: #ef4444;
+        background: none; border: none;
+        font-size: 0.75rem; cursor: pointer;
+        font-weight: 500;
+    }
+    .btn-delete-comment:hover { text-decoration: underline; }
+
+    /* Compose Box */
+    .comment-compose-box {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        align-items: flex-start;
+    }
+
+    .user-avatar-sm {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: var(--secondary-color);
+        color: white;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.7rem; font-weight: bold;
+    }
+
+    .compose-input-wrapper { flex-grow: 1; }
+
+    .comment-textarea {
+        width: 100%;
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        color: var(--text-primary);
+        transition: all 0.2s;
+        resize: none;
+        min-height: 42px;
+        font-family: inherit;
+    }
+
+    .comment-textarea:focus {
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(4, 102, 200, 0.1);
+        outline: none;
+        min-height: 80px;
+    }
+
+    .compose-actions {
+        display: none; /* Hidden by default, shown via JS */
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 8px;
+    }
+    
+    .btn-cancel-comment {
+        background: none; border: none; color: var(--text-muted);
+        font-size: 0.85rem; cursor: pointer;
+    }
+    
+    .btn-submit-comment {
+        background: var(--secondary-color); color: white; border: none;
+        padding: 6px 14px; border-radius: 16px; font-size: 0.85rem; font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* =========================================
+       4. Interactive States (Votes/Bookmarks)
+       ========================================= */
     .vote-button.is-voted { background-color: #e0f2fe; color: #0466C8; }
     .answer-vote-btn.is-voted { color: #0466C8; }
-    .bookmark-btn.active { color: #EAB308; fill: currentColor; }
+    .bookmark-btn.active { color: #EAB308; border-color: #EAB308; }
 
-    /* Accepted Answer Styling */
+    /* =========================================
+       5. Question Tags
+       ========================================= */
+    .question-tags {
+        margin-top: 15px;
+        margin-bottom: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .question-tag {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(4, 102, 200, 0.1) 0%, rgba(29, 78, 216, 0.08) 100%);
+        color: #1d4ed8;
+        border: 1px solid rgba(4, 102, 200, 0.18);
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1;
+        transition: all 0.2s ease;
+    }
+
+    .question-tag-link {
+        text-decoration: none;
+    }
+
+    .question-tag:hover {
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, rgba(4, 102, 200, 0.16) 0%, rgba(29, 78, 216, 0.12) 100%);
+        border-color: rgba(4, 102, 200, 0.28);
+    }
+
+    .question-tag-link:focus-visible {
+        outline: 2px solid #1d4ed8;
+        outline-offset: 2px;
+    }
+
+    /* =========================================
+       6. Accepted Answer
+       ========================================= */
     .answer-card.accepted-solution { border: 2px solid #059669; background-color: #f0fdf4; position: relative; }
-    .badge-solved { background-color: #059669; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; vertical-align: middle; }
+    .badge-solved { background-color: #059669; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
     .btn-accept { background: none; border: 1px solid #059669; color: #059669; padding: 4px 10px; border-radius: 15px; cursor: pointer; font-size: 0.75rem; margin-left: 10px; transition: all 0.2s; }
     .btn-accept:hover { background: #059669; color: white; }
 
-    /* Edit Modal Styles */
+    /* =========================================
+       7. Edit Modal
+       ========================================= */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
     .modal-overlay.active { display: flex; }
     .modal-content { background: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 600px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
@@ -53,6 +259,10 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
     .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     .btn-cancel { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
     .btn-save { background: #0466C8; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+
+    /* Utilities */
+    .hidden { display: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 
 <main class="forum-details-main" role="main">
@@ -97,11 +307,13 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
         </div>
 
         <?php if (!empty($question['tags'])): ?>
-        <div class="question-tags" style="margin-top: 15px;">
+        <div class="question-tags">
             <?php foreach (explode(',', $question['tags']) as $tag): ?>
-                <span class="question-tag" style="background: var(--surface-hover); padding: 4px 12px; border-radius: 15px; font-size: 0.85rem; margin-right: 8px;">
-                    #<?= htmlspecialchars(trim($tag)) ?>
-                </span>
+                <?php $tag = trim($tag); ?>
+                <?php if ($tag === '') continue; ?>
+                <a href="/dashboard/forum/all?tag=<?= urlencode($tag) ?>" class="question-tag question-tag-link" aria-label="View all questions tagged <?= htmlspecialchars($tag) ?>">
+                    #<?= htmlspecialchars($tag) ?>
+                </a>
             <?php endforeach; ?>
         </div>
         <?php endif; ?>
@@ -121,34 +333,62 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
             </div>
         </div>
 
-        <div class="comments-section">
-            <?php if (!empty($question_comments)): ?>
-                <?php foreach ($question_comments as $comment): ?>
-                    <div class="comment-item">
-                        <div>
-                            <span class="comment-author"><?= htmlspecialchars($comment['first_name']) ?>:</span>
-                            <span class="comment-text"><?= htmlspecialchars($comment['content']) ?></span>
-                        </div>
-                        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['user_id']): ?>
-                            <form action="/dashboard/forum/comment/delete" method="POST" onsubmit="return confirm('Delete this comment?');" style="margin:0;">
-                                <input type="hidden" name="comment_id" value="<?= $comment['id'] ?>">
-                                <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
-                                <button type="submit" class="btn-delete-comment" title="Delete Comment">✕</button>
-                            </form>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="comment-item" style="color:#94a3b8; font-style:italic;">No comments yet.</div>
-            <?php endif; ?>
+        <div class="comments-wrapper">
+            <div class="comments-header-row">
+                <h3 class="comments-title">
+                    Comments <span class="comments-count-badge"><?= count($question_comments ?? []) ?></span>
+                </h3>
+            </div>
 
-            <form action="/dashboard/forum/comment/create" method="POST" class="comment-form">
-                <input type="hidden" name="parent_type" value="question">
-                <input type="hidden" name="parent_id" value="<?= $question['id'] ?>">
-                <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
-                <input type="text" name="content" class="comment-input" placeholder="Add a comment to the question..." required>
-                <button type="submit" class="btn-comment">Comment</button>
-            </form>
+            <div class="comments-list">
+                <?php if (!empty($question_comments)): ?>
+                    <?php foreach ($question_comments as $comment): ?>
+                        <div class="comment-item">
+                            <div class="comment-avatar">
+                                <img src="https://ui-avatars.com/api/?name=<?= urlencode($comment['first_name'].' '.$comment['last_name']) ?>&background=random" alt="Avatar">
+                            </div>
+                            <div class="comment-content">
+                                <div class="comment-meta">
+                                    <span class="author-name"><?= htmlspecialchars($comment['first_name']) ?></span>
+                                    <span class="time-ago">User</span>
+                                </div>
+                                <div class="comment-text">
+                                    <?= htmlspecialchars($comment['content']) ?>
+                                </div>
+                                <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $comment['user_id']): ?>
+                                    <div class="comment-actions-row">
+                                        <form action="/dashboard/forum/comment/delete" method="POST" onsubmit="return confirm('Delete this comment?');">
+                                            <input type="hidden" name="comment_id" value="<?= $comment['id'] ?>">
+                                            <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
+                                            <button type="submit" class="btn-delete-comment">Delete</button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div style="font-size:0.9rem; color:var(--text-muted); font-style:italic;">No comments yet.</div>
+                <?php endif; ?>
+            </div>
+
+            <div class="comment-compose-box">
+                <div class="user-avatar-sm">You</div>
+                <div class="compose-input-wrapper">
+                    <form action="/dashboard/forum/comment/create" method="POST">
+                        <input type="hidden" name="parent_type" value="question">
+                        <input type="hidden" name="parent_id" value="<?= $question['id'] ?>">
+                        <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
+                        
+                        <textarea name="content" class="comment-textarea" placeholder="Add a comment to the question..." rows="1" required></textarea>
+                        
+                        <div class="compose-actions">
+                            <button type="button" class="btn-cancel-comment">Cancel</button>
+                            <button type="submit" class="btn-submit-comment">Post Comment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -166,7 +406,8 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                     $isAccepted = isset($answer['is_accepted']) && $answer['is_accepted']; 
                     $isQuestionOwner = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $question['user_id'];
                 ?>
-                <article class="answer-card <?= $isAccepted ? 'accepted-solution' : '' ?>" style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
+                <article class="answer-card <?= $isAccepted ? 'accepted-solution' : '' ?>" style="margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 30px;">
+                    
                     <div class="answer-header">
                         <img class="answer-author-avatar" 
                              src="https://ui-avatars.com/api/?name=<?= urlencode($answer['first_name'].' '.$answer['last_name']) ?>&background=059669&color=fff" 
@@ -225,33 +466,54 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
                         <?php endif; ?>
                     </div>
 
-                    <div style="margin-top: 15px; padding-left: 20px; border-left: 2px solid #e2e8f0;">
-                        <?php if (!empty($answer['comments'])): ?>
-                            <?php foreach ($answer['comments'] as $ansComment): ?>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                    <div style="font-size: 0.85rem; color: #475569;">
-                                        <span style="font-weight:600; color:#334155;"><?= htmlspecialchars($ansComment['first_name']) ?>:</span>
-                                        <?= htmlspecialchars($ansComment['content']) ?>
+                    <div class="comments-wrapper" style="margin-left: 20px; border-left: 3px solid var(--surface-hover); padding-left: 15px; border-top: none;">
+                        <div class="comments-list">
+                            <?php if (!empty($answer['comments'])): ?>
+                                <?php foreach ($answer['comments'] as $ansComment): ?>
+                                    <div class="comment-item">
+                                        <div class="comment-avatar">
+                                            <img src="https://ui-avatars.com/api/?name=<?= urlencode($ansComment['first_name']) ?>&background=random" style="width:28px; height:28px;" alt="Avatar">
+                                        </div>
+                                        <div class="comment-content" style="padding: 8px 12px;">
+                                            <div class="comment-meta">
+                                                <span class="author-name"><?= htmlspecialchars($ansComment['first_name']) ?></span>
+                                            </div>
+                                            <div class="comment-text">
+                                                <?= htmlspecialchars($ansComment['content']) ?>
+                                            </div>
+                                            <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $ansComment['user_id']): ?>
+                                                <div class="comment-actions-row">
+                                                    <form action="/dashboard/forum/comment/delete" method="POST" onsubmit="return confirm('Delete this comment?');">
+                                                        <input type="hidden" name="comment_id" value="<?= $ansComment['id'] ?>">
+                                                        <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
+                                                        <button type="submit" class="btn-delete-comment">Delete</button>
+                                                    </form>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $ansComment['user_id']): ?>
-                                        <form action="/dashboard/forum/comment/delete" method="POST" onsubmit="return confirm('Delete this comment?');" style="margin:0;">
-                                            <input type="hidden" name="comment_id" value="<?= $ansComment['id'] ?>">
-                                            <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
-                                            <button type="submit" class="btn-delete-comment" title="Delete Comment">✕</button>
-                                        </form>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
 
-                        <form action="/dashboard/forum/comment/create" method="POST" style="margin-top: 8px;">
-                            <input type="hidden" name="parent_type" value="answer">
-                            <input type="hidden" name="parent_id" value="<?= $answer['id'] ?>">
-                            <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
-                            <input type="text" name="content" placeholder="Reply to this answer..." 
-                                   style="width:100%; padding: 5px 10px; border:1px solid #e2e8f0; border-radius: 4px; font-size: 0.85rem;">
-                        </form>
+                        <div class="comment-compose-box">
+                            <div class="compose-input-wrapper">
+                                <form action="/dashboard/forum/comment/create" method="POST">
+                                    <input type="hidden" name="parent_type" value="answer">
+                                    <input type="hidden" name="parent_id" value="<?= $answer['id'] ?>">
+                                    <input type="hidden" name="redirect_id" value="<?= $question['id'] ?>">
+                                    
+                                    <textarea name="content" class="comment-textarea" placeholder="Reply to this answer..." rows="1" required></textarea>
+                                    
+                                    <div class="compose-actions">
+                                        <button type="button" class="btn-cancel-comment">Cancel</button>
+                                        <button type="submit" class="btn-submit-comment">Reply</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
+
                 </article>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -310,7 +572,7 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 <script>
 /**
- * Vote & Interaction System
+ * 1. Vote & Interaction System
  */
 class InteractionSystem {
   constructor() {
@@ -318,18 +580,16 @@ class InteractionSystem {
   }
 
   init() {
-    // 1. Question Vote Button
+    // Question Vote
     const qVoteBtn = document.querySelector('.vote-button');
     if (qVoteBtn) {
       qVoteBtn.addEventListener('click', (e) => this.handleVote(e, 'question'));
     }
-
-    // 2. Answer Vote Buttons
+    // Answer Votes
     document.querySelectorAll('.answer-vote-btn').forEach(btn => {
       btn.addEventListener('click', (e) => this.handleVote(e, 'answer'));
     });
-
-    // 3. Bookmark Button
+    // Bookmark
     const bookmarkBtn = document.querySelector('.bookmark-btn');
     if (bookmarkBtn) {
       bookmarkBtn.addEventListener('click', (e) => this.handleBookmark(e));
@@ -341,7 +601,7 @@ class InteractionSystem {
     const button = event.currentTarget;
     const id = button.dataset.id;
     
-    // Optimistic UI Update (Visual Feedback immediately)
+    // UI Feedback
     button.classList.toggle('is-voted');
     this.animateButton(button);
 
@@ -355,27 +615,23 @@ class InteractionSystem {
       const data = await response.json();
 
       if (data.status === 'success') {
-        // Update the count from server
         let countEl;
         if (type === 'question') {
           countEl = button.querySelector('.vote-count-span');
-          // Update text label if it exists
           const textEl = button.querySelector('.vote-text');
           if (textEl) textEl.textContent = button.classList.contains('is-voted') ? 'Voted' : 'Vote';
         } else {
           countEl = button.parentElement.querySelector('.answer-vote-count');
         }
-
         if (countEl) countEl.textContent = data.new_count;
         
       } else if (data.message === 'Please login to vote') {
-        // Revert if not logged in
         button.classList.toggle('is-voted');
         alert(data.message);
       }
     } catch (error) {
       console.error('Vote Error:', error);
-      button.classList.toggle('is-voted'); // Revert on error
+      button.classList.toggle('is-voted');
     }
   }
 
@@ -383,8 +639,6 @@ class InteractionSystem {
     event.preventDefault();
     const button = event.currentTarget;
     const id = button.dataset.id;
-
-    // Optimistic UI
     button.classList.toggle('active');
     this.animateButton(button);
 
@@ -394,16 +648,9 @@ class InteractionSystem {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
       });
-      
       const data = await response.json();
-      
       if (data.status !== 'success') {
         button.classList.toggle('active'); // Revert
-        if (data.message) alert(data.message);
-      } else {
-        // Optional: Show toast
-        const msg = button.classList.contains('active') ? 'Bookmarked!' : 'Bookmark removed';
-        this.showToast(msg);
       }
     } catch (error) {
       console.error('Bookmark Error:', error);
@@ -415,50 +662,34 @@ class InteractionSystem {
     button.style.transform = 'scale(0.95)';
     setTimeout(() => button.style.transform = 'scale(1)', 150);
   }
-
-  showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'interaction-toast';
-    toast.textContent = message;
-    Object.assign(toast.style, {
-      position: 'fixed', bottom: '20px', right: '20px',
-      background: '#334155', color: '#fff', padding: '10px 20px',
-      borderRadius: '8px', zIndex: '9999', opacity: '0', transition: 'opacity 0.3s'
-    });
-    document.body.appendChild(toast);
-    
-    // Fade In
-    requestAnimationFrame(() => toast.style.opacity = '1');
-    
-    // Fade Out
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
-    }, 2000);
-  }
 }
 
 /**
- * Report System
+ * 2. Report System
  */
 class ReportSystem {
-  constructor() {
-    this.init();
-  }
-
+  constructor() { this.init(); }
   init() {
     document.querySelectorAll('.report-button').forEach(btn => {
       btn.addEventListener('click', (e) => this.handleReport(e));
     });
   }
-
   async handleReport(event) {
     event.preventDefault();
     const button = event.currentTarget;
-    const type = button.dataset.type; // 'question' or 'answer'
+    const type = button.dataset.type; 
     const id = button.dataset.id;
 
-    if (!confirm('Are you sure you want to report this?')) return;
+    const reasonInput = prompt(
+      'Please enter the reason for this report (minimum 5 characters):\n\nExample: Spam, abusive language, wrong information'
+    );
+    if (reasonInput === null) return;
+
+    const reason = reasonInput.trim();
+    if (reason.length < 5) {
+      alert('Please provide a clearer reason (at least 5 characters).');
+      return;
+    }
 
     const originalText = button.textContent;
     button.textContent = 'Reporting...';
@@ -468,26 +699,19 @@ class ReportSystem {
       const response = await fetch('/dashboard/forum/report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-            type: type, 
-            id: id, 
-            reason: 'User flagged content' 
-        })
+        body: JSON.stringify({ type: type, id: id, reason: reason })
       });
-
       const data = await response.json();
-
       if (data.status === 'success') {
         button.textContent = 'Reported';
         button.style.color = '#ef4444';
-        alert('Thank you. The content has been reported to moderators.');
+        alert('Thank you. Content reported.');
       } else {
         button.textContent = originalText;
         button.disabled = false;
-        alert(data.message || 'Error reporting content.');
+        alert(data.message || 'Error reporting.');
       }
     } catch (error) {
-      console.error('Report Error:', error);
       button.textContent = originalText;
       button.disabled = false;
     }
@@ -495,7 +719,49 @@ class ReportSystem {
 }
 
 /**
- * Answer Input Controller
+ * 3. Comment System (New Interaction Logic)
+ */
+class CommentSystem {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        // Expand on Focus
+        document.querySelectorAll('.comment-textarea').forEach(textarea => {
+            textarea.addEventListener('focus', function() {
+                const actionsDiv = this.parentElement.querySelector('.compose-actions');
+                if (actionsDiv) {
+                    actionsDiv.style.display = 'flex';
+                    this.rows = 3;
+                }
+            });
+
+            // Auto Resize
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        });
+
+        // Cancel Button
+        document.querySelectorAll('.btn-cancel-comment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const form = this.closest('form');
+                const textarea = form.querySelector('textarea');
+                const actionsDiv = form.querySelector('.compose-actions');
+                
+                textarea.value = '';
+                textarea.style.height = 'auto';
+                textarea.rows = 1;
+                actionsDiv.style.display = 'none';
+            });
+        });
+    }
+}
+
+/**
+ * 4. Main Answer Input
  */
 class AnswerInput {
   constructor() {
@@ -504,72 +770,28 @@ class AnswerInput {
     this.minLength = 10;
     this.init();
   }
-
   init() {
     if (!this.textarea || !this.submitButton) return;
-
     this.textarea.addEventListener('input', () => this.handleInput());
     this.textarea.addEventListener('keydown', (e) => this.handleKeydown(e));
-
-    const form = this.submitButton.closest('form');
-    this.form = form;
-    
-    if (form) {
-      form.addEventListener('submit', (e) => this.handleSubmit(e));
-    }
-    
-    this.setupAutoResize();
     this.updateSubmitButton();
   }
-
-  handleInput() {
-    this.updateSubmitButton();
-  }
-
+  handleInput() { this.updateSubmitButton(); }
   handleKeydown(event) {
     if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
       event.preventDefault(); 
-      if (!this.submitButton.disabled) {
-         if(this.form) this.form.submit();
-      }
+      if (!this.submitButton.disabled) this.submitButton.closest('form').submit();
     }
   }
-
-  setupAutoResize() {
-    this.textarea.style.height = 'auto';
-    this.textarea.style.height = this.textarea.scrollHeight + 'px';
-    this.textarea.addEventListener('input', () => {
-      this.textarea.style.height = 'auto';
-      this.textarea.style.height = this.textarea.scrollHeight + 'px';
-    });
-  }
-
   updateSubmitButton() {
     const content = this.textarea.value.trim();
     const isValid = content.length >= this.minLength;
-    
     this.submitButton.disabled = !isValid;
-    const buttonText = this.submitButton.querySelector('.submit-text');
-    
-    if (buttonText) {
-      buttonText.textContent = isValid ? 'Post Answer' : `${this.minLength - content.length} more chars`;
-    }
-    
-    // Style the button
     this.submitButton.style.opacity = isValid ? '1' : '0.6';
     this.submitButton.style.cursor = isValid ? 'pointer' : 'not-allowed';
-  }
-
-  handleSubmit(event) {
-    const content = this.textarea.value.trim();
-    if (content.length < this.minLength) {
-        if (event) event.preventDefault();
-        return;
-    }
-    // Show loading state
-    this.submitButton.disabled = true;
-    const buttonText = this.submitButton.querySelector('.submit-text');
-    if(buttonText) buttonText.textContent = 'Posting...';
+    
+    const txt = this.submitButton.querySelector('.submit-text');
+    if (txt) txt.textContent = isValid ? 'Post Answer' : `${this.minLength - content.length} more chars`;
   }
 }
 
@@ -577,30 +799,20 @@ class AnswerInput {
 function initializeMarkdown() {
     function parseMarkdown(text) {
         if (!text) return '';
-        let html = text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-
-        // Simple Markdown Rules
+        let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         html = html.replace(/\*\*([\s\S]*?)\*\*/g, '<strong>$1</strong>');
         html = html.replace(/\*([\s\S]*?)\*/g, '<em>$1</em>');
         html = html.replace(/```([\s\S]*?)```/g, '<pre style="background:#1e293b; color:#e2e8f0; padding:10px; border-radius:6px; overflow-x:auto; margin:10px 0;"><code>$1</code></pre>');
         html = html.replace(/`([^`]+)`/g, '<code style="background:#f1f5f9; color:#ef4444; padding:2px 4px; border-radius:4px; font-family:monospace;">$1</code>');
-        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:#0466C8; text-decoration:underline;">$1</a>');
         html = html.replace(/^\s*-\s+(.*)$/gm, '• $1<br>');
         html = html.replace(/\n/g, '<br>');
         return html;
     }
-
     const el = document.querySelector('[data-question-markdown]');
-    if (el) {
-        const raw = el.textContent || el.innerText || '';
-        el.innerHTML = parseMarkdown(raw);
-    }
+    if (el) el.innerHTML = parseMarkdown(el.textContent || el.innerText || '');
 }
 
-// Edit Modal Logic
+// Edit Modal
 function initializeEditModal() {
     window.openEditModal = function(type, id, title, content) {
         document.getElementById('editType').value = type;
@@ -619,23 +831,20 @@ function initializeEditModal() {
             titleInput.removeAttribute('required');
             document.getElementById('modalTitle').innerText = "Edit Answer";
         }
-
-        // Updated: Simplified content assignment since JSON encodes correctly
         document.getElementById('editContent').value = content;
-
         document.getElementById('editModal').classList.add('active');
     }
-
     window.closeEditModal = function() {
         document.getElementById('editModal').classList.remove('active');
     }
 }
 
-// Initialize Everything
+// Initialize All Systems
 document.addEventListener('DOMContentLoaded', () => {
     new InteractionSystem();
-    new AnswerInput();
     new ReportSystem();
+    new CommentSystem(); // New Class
+    new AnswerInput();
     initializeMarkdown();
     initializeEditModal();
 });

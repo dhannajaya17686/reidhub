@@ -65,7 +65,7 @@ class ForumInteractions {
         // 2. Identify the Counter Element (select by explicit classes)
         let countEl = null;
         if (isMainQuestion) {
-            countEl = button.querySelector('.vote-count-span');
+            countEl = button.querySelector('.vote-count-span, .vote-text, .stat-number');
         } else {
             const wrapper = button.closest('.answer-vote');
             if (wrapper) countEl = wrapper.querySelector('.answer-vote-count');
