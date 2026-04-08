@@ -955,7 +955,7 @@ class Community_CommunityUserController extends Controller
             }
             
             // Create storage directory if it doesn't exist
-            $storageDir = __DIR__ . '/../../../public/storage/clubs';
+            $storageDir = __DIR__ . '/../../../storage/filestore/clubs';
             if (!is_dir($storageDir)) {
                 mkdir($storageDir, 0755, true);
             }
@@ -967,7 +967,7 @@ class Community_CommunityUserController extends Controller
             
             // Move uploaded file
             if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                $imageUrl = '/storage/clubs/' . $filename;
+                $imageUrl = '/storage/filestore/clubs/' . $filename;
             }
         }
         
@@ -1065,14 +1065,14 @@ class Community_CommunityUserController extends Controller
             
             if (in_array($mimeType, $allowedMimes)) {
                 // Create storage directory if it doesn't exist
-                $storageDir = __DIR__ . '/../../../public/storage/clubs';
+                $storageDir = __DIR__ . '/../../../storage/filestore/clubs';
                 if (!is_dir($storageDir)) {
                     mkdir($storageDir, 0755, true);
                 }
                 
                 // Delete old image if exists
                 if ($club['image_url']) {
-                    $oldPath = __DIR__ . '/../../../public' . $club['image_url'];
+                    $oldPath = __DIR__ . '/../../../storage/filestore' . $club['image_url'];
                     if (file_exists($oldPath)) {
                         unlink($oldPath);
                     }
@@ -1085,7 +1085,7 @@ class Community_CommunityUserController extends Controller
                 
                 // Move uploaded file
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                    $imageUrl = '/storage/clubs/' . $filename;
+                    $imageUrl = '/storage/filestore/clubs/' . $filename;
                 }
             }
         }

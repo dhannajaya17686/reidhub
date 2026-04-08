@@ -553,7 +553,7 @@ class Marketplace_MarketplaceUserController extends Controller
         $limit = min(4, count($files['name']));
 
         $projectRoot = dirname(__DIR__, 3); // /var/www/html
-        $storageDir  = $projectRoot . '/storage/marketplace';
+        $storageDir  = $projectRoot . '/storage/filestore/marketplace';
 
         // Log user and perms context
         $uid = function_exists('posix_geteuid') ? posix_geteuid() : null;
@@ -610,8 +610,8 @@ class Marketplace_MarketplaceUserController extends Controller
                 continue;
             }
 
-            // Public URL via symlink public/storage/marketplace -> storage/marketplace
-            $saved[] = '/storage/marketplace/' . $name;
+            // Public URL via filestore volume
+            $saved[] = '/storage/filestore/marketplace/' . $name;
         }
 
         Logger::info('Saved images: ' . json_encode($saved));
