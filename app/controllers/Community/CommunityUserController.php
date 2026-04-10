@@ -1456,7 +1456,7 @@ class Community_CommunityUserController extends Controller
                 }
                 
                 // Create storage directory if it doesn't exist
-                $storageDir = __DIR__ . '/../../../public/storage/events';
+                $storageDir = __DIR__ . '/../../../storage/filestore/events';
                 if (!is_dir($storageDir)) {
                     mkdir($storageDir, 0755, true);
                 }
@@ -1468,7 +1468,7 @@ class Community_CommunityUserController extends Controller
                 
                 // Move uploaded file
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                    $imageUrl = '/storage/events/' . $filename;
+                    $imageUrl = '/storage/filestore/events/' . $filename;
                 }
             }
             
@@ -1593,7 +1593,7 @@ class Community_CommunityUserController extends Controller
                 }
                 
                 // Create storage directory if it doesn't exist
-                $storageDir = __DIR__ . '/../../../public/storage/events';
+                $storageDir = __DIR__ . '/../../../storage/filestore/events';
                 if (!is_dir($storageDir)) {
                     mkdir($storageDir, 0755, true);
                 }
@@ -1605,7 +1605,7 @@ class Community_CommunityUserController extends Controller
                 
                 // Move uploaded file
                 if (move_uploaded_file($file['tmp_name'], $filePath)) {
-                    $imageUrl = '/storage/events/' . $filename;
+                    $imageUrl = '/storage/filestore/events/' . $filename;
                 }
             }
             
