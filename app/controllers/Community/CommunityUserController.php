@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../controllers/Auth/LoginController.php';
-require_once __DIR__ . '/../../models/CommunityPost.php';
 require_once __DIR__ . '/../../models/Club.php';
 require_once __DIR__ . '/../../models/Event.php';
 require_once __DIR__ . '/../../models/AdminRequest.php';
@@ -9,37 +8,6 @@ require_once __DIR__ . '/../../models/Report.php';
 
 class Community_CommunityUserController extends Controller
 {
-    // ============ MAIN COMMUNITY FEED ============
-    public function showCommunityDashboard()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        // Debug logging
-        Logger::info("CommunityUserController::showCommunityDashboard called for user: " . ($user['email'] ?? 'unknown'));
-        
-        // Check if user is a community admin
-        $isCommunityAdmin = $this->checkIfCommunityAdmin($user['id']);
-        
-        // Get community posts from database
-        try {
-            $postModel = new CommunityPost();
-            $posts = $postModel->getAllPosts(50, 0);
-        } catch (Exception $e) {
-            // If table doesn't exist yet, use empty array
-            Logger::warning("Could not fetch posts: " . $e->getMessage());
-            $posts = [];
-        }
-        
-        $data = [
-            'user' => $user,
-            'posts' => $posts,
-            'isCommunityAdmin' => $isCommunityAdmin
-        ];
-        
-        Logger::info("Rendering community feed view with " . count($posts) . " posts");
-        $this->viewApp('/User/community/community-feed', $data, 'Community - ReidHub');
-    }
-    
     /**
      * Check if user has community admin role
      */
@@ -109,83 +77,6 @@ class Community_CommunityUserController extends Controller
         }
     }
     
-    // ============ POST MANAGEMENT (For Community Admins) ============
-    public function showCreatePost()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        if (!$this->checkIfCommunityAdmin($user['id'])) {
-            header('Location: /dashboard/community');
-            exit;
-        }
-        
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/create-post', $data, 'Create Post - ReidHub');
-    }
-    
-    public function createPost()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        if (!$this->checkIfCommunityAdmin($user['id'])) {
-            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-            exit;
-        }
-        
-        $postModel = new CommunityPost();
-        $postId = $postModel->createPost([
-            'author_id' => $user['id'],
-            'title' => $_POST['title'] ?? null,
-            'content' => $_POST['content'] ?? '',
-            'post_type' => $_POST['post_type'] ?? 'general',
-            'images' => $_POST['images'] ?? [],
-            'status' => 'published'
-        ]);
-        
-        if ($postId) {
-            header('Location: /dashboard/community');
-        } else {
-            echo "Failed to create post";
-        }
-    }
-    
-    public function showMyPosts()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        if (!$this->checkIfCommunityAdmin($user['id'])) {
-            header('Location: /dashboard/community');
-            exit;
-        }
-        
-        $postModel = new CommunityPost();
-        $posts = $postModel->getPostsByAuthor($user['id']);
-        
-        $data = [
-            'user' => $user,
-            'posts' => $posts
-        ];
-        
-        $this->viewApp('/User/community/my-posts', $data, 'My Posts - ReidHub');
-    }
-    
-    public function deletePost()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = json_decode(file_get_contents('php://input'), true);
-        $postId = $data['post_id'] ?? 0;
-        
-        $postModel = new CommunityPost();
-        
-        // Check if user is author or admin
-        if ($postModel->isAuthor($postId, $user['id'])) {
-            $success = $postModel->deletePost($postId);
-            echo json_encode(['success' => $success]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-        }
-    }
-
     // ============ BLOGS ============
     public function showAllBlogs()
     {
@@ -846,67 +737,7 @@ class Community_CommunityUserController extends Controller
         $this->viewApp('/User/community/clubs/view-club', $data, 'View Club - ReidHub');
     }
     
-    /**
-     * Show admin request form for club admin access
-     */
-    public function showAdminRequestForm() {
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        // Check if user is already a club admin
-        if ($this->checkIfClubAdmin($user['id'])) {
-            header('Location: /dashboard/community/clubs/create');
-            exit;
-        }
-        
-        // Check if user already has a pending request
-        $adminRequestModel = new AdminRequest();
-        $pendingRequest = $adminRequestModel->getPendingRequest($user['id'], 'club_admin');
-        
-        $data = [
-            'user' => $user,
-            'hasPendingRequest' => $pendingRequest !== null,
-            'pendingRequest' => $pendingRequest
-        ];
-        
-        $this->viewApp('/User/community/admin-request', $data, 'Request Club Admin - ReidHub');
-    }
     
-    /**
-     * Submit admin request for club admin access
-     */
-    public function submitAdminRequest() {
-        header('Content-Type: application/json');
-        $user = Auth_LoginController::getSessionUser(true);
-        
-        try {
-            // Check if user is already a club admin
-            if ($this->checkIfClubAdmin($user['id'])) {
-                echo json_encode(['success' => false, 'message' => 'You are already a club admin']);
-                exit;
-            }
-            
-            // Check for required fields
-            if (empty($_POST['reason'])) {
-                echo json_encode(['success' => false, 'message' => 'Please provide a reason for your request']);
-                exit;
-            }
-            
-            // Create admin request
-            $adminRequestModel = new AdminRequest();
-            $requestId = $adminRequestModel->createRequest($user['id'], 'club_admin', $_POST['reason']);
-            
-            Logger::info("Admin request created: ID $requestId for user " . $user['email']);
-            echo json_encode([
-                'success' => true,
-                'message' => 'Your request has been submitted to system administrators. You will be notified once it is reviewed.',
-                'requestId' => $requestId
-            ]);
-        } catch (Exception $e) {
-            Logger::error("Error in submitAdminRequest: " . $e->getMessage());
-            echo json_encode(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
-        }
-    }
-
     public function showCreateClub()
     {
         $user = Auth_LoginController::getSessionUser(true);
