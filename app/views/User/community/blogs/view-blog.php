@@ -5,6 +5,23 @@
 
 <!-- Main Content Area -->
 <main class="blog-view-main" role="main" aria-label="Blog Post">
+  <?php
+    $category = $data['blog']['category'] ?? '';
+    $rawTags = $data['blog']['tags'] ?? null;
+    $tags = [];
+    if (is_string($rawTags) && $rawTags !== '') {
+      $decodedTags = json_decode($rawTags, true);
+      if (is_array($decodedTags)) {
+        $tags = array_values(array_filter(array_map('trim', $decodedTags), function ($tag) {
+          return $tag !== '';
+        }));
+      }
+    } elseif (is_array($rawTags)) {
+      $tags = array_values(array_filter(array_map('trim', $rawTags), function ($tag) {
+        return $tag !== '';
+      }));
+    }
+  ?>
   
   <!-- Breadcrumb Navigation -->
   <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -52,6 +69,21 @@
         </button>
         <?php endif; ?>
       </div>
+
+      <?php if (!empty($category) || !empty($tags)): ?>
+      <div class="blog-taxonomy" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+        <?php if (!empty($category)): ?>
+        <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; background:#DBEAFE; color:#1E40AF; font-size:0.75rem; font-weight:600;">
+          Category: <?= htmlspecialchars(ucwords(str_replace('-', ' ', $category))) ?>
+        </span>
+        <?php endif; ?>
+        <?php foreach ($tags as $tag): ?>
+        <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; background:#F3F4F6; color:#374151; font-size:0.75rem; font-weight:500;">
+          #<?= htmlspecialchars($tag) ?>
+        </span>
+        <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
     </header>
 
     <!-- Blog Content -->
@@ -62,7 +94,7 @@
     <!-- Blog Actions (for owner) -->
     <?php if ($data['isOwner']): ?>
     <div class="blog-actions" id="blog-actions">
-      <button class="btn btn--primary" onclick="window.location.href='/dashboard/community/blogs/edit'">Edit Blog</button>
+      <button class="btn btn--primary" onclick="window.location.href='/dashboard/community/blogs/edit?id=<?= (int)$data['blog']['id'] ?>'">Edit Blog</button>
       <button class="btn btn--danger" id="delete-blog-btn" data-blog-id="<?= $data['blog']['id'] ?>">Delete Blog</button>
     </div>
     <?php endif; ?>

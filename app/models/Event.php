@@ -18,7 +18,7 @@ class Event extends Model
                 FROM events e
                 INNER JOIN users u ON e.creator_id = u.id
                 LEFT JOIN clubs c ON e.club_id = c.id
-                WHERE e.status IN ('upcoming', 'ongoing')
+                WHERE e.status = 'upcoming'
                 ORDER BY e.event_date ASC
                 LIMIT :limit OFFSET :offset";
         
@@ -50,6 +50,32 @@ class Event extends Model
         
         $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':status', $status, PDO::PARAM_STR);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get all events for calendar view (upcoming, completed, cancelled)
+     */
+    public function getAllEventsForCalendar(int $limit = 1000, int $offset = 0): array
+    {
+        $sql = "SELECT 
+                    e.*,
+                    u.first_name as creator_first_name,
+                    u.last_name as creator_last_name,
+                    u.email as creator_email,
+                    c.name as club_name,
+                    (SELECT COUNT(*) FROM event_attendees WHERE event_id = e.id) as attendee_count
+                FROM events e
+                INNER JOIN users u ON e.creator_id = u.id
+                LEFT JOIN clubs c ON e.club_id = c.id
+                WHERE e.status IN ('upcoming', 'completed', 'cancelled')
+                ORDER BY e.event_date ASC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();

@@ -106,13 +106,6 @@
       <?php else: ?>
         <button class="btn btn--primary" onclick="registerEvent(<?= $data['event']['id'] ?>)">Register for Event</button>
       <?php endif; ?>
-      <button class="btn btn--outline" onclick="addToCalendar()" style="margin-left: auto;">
-        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="display: inline; margin-right: 4px;">
-          <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M3 8h14M7 1v6M13 1v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        Add to Calendar
-      </button>
       <button class="report-icon" id="report-event-btn" data-report-type="event" data-id="<?= $data['event']['id'] ?>" title="Report" aria-label="Report event" style="margin-left:8px;">
         <span class="material-symbols-outlined" aria-hidden="true">report</span>
       </button>
@@ -227,7 +220,7 @@
 <script>
 function registerEvent(eventId) {
   if (!confirm('Register for this event?')) return;
-  
+
   fetch('/dashboard/community/events/register', {
     method: 'POST',
     headers: {
@@ -251,7 +244,7 @@ function registerEvent(eventId) {
 
 function unregisterEvent(eventId) {
   if (!confirm('Cancel your attendance?')) return;
-  
+
   fetch('/dashboard/community/events/unregister', {
     method: 'POST',
     headers: {
@@ -275,7 +268,7 @@ function unregisterEvent(eventId) {
 
 function deleteEvent(eventId) {
   if (!confirm('Are you sure you want to delete this event? This cannot be undone.')) return;
-  
+
   fetch('/dashboard/community/events/delete', {
     method: 'POST',
     headers: {
@@ -295,58 +288,6 @@ function deleteEvent(eventId) {
     console.error('Error:', error);
     alert('An error occurred');
   });
-}
-
-function addToCalendar() {
-  // Event data
-  const title = <?= json_encode($data['event']['title']) ?>;
-  const description = <?= json_encode($data['event']['description']) ?>;
-  const location = <?= json_encode($data['event']['location']) ?>;
-  const startDate = new Date(<?= json_encode($data['event']['event_date']) ?>);
-  const eventUrl = window.location.href;
-  
-  // Format dates for iCalendar format (YYYYMMDDTHHMMSSZ)
-  const pad = (num) => String(num).padStart(2, '0');
-  const formatDate = (date) => {
-    return date.getUTCFullYear() +
-      pad(date.getUTCMonth() + 1) +
-      pad(date.getUTCDate()) + 'T' +
-      pad(date.getUTCHours()) +
-      pad(date.getUTCMinutes()) +
-      pad(date.getUTCSeconds()) + 'Z';
-  };
-  
-  // End time is 2 hours after start
-  const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
-  
-  // Create iCalendar content
-  const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//ReidHub//Events//EN
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:${title}
-X-WR-TIMEZONE:UTC
-BEGIN:VEVENT
-UID:${startDate.getTime()}@reidhub.local
-DTSTAMP:${formatDate(new Date())}
-DTSTART:${formatDate(startDate)}
-DTEND:${formatDate(endDate)}
-SUMMARY:${title}
-DESCRIPTION:${description}
-LOCATION:${location}
-URL:${eventUrl}
-END:VEVENT
-END:VCALENDAR`;
-  
-  // Create blob and download
-  const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.ics`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 </script>
 

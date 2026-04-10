@@ -25,13 +25,6 @@
     </div>
   <?php endif; ?>
 
-  <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert--success">
-      <?= htmlspecialchars($_SESSION['success']) ?>
-      <?php unset($_SESSION['success']); ?>
-    </div>
-  <?php endif; ?>
-
   <form class="blog-form" id="create-blog-form" method="POST" action="/dashboard/community/blogs/create" enctype="multipart/form-data">
     
     <div class="form-container">

@@ -14,6 +14,13 @@ class BlogsManager {
     console.log('BlogsManager: Loading blogs...');
     await this.loadAllBlogs();
     await this.loadMyBlogs();
+
+    // Allow deep-linking to a specific tab after actions like edit.
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedTab = urlParams.get('tab');
+    if (requestedTab === 'manage') {
+      this.switchTab('manage');
+    }
     console.log('BlogsManager: Initialization complete');
   }
 
@@ -69,7 +76,9 @@ class BlogsManager {
 
   async loadMyBlogs() {
     try {
-      const response = await fetch('/dashboard/community/blogs/api/my-blogs');
+      const response = await fetch('/dashboard/community/blogs/api/my-blogs', {
+        cache: 'no-store'
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -152,6 +161,8 @@ class BlogsManager {
   createBlogCard(blog) {
     const date = new Date(blog.created_at);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const categoryLabel = this.formatCategory(blog.category);
+    const tags = this.parseTags(blog.tags).slice(0, 3);
 
     // Use image path if available, otherwise use a colored placeholder
     const imageSrc = blog.image_path ? blog.image_path : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -171,6 +182,10 @@ class BlogsManager {
           </div>
           <div class="blog-card__content">
             <h3 class="blog-card__title">${this.escapeHtml(blog.title)}</h3>
+            <div class="blog-card__meta" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+              ${categoryLabel ? `<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; background:#DBEAFE; color:#1E40AF; font-size:0.75rem; font-weight:600;">${this.escapeHtml(categoryLabel)}</span>` : ''}
+              ${tags.map(tag => `<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; background:#F3F4F6; color:#374151; font-size:0.75rem; font-weight:500;">#${this.escapeHtml(tag)}</span>`).join('')}
+            </div>
             <div class="blog-card__meta">
               <span class="blog-card__author">By ${this.escapeHtml(blog.first_name)} ${this.escapeHtml(blog.last_name)}</span>
               <span class="blog-card__separator">•</span>
@@ -185,6 +200,8 @@ class BlogsManager {
   createMyBlogCard(blog) {
     const date = new Date(blog.created_at);
     const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const categoryLabel = this.formatCategory(blog.category);
+    const tags = this.parseTags(blog.tags).slice(0, 3);
 
     // Use image path if available, otherwise use a colored placeholder
     const imageSrc = blog.image_path ? blog.image_path : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2224%22 fill=%22%239ca3af%22%3ENo Image%3C/text%3E%3C/svg%3E';
@@ -203,6 +220,10 @@ class BlogsManager {
         </div>
         <div class="blog-card__content">
           <h3 class="blog-card__title">${this.escapeHtml(blog.title)}</h3>
+          <div class="blog-card__meta" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+            ${categoryLabel ? `<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; background:#DBEAFE; color:#1E40AF; font-size:0.75rem; font-weight:600;">${this.escapeHtml(categoryLabel)}</span>` : ''}
+            ${tags.map(tag => `<span style="display:inline-flex; align-items:center; padding:3px 8px; border-radius:999px; background:#F3F4F6; color:#374151; font-size:0.75rem; font-weight:500;">#${this.escapeHtml(tag)}</span>`).join('')}
+          </div>
           <div class="blog-card__meta">
             <span class="blog-card__date">${formattedDate}</span>
           </div>
@@ -294,6 +315,36 @@ class BlogsManager {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  parseTags(rawTags) {
+    if (Array.isArray(rawTags)) {
+      return rawTags.map(tag => String(tag).trim()).filter(Boolean);
+    }
+
+    if (typeof rawTags === 'string' && rawTags.trim() !== '') {
+      try {
+        const parsed = JSON.parse(rawTags);
+        if (Array.isArray(parsed)) {
+          return parsed.map(tag => String(tag).trim()).filter(Boolean);
+        }
+      } catch (e) {
+        return rawTags.split(',').map(tag => tag.trim()).filter(Boolean);
+      }
+    }
+
+    return [];
+  }
+
+  formatCategory(category) {
+    if (!category) {
+      return '';
+    }
+
+    return String(category)
+      .split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 
   filterByCategory(category) {
