@@ -371,6 +371,9 @@ class Community_CommunityUserController extends Controller
     public function getMyBlogsApi()
     {
         header('Content-Type: application/json');
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('Expires: 0');
         error_log("getMyBlogsApi called");
         
         try {
@@ -679,7 +682,7 @@ class Community_CommunityUserController extends Controller
             if ($success) {
                 error_log("✓✓✓ Blog updated successfully!");
                 $_SESSION['success'] = 'Blog updated successfully!';
-                header('Location: /dashboard/community/blogs');
+                header('Location: /dashboard/community/blogs?tab=manage&updated=1');
             } else {
                 error_log("❌ Blog update failed");
                 $_SESSION['error'] = 'Failed to update blog';
@@ -1273,11 +1276,8 @@ class Community_CommunityUserController extends Controller
             
             Logger::info("Fetching events with status: " . $status);
             
-            if ($status === 'all' || $status === '') {
-                $events = $eventModel->getAllUpcomingEvents($limit, $offset);
-            } else {
-                $events = $eventModel->getEventsByStatus($status, $limit, $offset);
-            }
+            // Filters in the UI are client-side; load all statuses used by the page.
+            $events = $eventModel->getAllEventsForCalendar($limit, $offset);
             
             Logger::info("Fetched " . count($events) . " events for status: " . $status);
             if (!empty($events)) {
@@ -1288,33 +1288,46 @@ class Community_CommunityUserController extends Controller
                 ]));
             }
             
-            // Get all events for calendar view (not paginated or filtered)
-            $allEvents = $eventModel->getAllUpcomingEvents(1000, 0);
+            // Get all events for calendar view (upcoming, completed, cancelled)
+            $allEvents = $eventModel->getAllEventsForCalendar(1000, 0);
             Logger::info("Fetched " . count($allEvents) . " events for calendar");
             
             // Get user's registered events for UI indication
             $userEvents = $eventModel->getEventsForUser($user['id']);
             $userEventIds = array_column($userEvents, 'id');
             
-            // Check if user can create events
-            $isClubAdmin = $this->isClubAdminOrCreator($user['id']);
+            // Keep create permission behavior, but gate My Events by strict club admin role.
+            $canCreateEvents = $this->isClubAdminOrCreator($user['id']);
+            $isClubAdmin = $this->checkIfClubAdmin($user['id']);
+            $myEvents = $isClubAdmin ? $eventModel->getEventsByCreator($user['id']) : [];
             
             $data = [
                 'user' => $user,
                 'events' => $events,
                 'allEvents' => $allEvents,  // For calendar view
                 'userEventIds' => $userEventIds,
+                'myEvents' => $myEvents,
                 'currentPage' => $page,
                 'currentStatus' => $status,
                 'itemsPerPage' => $limit,
-                'isClubAdmin' => $isClubAdmin
+                'isClubAdmin' => $isClubAdmin,
+                'canCreateEvents' => $canCreateEvents
             ];
             
             Logger::info("Rendering all events view with " . count($events) . " events");
             $this->viewApp('/User/community/events/all-events', $data, 'Events - ReidHub');
         } catch (Exception $e) {
             Logger::error("Error in showAllEvents: " . $e->getMessage());
-            $data = ['user' => $user, 'error' => 'Unable to load events', 'events' => [], 'allEvents' => [], 'isClubAdmin' => false];
+            $data = [
+                'user' => $user,
+                'error' => 'Unable to load events',
+                'events' => [],
+                'allEvents' => [],
+                'userEventIds' => [],
+                'myEvents' => [],
+                'isClubAdmin' => false,
+                'canCreateEvents' => false
+            ];
             $this->viewApp('/User/community/events/all-events', $data, 'Events - ReidHub');
         }
     }
@@ -1383,22 +1396,13 @@ class Community_CommunityUserController extends Controller
         }
         
         try {
-            // Get user's clubs (if they're a club admin)
+            // Show all active clubs for event association.
             $clubModel = new Club();
-            $userClubs = $clubModel->getClubsByCreator($user['id']);
-            
-            // Also get clubs where user is an admin/owner
-            $memberClubs = $clubModel->getClubsByMember($user['id']);
-            $adminClubs = array_filter($memberClubs, function($club) {
-                return in_array($club['member_role'], ['admin', 'owner']);
-            });
-            
-            // Merge and deduplicate
-            $allAdminClubs = array_merge($userClubs, $adminClubs);
+            $allClubs = $clubModel->getAllClubs();
             
             $data = [
                 'user' => $user,
-                'userClubs' => $allAdminClubs,
+                'allClubs' => $allClubs,
                 'isClubAdmin' => true
             ];
             
@@ -1476,7 +1480,14 @@ class Community_CommunityUserController extends Controller
             
             // Convert empty max_attendees to null
             $maxAttendees = !empty($_POST['max_attendees']) ? (int)$_POST['max_attendees'] : null;
-            $clubId = !empty($_POST['club_id']) ? (int)$_POST['club_id'] : null;
+            $clubIdRaw = $_POST['club_id'] ?? '';
+            $otherClubName = trim($_POST['club_name_other'] ?? '');
+            $clubId = (ctype_digit((string)$clubIdRaw) && (int)$clubIdRaw > 0) ? (int)$clubIdRaw : null;
+
+            if ($clubIdRaw === 'other' && $otherClubName === '') {
+                echo json_encode(['success' => false, 'message' => 'Please enter the other club name']);
+                exit;
+            }
             $googleFormUrl = !empty($_POST['google_form_url']) ? $_POST['google_form_url'] : null;
             
             $eventData = [
@@ -1535,14 +1546,14 @@ class Community_CommunityUserController extends Controller
                 exit;
             }
             
-            // Get user's clubs
+            // Show all active clubs for event association updates.
             $clubModel = new Club();
-            $userClubs = $clubModel->getClubsByCreator($user['id']);
+            $allClubs = $clubModel->getAllClubs();
             
             $data = [
                 'user' => $user,
                 'event' => $event,
-                'userClubs' => $userClubs
+                'allClubs' => $allClubs
             ];
             
             Logger::info("Rendering edit event view for event: " . $eventId);
@@ -1611,6 +1622,27 @@ class Community_CommunityUserController extends Controller
             
             $updateData = [];
             $allowedFields = ['title', 'description', 'event_date', 'location', 'category', 'max_attendees', 'image_url', 'google_form_url', 'status'];
+
+            $clubIdRaw = $_POST['club_id'] ?? null;
+            if ($clubIdRaw !== null) {
+                $otherClubName = trim($_POST['club_name_other'] ?? '');
+
+                if ($clubIdRaw === 'other') {
+                    if ($otherClubName === '') {
+                        echo json_encode(['success' => false, 'message' => 'Please enter the other club name']);
+                        exit;
+                    }
+                    // Keep club_id null when custom club name is used.
+                    $updateData['club_id'] = null;
+                } elseif ($clubIdRaw === '' || $clubIdRaw === null) {
+                    $updateData['club_id'] = null;
+                } elseif (ctype_digit((string)$clubIdRaw) && (int)$clubIdRaw > 0) {
+                    $updateData['club_id'] = (int)$clubIdRaw;
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Invalid club selection']);
+                    exit;
+                }
+            }
             
             foreach ($allowedFields as $field) {
                 if (isset($_POST[$field])) {

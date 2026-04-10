@@ -6,8 +6,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const filePreview = document.getElementById('file-preview');
     const previewImage = document.getElementById('preview-image');
     const previewRemove = document.getElementById('preview-remove');
+    const eventClubSelect = document.getElementById('event-club');
+    const eventClubOtherInput = document.getElementById('event-club-other');
 
     if (!form) return;
+
+    function toggleOtherClubInput() {
+        if (!eventClubSelect || !eventClubOtherInput) return;
+
+        const isOther = eventClubSelect.value === 'other';
+        eventClubOtherInput.style.display = isOther ? 'block' : 'none';
+        eventClubOtherInput.required = isOther;
+
+        if (!isOther) {
+            eventClubOtherInput.value = '';
+        }
+    }
+
+    if (eventClubSelect && eventClubOtherInput) {
+        eventClubSelect.addEventListener('change', toggleOtherClubInput);
+        toggleOtherClubInput();
+    }
 
     // File upload handling
     if (uploadTrigger) {
@@ -60,6 +79,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Clear previous errors
         document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+
+        if (eventClubSelect && eventClubOtherInput && eventClubSelect.value === 'other' && !eventClubOtherInput.value.trim()) {
+            const otherClubError = document.getElementById('club-name-other-error');
+            if (otherClubError) {
+                otherClubError.textContent = 'Please type the other club name';
+            }
+            eventClubOtherInput.focus();
+            return;
+        }
 
         const formData = new FormData(form);
         const isEdit = !!document.getElementById('edit-event-form');

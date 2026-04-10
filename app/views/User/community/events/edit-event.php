@@ -75,11 +75,33 @@
           <label for="event-status" class="form-label">Status</label>
           <select id="event-status" name="status" class="form-select" required>
             <option value="upcoming" <?= $data['event']['status'] === 'upcoming' ? 'selected' : '' ?>>Upcoming</option>
-            <option value="ongoing" <?= $data['event']['status'] === 'ongoing' ? 'selected' : '' ?>>Ongoing</option>
             <option value="completed" <?= $data['event']['status'] === 'completed' ? 'selected' : '' ?>>Completed</option>
             <option value="cancelled" <?= $data['event']['status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
           </select>
           <div class="form-error" id="status-error"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="event-club" class="form-label">Associated Club</label>
+          <select id="event-club" name="club_id" class="form-select">
+            <option value="">-- No Club --</option>
+            <?php foreach (($data['allClubs'] ?? []) as $club): ?>
+            <option value="<?= $club['id'] ?>" <?= ((int)($data['event']['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : '' ?>>
+              <?= htmlspecialchars($club['name']) ?>
+            </option>
+            <?php endforeach; ?>
+            <option value="other">Other (Type Club Name)</option>
+          </select>
+          <input
+            type="text"
+            id="event-club-other"
+            name="club_name_other"
+            class="form-input"
+            placeholder="Type other club name"
+            style="margin-top: 0.5rem; display: none;"
+          >
+          <div class="form-error" id="club-id-error"></div>
+          <div class="form-error" id="club-name-other-error"></div>
         </div>
 
         <div class="form-group">

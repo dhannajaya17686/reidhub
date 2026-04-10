@@ -61,18 +61,26 @@
           <div class="form-error" id="google-form-url-error"></div>
         </div>
 
-        <?php if (!empty($data['userClubs'])): ?>
         <div class="form-group">
-          <label for="event-club" class="form-label">Associated Club (Optional)</label>
+          <label for="event-club" class="form-label">Associated Club</label>
           <select id="event-club" name="club_id" class="form-select">
             <option value="">-- No Club --</option>
-            <?php foreach ($data['userClubs'] as $club): ?>
+            <?php foreach (($data['allClubs'] ?? []) as $club): ?>
             <option value="<?= $club['id'] ?>"><?= htmlspecialchars($club['name']) ?></option>
             <?php endforeach; ?>
+            <option value="other">Other (Type Club Name)</option>
           </select>
+          <input
+            type="text"
+            id="event-club-other"
+            name="club_name_other"
+            class="form-input"
+            placeholder="Type other club name"
+            style="margin-top: 0.5rem; display: none;"
+          >
           <div class="form-error" id="club-id-error"></div>
+          <div class="form-error" id="club-name-other-error"></div>
         </div>
-        <?php endif; ?>
 
         <div class="form-group">
           <label class="form-label">Event Image (Optional)</label>

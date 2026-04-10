@@ -4,6 +4,20 @@
 
 <!-- Main Blogs Content Area -->
 <main class="blogs-main" role="main" aria-label="Blogs Dashboard">
+
+  <?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert--error" style="margin-bottom: 1rem;">
+      <?= htmlspecialchars($_SESSION['error']) ?>
+      <?php unset($_SESSION['error']); ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert--success" style="margin-bottom: 1rem;">
+      <?= htmlspecialchars($_SESSION['success']) ?>
+      <?php unset($_SESSION['success']); ?>
+    </div>
+  <?php endif; ?>
   
   <!-- Page Header -->
   <div class="page-header">

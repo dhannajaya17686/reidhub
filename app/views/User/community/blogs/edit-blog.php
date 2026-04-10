@@ -28,13 +28,6 @@
     </div>
   <?php endif; ?>
 
-  <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert--success">
-      <?= htmlspecialchars($_SESSION['success']) ?>
-      <?php unset($_SESSION['success']); ?>
-    </div>
-  <?php endif; ?>
-
   <!-- Blog Form -->
   <form class="blog-form" id="edit-blog-form" method="POST" action="/dashboard/community/blogs/edit" enctype="multipart/form-data">
     <input type="hidden" name="blog_id" value="<?= htmlspecialchars($data['blog']['id']) ?>">
@@ -142,7 +135,8 @@
     </div>
 
     <!-- Form Actions -->
-    <dia href="/dashboard/community/blogs" class="btn btn--secondary btn--large">Cancel</a>
+    <div class="form-actions">
+      <a href="/dashboard/community/blogs" class="btn btn--secondary btn--large">Cancel</a>
       <button type="submit" class="btn btn--primary btn--large">Update Blog</button>
     </div>
 

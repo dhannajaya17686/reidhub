@@ -19,7 +19,7 @@ if (!empty($data['events'])) {
     <p class="page-subtitle">
       Discover and join exciting events happening around campus
     </p>
-    <?php if ($data['isClubAdmin']): ?>
+    <?php if (!empty($data['canCreateEvents'])): ?>
     <a href="/dashboard/community/events/create" class="btn btn--primary">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <line x1="10" y1="4" x2="10" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -34,7 +34,9 @@ if (!empty($data['events'])) {
     <div class="tab-list" role="tablist">
       <button class="tab-button tab-button--active" data-tab="all">All Events</button>
       <button class="tab-button" data-tab="registered">Attending Events</button>
+      <?php if (!empty($data['isClubAdmin'])): ?>
       <button class="tab-button" data-tab="my-events">My Events</button>
+      <?php endif; ?>
       <button class="tab-button" data-tab="calendar" style="margin-left: auto;">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" style="display: inline; margin-right: 4px;">
           <rect x="3" y="4" width="14" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
@@ -59,8 +61,8 @@ if (!empty($data['events'])) {
 
     <div class="category-pills">
       <button class="pill pill--active" data-status="upcoming">Upcoming</button>
-      <button class="pill" data-status="ongoing">Ongoing</button>
       <button class="pill" data-status="completed">Completed</button>
+      <button class="pill" data-status="cancelled">Cancelled</button>
     </div>
 
     <section class="blogs-section">
@@ -82,6 +84,9 @@ if (!empty($data['events'])) {
               <span class="event-date-badge">
                 <?= date('M d', strtotime($event['event_date'])) ?>
               </span>
+              <?php if (!empty($event['club_name'])): ?>
+              <span class="badge-club"><?= htmlspecialchars($event['club_name']) ?></span>
+              <?php endif; ?>
             </div>
             <div class="blog-card__content">
               <h3 class="blog-card__title"><?= htmlspecialchars($event['title']) ?></h3>
@@ -136,6 +141,9 @@ if (!empty($data['events'])) {
               <span class="event-date-badge">
                 <?= date('M d', strtotime($event['event_date'])) ?>
               </span>
+              <?php if (!empty($event['club_name'])): ?>
+              <span class="badge-club"><?= htmlspecialchars($event['club_name']) ?></span>
+              <?php endif; ?>
               <span class="badge-attending">✓ Attending</span>
             </div>
             <div class="blog-card__content">
@@ -153,6 +161,55 @@ if (!empty($data['events'])) {
       <?php endif; ?>
     </section>
   </div>
+
+  <?php if (!empty($data['isClubAdmin'])): ?>
+  <!-- My Events Tab (Club Admin Only) -->
+  <div class="tab-content is-hidden" data-tab-content="my-events">
+    <section class="manage-blogs-section">
+      <div class="section-header">
+        <h2 class="section-title">My Created Events</h2>
+      </div>
+
+      <?php $myEvents = $data['myEvents'] ?? []; ?>
+
+      <?php if (empty($myEvents)): ?>
+      <div class="empty-state">
+        <div class="empty-icon">🗓️</div>
+        <h3>No events created yet</h3>
+        <p>Events you create as a club admin will appear here.</p>
+        <a href="/dashboard/community/events/create" class="btn btn--primary">Create Event</a>
+      </div>
+      <?php else: ?>
+      <div class="blogs-grid">
+        <?php foreach ($myEvents as $event): ?>
+        <article class="blog-card event-card" data-event-id="<?= $event['id'] ?>" data-status="<?= htmlspecialchars($event['status']) ?>">
+          <a href="/dashboard/community/events/view?id=<?= $event['id'] ?>" class="blog-card__link">
+            <div class="blog-card__image event-card__image">
+              <img src="<?= htmlspecialchars($event['image_url'] ?? 'https://via.placeholder.com/400x400/E74C3C/ffffff?text=' . urlencode(substr($event['title'], 0, 1))) ?>"
+                   alt="<?= htmlspecialchars($event['title']) ?>">
+              <span class="event-date-badge">
+                <?= date('M d', strtotime($event['event_date'])) ?>
+              </span>
+              <?php if (!empty($event['club_name'])): ?>
+              <span class="badge-club"><?= htmlspecialchars($event['club_name']) ?></span>
+              <?php endif; ?>
+            </div>
+            <div class="blog-card__content">
+              <h3 class="blog-card__title"><?= htmlspecialchars($event['title']) ?></h3>
+              <p class="blog-card__excerpt"><?= htmlspecialchars(substr($event['description'] ?? '', 0, 100)) ?><?= strlen($event['description'] ?? '') > 100 ? '...' : '' ?></p>
+              <div class="blog-card__meta">
+                <span class="blog-card__author"><?= htmlspecialchars($event['attendee_count'] ?? 0) ?> going</span>
+                <span class="blog-card__category"><?= htmlspecialchars(ucfirst($event['status'])) ?></span>
+              </div>
+            </div>
+          </a>
+        </article>
+        <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
+    </section>
+  </div>
+  <?php endif; ?>
 
   <!-- Calendar View Tab -->
   <div class="tab-content is-hidden" data-tab-content="calendar">
@@ -291,6 +348,31 @@ if (!empty($data['events'])) {
   border-color: #0284c7;
 }
 
+.calendar-day.has-going-event {
+  background: #ecfdf5;
+  border-color: #10b981;
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.2);
+}
+
+.calendar-day.has-going-event:hover {
+  background: #d1fae5;
+  border-color: #059669;
+}
+
+.calendar-day-going {
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #047857;
+}
+
+.calendar-day-has-cancelled {
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #b91c1c;
+}
+
 /* Modal Styles */
 .modal {
   position: fixed;
@@ -385,6 +467,16 @@ if (!empty($data['events'])) {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+.modal-event-item--going {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.modal-event-item--going:hover {
+  border-color: #059669;
+  background: #d1fae5;
+}
+
 .modal-event-item__header {
   display: flex;
   justify-content: space-between;
@@ -437,6 +529,42 @@ if (!empty($data['events'])) {
   font-weight: 600;
   text-transform: capitalize;
 }
+
+.modal-event-item__going {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #047857;
+  background: #a7f3d0;
+}
+
+.modal-event-item--cancelled {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.modal-event-item--cancelled:hover {
+  border-color: #dc2626;
+  background: #fee2e2;
+}
+
+.modal-event-item--cancelled .modal-event-item__title,
+.modal-event-item--cancelled .modal-event-item__time {
+  color: #b91c1c;
+  text-decoration: line-through;
+  text-decoration-color: #dc2626;
+  text-decoration-thickness: 2px;
+}
+
+.modal-event-item__status--cancelled {
+  background: #fecaca;
+  color: #991b1b;
+  text-decoration: line-through;
+  text-decoration-color: #dc2626;
+}
 </style>
 
 <style>
@@ -462,10 +590,9 @@ if (!empty($data['events'])) {
 }
 
 .badge-attending,
-.badge-creator {
+.badge-creator,
+.badge-club {
   position: absolute;
-  bottom: 12px;
-  right: 12px;
   padding: 6px 12px;
   border-radius: 20px;
   font-weight: 600;
@@ -474,8 +601,20 @@ if (!empty($data['events'])) {
   color: white;
 }
 
+.badge-attending,
+.badge-creator {
+  bottom: 12px;
+  right: 12px;
+}
+
 .badge-creator {
   background: rgba(59, 130, 246, 0.95);
+}
+
+.badge-club {
+  bottom: 12px;
+  left: 12px;
+  background: rgba(99, 102, 241, 0.95);
 }
 </style>
 
@@ -529,7 +668,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Status filter
+  // Status filter - only apply to All Events tab
   document.querySelectorAll('.category-pills .pill').forEach(pill => {
     pill.addEventListener('click', function() {
       const status = this.dataset.status;
@@ -537,15 +676,20 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.category-pills .pill').forEach(p => p.classList.remove('pill--active'));
       this.classList.add('pill--active');
       
-      document.querySelectorAll('.event-card').forEach(card => {
-        const cardStatus = card.dataset.status;
-        card.style.display = !status || cardStatus === status ? '' : 'none';
-      });
+      // Only filter cards in the All Events tab
+      const allEventsTab = document.querySelector('[data-tab-content="all"]');
+      if (allEventsTab) {
+        allEventsTab.querySelectorAll('.event-card').forEach(card => {
+          const cardStatus = card.dataset.status;
+          card.style.display = !status || cardStatus === status ? '' : 'none';
+        });
+      }
     });
   });
   
   // Calendar functionality
   let currentDate = new Date();
+  const userEventIds = new Set(<?= json_encode(array_map('intval', $data['userEventIds'] ?? [])) ?>);
 
   function renderCalendar() {
     console.log('Rendering calendar for:', currentDate);
@@ -624,6 +768,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (dayEvents.length > 0) {
         day.classList.add('has-events');
         day.innerHTML += `<div class="calendar-day-events">${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}</div>`;
+
+        const hasGoingEvent = dayEvents.some(event => userEventIds.has(Number(event.id)));
+        if (hasGoingEvent) {
+          day.classList.add('has-going-event');
+          day.innerHTML += `<div class="calendar-day-going">You're going</div>`;
+        }
+
+        const cancelledCount = dayEvents.filter(event => event.status === 'cancelled').length;
+        if (cancelledCount > 0) {
+          day.innerHTML += `<div class="calendar-day-has-cancelled">${cancelledCount} cancelled</div>`;
+        }
       }
       
       // Add click handler to show events for this day
@@ -691,7 +846,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const timeStr = eventTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
       
       const eventEl = document.createElement('div');
-      eventEl.className = 'modal-event-item';
+      const isGoing = userEventIds.has(Number(event.id));
+      const isCancelled = event.status === 'cancelled';
+      eventEl.className = `modal-event-item${isGoing ? ' modal-event-item--going' : ''}${isCancelled ? ' modal-event-item--cancelled' : ''}`;
       eventEl.innerHTML = `
         <div class="modal-event-item__header">
           <h3 class="modal-event-item__title">${htmlEscape(event.title)}</h3>
@@ -710,8 +867,15 @@ document.addEventListener('DOMContentLoaded', function() {
           </svg>
           ${event.attendee_count || 0} attending
         </p>
+        ${event.club_name ? `<p class="modal-event-item__club" style="margin: 0.5rem 0; font-size: 0.875rem; color: #6b7280; display: flex; align-items: center;">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" style="display: inline; margin-right: 6px;">
+            <path d="M10 2C5.58 2 2 5 2 9v5c0 2 1 3 3 3h10c2 0 3-1 3-3V9c0-4-3.58-7-8-7z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          </svg>
+          ${htmlEscape(event.club_name)}
+        </p>` : ''}
         <p class="modal-event-item__category">
-          <span class="modal-event-item__status">${htmlEscape(event.status)}</span>
+          <span class="modal-event-item__status${isCancelled ? ' modal-event-item__status--cancelled' : ''}">${htmlEscape(event.status)}</span>
+          ${isGoing ? '<span class="modal-event-item__going">\u2713 You\'re going</span>' : ''}
         </p>
         <a href="/dashboard/community/events/view?id=${event.id}" class="btn btn--primary btn--sm" style="margin-top: 12px; width: 100%;">
           View Event Details

@@ -39,7 +39,7 @@ class Blog extends Model
                 FROM blogs b
                 INNER JOIN users u ON b.author_id = u.id
                 WHERE b.author_id = ?
-                ORDER BY b.created_at DESC";
+                ORDER BY b.updated_at DESC, b.created_at DESC";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$authorId]);
