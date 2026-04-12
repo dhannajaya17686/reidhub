@@ -57,8 +57,15 @@ class EduArchive_EduAdminController extends Controller {
         $search = $_GET['q'] ?? '';
         $tag = $_GET['tag'] ?? '';
         $hidden = $_GET['hidden'] ?? '';
+        $removal = $_GET['removal'] ?? '';
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 20;
+        $totalResources = $model->getAdminResourcesCount($status, $type, $subject ?: null, $year ?: null, $search ?: null, $tag ?: null, $hidden ?: null, $removal ?: null);
+        $totalPages = max(1, (int)ceil($totalResources / $perPage));
+        $page = min($page, $totalPages);
+        $offset = ($page - 1) * $perPage;
 
-        $resources = $model->getAdminResources($status, $type, $subject ?: null, $year ?: null, $search ?: null, $tag ?: null, $hidden ?: null);
+        $resources = $model->getAdminResources($status, $type, $subject ?: null, $year ?: null, $search ?: null, $tag ?: null, $hidden ?: null, $perPage, $offset, $removal ?: null);
         $counts = $model->getAdminCounts();
         $filterTags = [];
         try {
@@ -78,7 +85,14 @@ class EduArchive_EduAdminController extends Controller {
                 'year' => $year,
                 'search' => $search,
                 'tag' => $tag,
-                'hidden' => $hidden
+                'hidden' => $hidden,
+                'removal' => $removal
+            ],
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total_items' => $totalResources,
+                'total_pages' => $totalPages
             ],
             'filterTags' => $filterTags
         ], 'Edu Archive Admin - ReidHub');
@@ -136,6 +150,11 @@ class EduArchive_EduAdminController extends Controller {
         if ($action === 'unhide') {
             $ok = $model->setResourceHidden($id, 0);
             $this->redirectBack($ok ? 'success' : 'error', $ok ? 'unhidden' : 'unhide_failed', $qs);
+        }
+
+        if ($action === 'clear_removal_request') {
+            $ok = $model->clearRemovalRequest($id);
+            $this->redirectBack($ok ? 'success' : 'error', $ok ? 'removal_request_cleared' : 'clear_request_failed', $qs);
         }
 
         $this->redirectBack('error', 'unsupported_action', $qs);

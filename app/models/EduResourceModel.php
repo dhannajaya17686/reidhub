@@ -1,17 +1,55 @@
 <?php
 
 class EduResourceModel extends Model {
+    private $moderationColumnsChecked = false;
+    private $moderationColumnsReady = false;
 
-    // Fetch approved resources with filters
-    public function getAllResources($type = 'all', $subject = null, $year = null, $search = null, $tag = null, $limit = 100, $offset = 0) {
-        $sql = "SELECT r.*, u.first_name, u.last_name 
-                FROM edu_resources r
-                JOIN users u ON r.user_id = u.id
-                WHERE r.status = 'approved'
-                  AND (r.is_hidden = 0 OR r.is_hidden IS NULL)";
-        
-        $params = [];
+    private function bindParams($stmt, array $params) {
+        foreach ($params as $key => $val) {
+            $stmt->bindValue($key, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+    }
 
+    private function hasColumn($table, $column) {
+        $stmt = $this->db->prepare("SHOW COLUMNS FROM {$table} LIKE :column");
+        $stmt->execute([':column' => $column]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) !== false;
+    }
+
+    private function ensureArchiveModerationColumns() {
+        if ($this->moderationColumnsChecked) {
+            return $this->moderationColumnsReady;
+        }
+
+        $this->moderationColumnsChecked = true;
+
+        try {
+            if (!$this->hasColumn('edu_resources', 'is_hidden')) {
+                $this->db->exec("ALTER TABLE edu_resources ADD COLUMN is_hidden TINYINT(1) NOT NULL DEFAULT 0 AFTER admin_feedback");
+            }
+            if (!$this->hasColumn('edu_resources', 'removal_requested')) {
+                $this->db->exec("ALTER TABLE edu_resources ADD COLUMN removal_requested TINYINT(1) NOT NULL DEFAULT 0 AFTER is_hidden");
+            }
+            if (!$this->hasColumn('edu_resources', 'removal_reason')) {
+                $this->db->exec("ALTER TABLE edu_resources ADD COLUMN removal_reason TEXT NULL AFTER removal_requested");
+            }
+            if (!$this->hasColumn('edu_resources', 'removal_requested_at')) {
+                $this->db->exec("ALTER TABLE edu_resources ADD COLUMN removal_requested_at TIMESTAMP NULL AFTER removal_reason");
+            }
+
+            $this->moderationColumnsReady =
+                $this->hasColumn('edu_resources', 'is_hidden') &&
+                $this->hasColumn('edu_resources', 'removal_requested') &&
+                $this->hasColumn('edu_resources', 'removal_reason') &&
+                $this->hasColumn('edu_resources', 'removal_requested_at');
+        } catch (Exception $e) {
+            $this->moderationColumnsReady = false;
+        }
+
+        return $this->moderationColumnsReady;
+    }
+
+    private function appendPublicResourceFilters(&$sql, &$params, $type, $subject, $year, $search, $tag) {
         if ($type && $type !== 'all') {
             $sql .= " AND r.type = :type";
             $params[':type'] = $type;
@@ -32,25 +70,10 @@ class EduResourceModel extends Model {
             $sql .= " AND r.tags LIKE :tag";
             $params[':tag'] = "%$tag%";
         }
-
-        $sql .= " ORDER BY r.created_at DESC LIMIT :limit OFFSET :offset";
-
-        $stmt = $this->db->prepare($sql);
-        foreach ($params as $key => $val) {
-            $stmt->bindValue($key, $val, PDO::PARAM_STR);
-        }
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getAdminResources($status = 'all', $type = 'all', $subject = null, $year = null, $search = null, $tag = null, $hidden = null, $limit = 200, $offset = 0) {
-        $sql = "SELECT r.*, u.first_name, u.last_name
-                FROM edu_resources r
-                JOIN users u ON r.user_id = u.id
-                WHERE 1=1";
-        $params = [];
+    private function appendAdminResourceFilters(&$sql, &$params, $status, $type, $subject, $year, $search, $tag, $hidden, $removal = null) {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
 
         if ($status && $status !== 'all') {
             $sql .= " AND r.status = :status";
@@ -76,13 +99,72 @@ class EduResourceModel extends Model {
             $sql .= " AND r.tags LIKE :tag";
             $params[':tag'] = "%$tag%";
         }
-        if ($hidden !== null && $hidden !== '') {
+        if ($moderationColumnsReady && $hidden !== null && $hidden !== '') {
             $sql .= " AND r.is_hidden = :hidden";
             $params[':hidden'] = ((string)$hidden === '1') ? 1 : 0;
         }
+        if ($moderationColumnsReady && $removal !== null && $removal !== '') {
+            $sql .= " AND r.removal_requested = :removal_requested";
+            $params[':removal_requested'] = ((string)$removal === '1') ? 1 : 0;
+        }
+    }
 
-        $sql .= " ORDER BY
-                    CASE r.status
+    // Fetch approved resources with filters
+    public function getAllResources($type = 'all', $subject = null, $year = null, $search = null, $tag = null, $limit = 100, $offset = 0) {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $sql = "SELECT r.*, u.first_name, u.last_name
+                FROM edu_resources r
+                JOIN users u ON r.user_id = u.id
+                WHERE r.status = 'approved'";
+        if ($moderationColumnsReady) {
+            $sql .= " AND (r.is_hidden = 0 OR r.is_hidden IS NULL)";
+        }
+
+        $params = [];
+        $this->appendPublicResourceFilters($sql, $params, $type, $subject, $year, $search, $tag);
+
+        $sql .= " ORDER BY r.created_at DESC LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        $this->bindParams($stmt, $params);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllResourcesCount($type = 'all', $subject = null, $year = null, $search = null, $tag = null) {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $sql = "SELECT COUNT(*)
+                FROM edu_resources r
+                WHERE r.status = 'approved'";
+        if ($moderationColumnsReady) {
+            $sql .= " AND (r.is_hidden = 0 OR r.is_hidden IS NULL)";
+        }
+        $params = [];
+
+        $this->appendPublicResourceFilters($sql, $params, $type, $subject, $year, $search, $tag);
+
+        $stmt = $this->db->prepare($sql);
+        $this->bindParams($stmt, $params);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+    public function getAdminResources($status = 'all', $type = 'all', $subject = null, $year = null, $search = null, $tag = null, $hidden = null, $limit = 200, $offset = 0, $removal = null) {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $sql = "SELECT r.*, u.first_name, u.last_name
+                FROM edu_resources r
+                JOIN users u ON r.user_id = u.id
+                WHERE 1=1";
+        $params = [];
+        $this->appendAdminResourceFilters($sql, $params, $status, $type, $subject, $year, $search, $tag, $hidden, $removal);
+
+        $sql .= " ORDER BY ";
+        if ($moderationColumnsReady) {
+            $sql .= "CASE WHEN r.removal_requested = 1 THEN 0 ELSE 1 END, ";
+        }
+        $sql .= "CASE r.status
                         WHEN 'pending' THEN 0
                         WHEN 'approved' THEN 1
                         WHEN 'rejected' THEN 2
@@ -92,22 +174,39 @@ class EduResourceModel extends Model {
                   LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
-        foreach ($params as $key => $val) {
-            $stmt->bindValue($key, $val, PDO::PARAM_STR);
-        }
+        $this->bindParams($stmt, $params);
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAdminResourcesCount($status = 'all', $type = 'all', $subject = null, $year = null, $search = null, $tag = null, $hidden = null, $removal = null) {
+        $sql = "SELECT COUNT(*)
+                FROM edu_resources r
+                WHERE 1=1";
+        $params = [];
+
+        $this->appendAdminResourceFilters($sql, $params, $status, $type, $subject, $year, $search, $tag, $hidden, $removal);
+
+        $stmt = $this->db->prepare($sql);
+        $this->bindParams($stmt, $params);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
     public function getAdminCounts() {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $hiddenCountSql = $moderationColumnsReady ? "SUM(CASE WHEN status = 'approved' AND is_hidden = 1 THEN 1 ELSE 0 END)" : "0";
+        $removalCountSql = $moderationColumnsReady ? "SUM(CASE WHEN removal_requested = 1 THEN 1 ELSE 0 END)" : "0";
+
         $sql = "SELECT
                     COUNT(*) AS total_count,
                     SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending_count,
                     SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approved_count,
                     SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) AS rejected_count,
-                    SUM(CASE WHEN status = 'approved' AND is_hidden = 1 THEN 1 ELSE 0 END) AS hidden_count
+                    {$hiddenCountSql} AS hidden_count,
+                    {$removalCountSql} AS removal_request_count
                 FROM edu_resources";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
@@ -177,7 +276,11 @@ class EduResourceModel extends Model {
     }
 
     public function approveResource($id) {
-        $stmt = $this->db->prepare("UPDATE edu_resources SET status = 'approved', admin_feedback = NULL, is_hidden = 0 WHERE id = :id");
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $sql = $moderationColumnsReady
+            ? "UPDATE edu_resources SET status = 'approved', admin_feedback = NULL, is_hidden = 0 WHERE id = :id"
+            : "UPDATE edu_resources SET status = 'approved', admin_feedback = NULL WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->rowCount() > 0;
     }
@@ -189,8 +292,45 @@ class EduResourceModel extends Model {
     }
 
     public function setResourceHidden($id, $hidden) {
+        if (!$this->ensureArchiveModerationColumns()) {
+            return false;
+        }
         $stmt = $this->db->prepare("UPDATE edu_resources SET is_hidden = :hidden WHERE id = :id AND status = 'approved'");
         $stmt->execute([':hidden' => (int)$hidden, ':id' => $id]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function requestRemoval($id, $userId, $reason) {
+        if (!$this->ensureArchiveModerationColumns()) {
+            return false;
+        }
+        $sql = "UPDATE edu_resources
+                SET removal_requested = 1,
+                    removal_reason = :reason,
+                    removal_requested_at = NOW()
+                WHERE id = :id
+                  AND user_id = :uid
+                  AND status = 'approved'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':reason' => $reason,
+            ':id' => $id,
+            ':uid' => $userId
+        ]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function clearRemovalRequest($id) {
+        if (!$this->ensureArchiveModerationColumns()) {
+            return false;
+        }
+        $sql = "UPDATE edu_resources
+                SET removal_requested = 0,
+                    removal_reason = NULL,
+                    removal_requested_at = NULL
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
         return $stmt->rowCount() > 0;
     }
 
@@ -284,6 +424,20 @@ class EduResourceModel extends Model {
         $sql = "SELECT id FROM edu_bookmarks WHERE user_id = :uid AND resource_id = :rid";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':uid' => $userId, ':rid' => $resourceId]);
+        return $stmt->rowCount() > 0;
+    }
+
+    public function isResourceVisibleForBookmark($resourceId) {
+        $moderationColumnsReady = $this->ensureArchiveModerationColumns();
+        $sql = "SELECT id
+                FROM edu_resources
+                WHERE id = :id
+                  AND status = 'approved'";
+        if ($moderationColumnsReady) {
+            $sql .= " AND (is_hidden = 0 OR is_hidden IS NULL)";
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $resourceId]);
         return $stmt->rowCount() > 0;
     }
 

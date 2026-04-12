@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!page) return;
 
     initFilterForm(page);
+    initTagPanel(page);
     initTagForms(page);
     initResourceForms(page);
     initFlashAlerts(page);
@@ -17,6 +18,22 @@ function initFilterForm(page) {
         select.addEventListener('change', () => {
             form.submit();
         });
+    });
+}
+
+function initTagPanel(page) {
+    const toggle = page.querySelector('[data-tag-panel-toggle]');
+    const body = page.querySelector('[data-tag-panel-body]');
+    if (!toggle || !body) return;
+
+    toggle.addEventListener('click', () => {
+        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!isOpen));
+        body.hidden = isOpen;
+        const label = toggle.querySelector('.tag-panel-toggle-icon');
+        if (label) {
+            label.textContent = isOpen ? 'Show' : 'Hide';
+        }
     });
 }
 
@@ -72,7 +89,7 @@ function initResourceForms(page) {
                 }
             }
 
-            if (['approve', 'reject', 'hide', 'unhide'].includes(action)) {
+            if (['approve', 'reject', 'hide', 'unhide', 'clear_removal_request'].includes(action)) {
                 const confirmationMessage = getActionConfirmation(action);
                 if (!window.confirm(confirmationMessage)) {
                     event.preventDefault();
@@ -111,6 +128,8 @@ function getActionConfirmation(action) {
             return 'Hide this approved resource from students?';
         case 'unhide':
             return 'Unhide this resource and make it visible to students?';
+        case 'clear_removal_request':
+            return 'Mark this removal request as handled?';
         default:
             return 'Continue?';
     }

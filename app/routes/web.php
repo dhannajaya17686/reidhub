@@ -332,6 +332,11 @@ $routes['/dashboard/edu-archive/delete'] = [
     'POST' => 'EduArchive_EduController@deleteSubmission'
 ];
 
+// Request approved resource removal
+$routes['/dashboard/edu-archive/request-removal'] = [
+    'POST' => 'EduArchive_EduController@requestRemoval'
+];
+
 // Bookmark Resource
 $routes['/dashboard/edu-archive/bookmark'] = [
     'POST' => 'EduArchive_EduController@bookmark'

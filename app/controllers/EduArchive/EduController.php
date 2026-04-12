@@ -17,6 +17,36 @@ class EduArchive_EduController extends Controller {
         }
         return (bool)preg_match('/(youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/i', $url);
     }
+
+    private function deleteStoredNoteFile($filePath) {
+        if (empty($filePath)) {
+            return false;
+        }
+
+        $relativePath = str_replace('\\', '/', parse_url((string)$filePath, PHP_URL_PATH) ?: '');
+        $relativePath = ltrim($relativePath, '/');
+        $storagePrefix = 'public/storage/edu-notes/';
+
+        if (!str_starts_with($relativePath, $storagePrefix)) {
+            return false;
+        }
+
+        $storageRoot = realpath(__DIR__ . '/../../../public/storage/edu-notes');
+        $targetPath = realpath(__DIR__ . '/../../../' . $relativePath);
+
+        if (!$storageRoot || !$targetPath || !is_file($targetPath)) {
+            return false;
+        }
+
+        $normalizedRoot = rtrim(strtolower(str_replace('\\', '/', $storageRoot)), '/') . '/';
+        $normalizedTarget = strtolower(str_replace('\\', '/', $targetPath));
+
+        if (!str_starts_with($normalizedTarget, $normalizedRoot)) {
+            return false;
+        }
+
+        return unlink($targetPath);
+    }
     
     // Main Archive Page
     public function index() {
@@ -28,8 +58,14 @@ class EduArchive_EduController extends Controller {
         $year = $_GET['year'] ?? null;
         $search = $_GET['q'] ?? null;
         $tag = $_GET['tag'] ?? null;
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 12;
+        $totalResources = $model->getAllResourcesCount($type, $subject, $year, $search, $tag);
+        $totalPages = max(1, (int)ceil($totalResources / $perPage));
+        $page = min($page, $totalPages);
+        $offset = ($page - 1) * $perPage;
 
-        $resources = $model->getAllResources($type, $subject, $year, $search, $tag);
+        $resources = $model->getAllResources($type, $subject, $year, $search, $tag, $perPage, $offset);
         $filterTags = [];
         try {
             $filterTags = $model->getFilterTags();
@@ -47,7 +83,13 @@ class EduArchive_EduController extends Controller {
         $this->viewApp('User/edu-archive/archive-view', [
             'resources' => $resources,
             'filters' => ['type' => $type, 'subject' => $subject, 'year' => $year, 'search' => $search, 'tag' => $tag],
-            'filterTags' => $filterTags
+            'filterTags' => $filterTags,
+            'pagination' => [
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'total_items' => $totalResources,
+                'total_pages' => $totalPages
+            ]
         ], 'Edu Archive - ReidHub');
     }
 
@@ -169,11 +211,45 @@ class EduArchive_EduController extends Controller {
         }
 
         $model = new EduResourceModel();
+        $resource = $model->getResourceById($_POST['id'], $_SESSION['user_id']);
         $deleted = $model->deleteResource($_POST['id'], $_SESSION['user_id']);
         if ($deleted) {
+            if (($resource['type'] ?? '') === 'note') {
+                $this->deleteStoredNoteFile($resource['file_path'] ?? null);
+            }
             header("Location: /dashboard/edu-archive/my-submissions?success=deleted");
         } else {
             header("Location: /dashboard/edu-archive/my-submissions?error=cannot_delete");
+        }
+        exit;
+    }
+
+    // Request removal for already approved resources
+    public function requestRemoval() {
+        if (!isset($_SESSION['user_id'])) { header('Location: /login'); exit; }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['id'])) {
+            header("Location: /dashboard/edu-archive/my-submissions?error=invalid_request");
+            exit;
+        }
+
+        $reason = trim($_POST['removal_reason'] ?? '');
+        if ($reason === '') {
+            header("Location: /dashboard/edu-archive/my-submissions?error=reason_required");
+            exit;
+        }
+
+        if (strlen($reason) > 500) {
+            $reason = substr($reason, 0, 500);
+        }
+
+        $model = new EduResourceModel();
+        $requested = $model->requestRemoval((int)$_POST['id'], $_SESSION['user_id'], $reason);
+
+        if ($requested) {
+            header("Location: /dashboard/edu-archive/my-submissions?success=removal_requested");
+        } else {
+            header("Location: /dashboard/edu-archive/my-submissions?error=request_failed");
         }
         exit;
     }
@@ -240,6 +316,8 @@ class EduArchive_EduController extends Controller {
             'video_link' => null,
             'file_path' => null
         ];
+        $previousFilePath = $existing['file_path'] ?? null;
+        $uploadedFilePath = null;
 
         if (empty($data['title']) || empty($data['subject']) || empty($data['year_level']) || empty($data['type'])) {
             header("Location: /dashboard/edu-archive/edit?id={$id}&error=missing_fields");
@@ -294,6 +372,7 @@ class EduArchive_EduController extends Controller {
                     exit;
                 }
                 $data['file_path'] = '/' . $path;
+                $uploadedFilePath = $data['file_path'];
             }
 
             if (empty($data['file_path'])) {
@@ -306,8 +385,14 @@ class EduArchive_EduController extends Controller {
         }
 
         if ($model->updateResource($id, $_SESSION['user_id'], $data)) {
+            if (!empty($previousFilePath) && $previousFilePath !== ($data['file_path'] ?? null)) {
+                $this->deleteStoredNoteFile($previousFilePath);
+            }
             header("Location: /dashboard/edu-archive/my-submissions?success=updated");
         } else {
+            if (!empty($uploadedFilePath)) {
+                $this->deleteStoredNoteFile($uploadedFilePath);
+            }
             header("Location: /dashboard/edu-archive/edit?id={$id}&error=failed");
         }
         exit;
@@ -315,13 +400,37 @@ class EduArchive_EduController extends Controller {
     
     // Bookmark Action (AJAX)
     public function bookmark() {
+        header('Content-Type: application/json');
+
         if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
             echo json_encode(['status' => 'error', 'message' => 'Login required']);
             return;
         }
+
         $input = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($input)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid request']);
+            return;
+        }
+
+        $resourceId = (int)($input['id'] ?? 0);
+        if ($resourceId <= 0) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid resource']);
+            return;
+        }
+
         $model = new EduResourceModel();
-        $action = $model->toggleBookmark($_SESSION['user_id'], $input['id']);
+
+        if (!$model->isResourceVisibleForBookmark($resourceId)) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Resource is not available']);
+            return;
+        }
+
+        $action = $model->toggleBookmark($_SESSION['user_id'], $resourceId);
         echo json_encode(['status' => 'success', 'action' => $action]);
     }
 }

@@ -185,6 +185,26 @@
     padding: 0;
   }
 
+  .submission-request-btn {
+    background: none;
+    border: none;
+    color: #b45309;
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  .submission-requested-note {
+    color: #b45309;
+    background: #fef3c7;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
   .submissions-empty {
     background: #fff;
     border: 1px solid #dbe3ef;
@@ -283,6 +303,19 @@
                 </form>
               <?php elseif ($res['status'] === 'approved'): ?>
                 <a href="<?= $res['type'] === 'video' ? htmlspecialchars($res['video_link']) : htmlspecialchars($res['file_path']) ?>" target="_blank" class="submission-action-link">View</a>
+                <?php if ((int)($res['removal_requested'] ?? 0) === 1): ?>
+                  <span class="submission-requested-note">Removal requested</span>
+                <?php else: ?>
+                  <form
+                    action="/dashboard/edu-archive/request-removal"
+                    method="POST"
+                    onsubmit="const reason = prompt('Why should this approved resource be removed?'); if (!reason || !reason.trim()) return false; this.removal_reason.value = reason.trim(); return true;"
+                  >
+                    <input type="hidden" name="id" value="<?= (int)$res['id'] ?>">
+                    <input type="hidden" name="removal_reason" value="">
+                    <button type="submit" class="submission-request-btn">Request Removal</button>
+                  </form>
+                <?php endif; ?>
               <?php else: ?>
                 <span style="font-size: 0.9rem; color: #94a3b8;">No actions</span>
               <?php endif; ?>

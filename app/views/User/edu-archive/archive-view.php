@@ -1,12 +1,22 @@
-<link href="/css/app/user/edu-archive/archive.css" rel="stylesheet">
-
 <?php
+$archiveCssVersion = @filemtime(__DIR__ . '/../../../../public/css/app/user/edu-archive/archive.css') ?: time();
+
 $yearLabels = [
     '1' => '1st Year',
     '2' => '2nd Year',
     '3' => '3rd Year',
     '4' => '4th Year',
     '5' => 'Post Graduate'
+];
+$subjectLabels = [
+    'CS' => 'Computer Science',
+    'IS' => 'Information Systems',
+    'SE' => 'Software Engineering'
+];
+$typeLabels = [
+    'all' => 'All Content',
+    'video' => 'Videos',
+    'note' => 'Notes'
 ];
 
 $videosByYear = ['1' => [], '2' => [], '3' => [], '4' => [], '5' => []];
@@ -23,69 +33,62 @@ foreach ($resources as $res) {
         $notesByYear[$yearKey][] = $res;
     }
 }
+
+$pagination = $pagination ?? ['current_page' => 1, 'per_page' => count($resources), 'total_items' => count($resources), 'total_pages' => 1];
+$currentPage = (int)($pagination['current_page'] ?? 1);
+$totalPages = (int)($pagination['total_pages'] ?? 1);
+$totalItems = (int)($pagination['total_items'] ?? count($resources));
+$perPage = max(1, (int)($pagination['per_page'] ?? max(1, count($resources))));
+$pageStart = $totalItems > 0 ? (($currentPage - 1) * $perPage) + 1 : 0;
+$pageEnd = $totalItems > 0 ? min($totalItems, $currentPage * $perPage) : 0;
+
+$buildArchivePageUrl = function($page) use ($filters) {
+    $query = [
+        'type' => $filters['type'] ?? 'all',
+        'subject' => $filters['subject'] ?? '',
+        'year' => $filters['year'] ?? '',
+        'q' => $filters['search'] ?? '',
+        'tag' => $filters['tag'] ?? ''
+    ];
+
+    if ($page > 1) {
+        $query['page'] = $page;
+    }
+
+    return '/dashboard/edu-archive?' . http_build_query($query);
+};
+
+$archivePageLinks = [];
+if ($totalPages <= 7) {
+    $archivePageLinks = range(1, $totalPages);
+} else {
+    $archivePageLinks = array_values(array_unique([1, 2, $currentPage - 1, $currentPage, $currentPage + 1, $totalPages - 1, $totalPages]));
+    $archivePageLinks = array_values(array_filter($archivePageLinks, function($page) use ($totalPages) {
+        return $page >= 1 && $page <= $totalPages;
+    }));
+}
+
+$activeFilters = [];
+if (!empty($filters['search'])) {
+    $activeFilters[] = 'Search: ' . $filters['search'];
+}
+if (!empty($filters['subject'])) {
+    $activeFilters[] = 'Subject: ' . ($subjectLabels[$filters['subject']] ?? $filters['subject']);
+}
+if (!empty($filters['year'])) {
+    $activeFilters[] = 'Year: ' . ($yearLabels[(string)$filters['year']] ?? $filters['year']);
+}
+if (($filters['type'] ?? 'all') !== 'all') {
+    $activeFilters[] = 'Type: ' . ($typeLabels[$filters['type']] ?? $filters['type']);
+}
+if (!empty($filters['tag'])) {
+    $activeFilters[] = 'Tag: ' . $filters['tag'];
+}
 ?>
 
+<link href="/css/app/user/edu-archive/archive.css?v=<?= $archiveCssVersion ?>" rel="stylesheet">
+
 <div class="archive-layout">
-    <aside class="archive-sidebar">
-        <div class="archive-sidebar-head">
-            <h2>Filters</h2>
-            <a href="/dashboard/edu-archive" class="archive-reset-link">Reset</a>
-        </div>
-
-        <form method="GET" action="/dashboard/edu-archive" class="archive-filter-form">
-            <div class="archive-filter-group">
-                <label for="archive-subject">Subject/Module</label>
-                <div class="archive-select-wrap">
-                    <select id="archive-subject" name="subject" class="archive-select" onchange="this.form.submit()">
-                        <option value="">All Subjects</option>
-                        <option value="CS" <?= ($filters['subject'] ?? '') == 'CS' ? 'selected' : '' ?>>Computer Science</option>
-                        <option value="IS" <?= ($filters['subject'] ?? '') == 'IS' ? 'selected' : '' ?>>Information Systems</option>
-                        <option value="SE" <?= ($filters['subject'] ?? '') == 'SE' ? 'selected' : '' ?>>Software Engineering</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="archive-filter-group">
-                <label for="archive-year">Academic Year</label>
-                <div class="archive-select-wrap">
-                    <select id="archive-year" name="year" class="archive-select" onchange="this.form.submit()">
-                        <option value="">Select</option>
-                        <option value="1" <?= ($filters['year'] ?? '') == '1' ? 'selected' : '' ?>>1st Year</option>
-                        <option value="2" <?= ($filters['year'] ?? '') == '2' ? 'selected' : '' ?>>2nd Year</option>
-                        <option value="3" <?= ($filters['year'] ?? '') == '3' ? 'selected' : '' ?>>3rd Year</option>
-                        <option value="4" <?= ($filters['year'] ?? '') == '4' ? 'selected' : '' ?>>4th Year</option>
-                        <option value="5" <?= ($filters['year'] ?? '') == '5' ? 'selected' : '' ?>>Post Graduate</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="archive-filter-group">
-                <label for="archive-type">Content Type</label>
-                <div class="archive-select-wrap">
-                    <select id="archive-type" name="type" class="archive-select" onchange="this.form.submit()">
-                        <option value="all" <?= ($filters['type'] ?? 'all') == 'all' ? 'selected' : '' ?>>All Content</option>
-                        <option value="video" <?= ($filters['type'] ?? '') == 'video' ? 'selected' : '' ?>>Videos</option>
-                        <option value="note" <?= ($filters['type'] ?? '') == 'note' ? 'selected' : '' ?>>Notes</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="archive-filter-group">
-                <label for="archive-tag">Tag</label>
-                <div class="archive-select-wrap">
-                    <select id="archive-tag" name="tag" class="archive-select" onchange="this.form.submit()">
-                        <option value="">All Tags</option>
-                        <?php foreach (($filterTags ?? []) as $tagRow): ?>
-                            <option value="<?= htmlspecialchars($tagRow['name']) ?>" <?= ($filters['tag'] ?? '') == $tagRow['name'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($tagRow['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-        </form>
-    </aside>
-
     <main class="archive-main">
         <div class="archive-top">
             <h1>Academic Resources</h1>
@@ -113,10 +116,85 @@ foreach ($resources as $res) {
             >
         </form>
 
+        <section class="archive-filter-panel" aria-label="Resource filters">
+            <form method="GET" action="/dashboard/edu-archive" class="archive-filter-form">
+                <input type="hidden" name="q" value="<?= htmlspecialchars($filters['search'] ?? '') ?>">
+
+                <div class="archive-filter-title">
+                    <span>Filters</span>
+                    <small><?= $totalItems ?> result<?= $totalItems === 1 ? '' : 's' ?></small>
+                </div>
+
+                <div class="archive-filter-group">
+                    <label for="archive-subject">Subject</label>
+                    <div class="archive-select-wrap">
+                        <select id="archive-subject" name="subject" class="archive-select" onchange="this.form.submit()">
+                            <option value="">All Subjects</option>
+                            <option value="CS" <?= ($filters['subject'] ?? '') == 'CS' ? 'selected' : '' ?>>Computer Science</option>
+                            <option value="IS" <?= ($filters['subject'] ?? '') == 'IS' ? 'selected' : '' ?>>Information Systems</option>
+                            <option value="SE" <?= ($filters['subject'] ?? '') == 'SE' ? 'selected' : '' ?>>Software Engineering</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="archive-filter-group">
+                    <label for="archive-year">Academic Year</label>
+                    <div class="archive-select-wrap">
+                        <select id="archive-year" name="year" class="archive-select" onchange="this.form.submit()">
+                            <option value="">All Years</option>
+                            <option value="1" <?= ($filters['year'] ?? '') == '1' ? 'selected' : '' ?>>1st Year</option>
+                            <option value="2" <?= ($filters['year'] ?? '') == '2' ? 'selected' : '' ?>>2nd Year</option>
+                            <option value="3" <?= ($filters['year'] ?? '') == '3' ? 'selected' : '' ?>>3rd Year</option>
+                            <option value="4" <?= ($filters['year'] ?? '') == '4' ? 'selected' : '' ?>>4th Year</option>
+                            <option value="5" <?= ($filters['year'] ?? '') == '5' ? 'selected' : '' ?>>Post Graduate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="archive-filter-group">
+                    <label for="archive-type">Content Type</label>
+                    <div class="archive-select-wrap">
+                        <select id="archive-type" name="type" class="archive-select" onchange="this.form.submit()">
+                            <option value="all" <?= ($filters['type'] ?? 'all') == 'all' ? 'selected' : '' ?>>All Content</option>
+                            <option value="video" <?= ($filters['type'] ?? '') == 'video' ? 'selected' : '' ?>>Videos</option>
+                            <option value="note" <?= ($filters['type'] ?? '') == 'note' ? 'selected' : '' ?>>Notes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="archive-filter-group">
+                    <label for="archive-tag">Tag</label>
+                    <div class="archive-select-wrap">
+                        <select id="archive-tag" name="tag" class="archive-select" onchange="this.form.submit()">
+                            <option value="">All Tags</option>
+                            <?php foreach (($filterTags ?? []) as $tagRow): ?>
+                                <option value="<?= htmlspecialchars($tagRow['name']) ?>" <?= ($filters['tag'] ?? '') == $tagRow['name'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($tagRow['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <a href="/dashboard/edu-archive" class="archive-filter-clear">Clear</a>
+            </form>
+
+            <div class="archive-active-filters">
+                <?php if (empty($activeFilters)): ?>
+                    <span class="archive-filter-hint">Showing all approved resources</span>
+                <?php else: ?>
+                    <?php foreach ($activeFilters as $activeFilter): ?>
+                        <span class="archive-filter-chip"><?= htmlspecialchars($activeFilter) ?></span>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </section>
+
         <?php if (empty($resources)): ?>
             <section class="archive-empty">
                 <h3>No resources found</h3>
                 <p>Try adjusting your filters or search query.</p>
+                <a href="/dashboard/edu-archive" class="archive-btn archive-btn-primary">Clear filters</a>
             </section>
         <?php else: ?>
 
@@ -224,6 +302,44 @@ foreach ($resources as $res) {
                 </section>
             <?php endif; ?>
 
+        <?php endif; ?>
+
+        <?php if ($totalPages > 1): ?>
+            <nav class="archive-pagination" aria-label="Archive pagination">
+                <div class="archive-pagination-summary">
+                    Showing <?= $pageStart ?>-<?= $pageEnd ?> of <?= $totalItems ?> resources
+                </div>
+                <div class="archive-pagination-controls">
+                    <?php if ($currentPage > 1): ?>
+                        <a class="archive-page-btn" href="<?= htmlspecialchars($buildArchivePageUrl($currentPage - 1)) ?>">Previous</a>
+                    <?php else: ?>
+                        <span class="archive-page-btn is-disabled">Previous</span>
+                    <?php endif; ?>
+
+                    <?php
+                    $previousPage = null;
+                    foreach ($archivePageLinks as $pageNumber):
+                        if ($previousPage !== null && $pageNumber - $previousPage > 1):
+                    ?>
+                        <span class="archive-page-ellipsis">...</span>
+                    <?php
+                        endif;
+                    ?>
+                        <a class="archive-page-btn <?= $pageNumber === $currentPage ? 'is-active' : '' ?>" href="<?= htmlspecialchars($buildArchivePageUrl($pageNumber)) ?>">
+                            <?= $pageNumber ?>
+                        </a>
+                    <?php
+                        $previousPage = $pageNumber;
+                    endforeach;
+                    ?>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a class="archive-page-btn" href="<?= htmlspecialchars($buildArchivePageUrl($currentPage + 1)) ?>">Next</a>
+                    <?php else: ?>
+                        <span class="archive-page-btn is-disabled">Next</span>
+                    <?php endif; ?>
+                </div>
+            </nav>
         <?php endif; ?>
     </main>
 </div>

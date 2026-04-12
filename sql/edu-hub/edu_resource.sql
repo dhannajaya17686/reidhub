@@ -16,6 +16,10 @@ CREATE TABLE edu_resources (
     -- Approval System
     status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     admin_feedback TEXT,
+    is_hidden TINYINT(1) NOT NULL DEFAULT 0,
+    removal_requested TINYINT(1) NOT NULL DEFAULT 0,
+    removal_reason TEXT,
+    removal_requested_at TIMESTAMP NULL,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
