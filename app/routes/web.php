@@ -63,6 +63,10 @@ $routes['/dashboard/marketplace/cart/remove'] = [
 $routes['/dashboard/marketplace/cart/update'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateCartQuantity'
 ];
+// Buyer Stats API
+$routes['/dashboard/marketplace/stats'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getBuyerStats'
+];
 $routes['/dashboard/marketplace/orders'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showMyOrders'
 ];
@@ -152,6 +156,11 @@ $routes['/dashboard/marketplace/checkout'] = [
 $routes['/dashboard/marketplace/checkout/place-order'] = [
     'POST' => 'Marketplace_MarketplaceUserController@submitCheckout'
 ];
+
+$routes['/dashboard/marketplace/terms-and-conditions'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showTermsAndConditions'
+];
+
 $routes['/dashboard/marketplace/cart/payment-method'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateCartPaymentMethod',
 ];
