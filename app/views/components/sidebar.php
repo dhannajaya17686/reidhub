@@ -32,11 +32,6 @@ $userItems = [
         'icon' => 'dashboard' 
     ],
     [ 
-        'label' => 'My Profile', 
-        'href' => '/dashboard/profile', 
-        'icon' => 'profile' 
-    ],
-    [ 
         'label' => 'Edu Hub', 
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
@@ -76,16 +71,6 @@ $userItems = [
             ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items']
         ]
     ],
-    [ 
-        'label' => 'Help & Feedback', 
-        'href' => '/dashboard/help', 
-        'icon' => 'help',
-        'children' => [
-            ['label' => 'Ask Your Question', 'href' => '/dashboard/help'],
-            ['label' => 'My Questions', 'href' => '/dashboard/help/my-questions'],
-            ['label' => 'FAQs', 'href' => '/dashboard/help/faq']
-        ]
-    ],
 ];
 
 // Seller sidebar items
@@ -94,11 +79,6 @@ $sellerItems = [
         'label' => 'Dashboard', 
         'href' => '/dashboard/user', 
         'icon' => 'dashboard' 
-    ],
-    [ 
-        'label' => 'My Profile', 
-        'href' => '/dashboard/profile', 
-        'icon' => 'profile' 
     ],
     [ 
         'label' => 'Edu Hub', 
@@ -152,11 +132,6 @@ $clubAdminItems = [
         'icon' => 'dashboard' 
     ],
     [ 
-        'label' => 'My Profile', 
-        'href' => '/dashboard/profile', 
-        'icon' => 'profile' 
-    ],
-    [ 
         'label' => 'Edu Hub', 
         'href' => '/dashboard/edu-hub', 
         'icon' => 'edu',
@@ -208,11 +183,6 @@ $adminItems = [
         'icon' => 'dashboard' 
     ],
     [ 
-        'label' => 'My Profile', 
-        'href' => '/dashboard/profile', 
-        'icon' => 'profile' 
-    ],
-    [ 
         'label' => 'Forum', 
         'href' => '/dashboard/forum/admin', 
         'icon' => 'edu'
@@ -236,15 +206,6 @@ $adminItems = [
         'label' => 'Lost & Found', 
         'href' => '/dashboard/lost-and-found/admin', 
         'icon' => 'lost',
-    ],
-    [ 
-        'label' => 'Help & Feedback', 
-        'href' => '/dashboard/admin/help', 
-        'icon' => 'help',
-        'children' => [
-            ['label' => 'Questions', 'href' => '/dashboard/admin/help'],
-            ['label' => 'FAQ Management', 'href' => '/dashboard/admin/faq'],
-        ]
     ],
     /*[ 
         'label' => 'User Management', 
@@ -410,8 +371,59 @@ if ($isAdmin) {
                     </li>
                 <?php endforeach; ?>
                 
-                <!-- Logout Button at bottom -->
+                <!-- Bottom Section: Profile, Help & Feedback, Logout -->
                 <li class="sidebar-nav-item" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+                    <!-- My Profile -->
+                    <a class="sidebar-nav-link<?php echo is_active('/dashboard/profile', $path) ? ' is-active' : ''; ?>"
+                       href="/dashboard/profile"
+                       <?php echo is_active('/dashboard/profile', $path) ? 'aria-current="page"' : ''; ?>
+                       style="margin-bottom: var(--space-sm);">
+                        <span class="sidebar-nav-icon"><?php echo svg_icon('profile'); ?></span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                </li>
+                
+                <!-- Help & Feedback with Dropdown -->
+                <li class="sidebar-nav-item">
+                    <?php 
+                        $helpActive = is_active('/dashboard/help', $path) || is_active('/dashboard/admin/help', $path);
+                        $helpChildren = $isAdmin ? [
+                            ['label' => 'Questions', 'href' => '/dashboard/admin/help'],
+                            ['label' => 'FAQ Management', 'href' => '/dashboard/admin/faq'],
+                        ] : [
+                            ['label' => 'Ask Your Question', 'href' => '/dashboard/help'],
+                            ['label' => 'My Questions', 'href' => '/dashboard/help/my-questions'],
+                            ['label' => 'FAQs', 'href' => '/dashboard/help/faq']
+                        ];
+                        $hasActiveHelpChild = has_active_child($helpChildren, $path);
+                        $helpIsExpanded = $helpActive || $hasActiveHelpChild;
+                    ?>
+                    <button class="sidebar-nav-link sidebar-nav-toggle<?php echo ($helpActive || $hasActiveHelpChild) ? ' is-active' : ''; ?>"
+                            data-toggle="dropdown"
+                            aria-expanded="<?php echo $helpIsExpanded ? 'true' : 'false'; ?>"
+                            style="margin-bottom: var(--space-sm);">
+                        <span class="sidebar-nav-icon"><?php echo svg_icon('help'); ?></span>
+                        <span class="sidebar-link-text">Help & Feedback</span>
+                        <span class="sidebar-nav-chevron<?php echo $helpIsExpanded ? ' is-expanded' : ''; ?>">
+                            <?php echo svg_icon('chevron'); ?>
+                        </span>
+                    </button>
+                    <ul class="sidebar-submenu<?php echo $helpIsExpanded ? ' is-expanded' : ''; ?>" role="list">
+                        <?php foreach ($helpChildren as $child): ?>
+                            <?php $childActive = is_active($child['href'], $path); ?>
+                            <li class="sidebar-submenu-item">
+                                <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?>"
+                                   href="<?php echo htmlspecialchars($child['href']); ?>"
+                                   <?php echo $childActive ? 'aria-current="page"' : ''; ?>>
+                                    <?php echo htmlspecialchars($child['label']); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+                
+                <!-- Logout Button -->
+                <li class="sidebar-nav-item" style="margin-top: var(--space-md);">
                     <form method="POST" action="/logout" style="margin: 0;">
                         <button type="submit" class="sidebar-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-sm);">
                             <span class="sidebar-nav-icon"><?php echo svg_icon('logout'); ?></span>

@@ -108,7 +108,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--help-primary), var(--help-secondary));
+    background-color: rgba(15, 90, 212);
     color: white;
 }
 
