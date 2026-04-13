@@ -367,6 +367,17 @@ $routes['/dashboard/lost-and-found/admin'] = [
     'GET' => 'Forum_ForumAdminController@manageLostAndFound'
 ];
 
+//---------------------------------------NOTIFICATION ROUTES START-----------------------------------//
+$routes['/api/notifications'] = [
+    'GET' => 'System_NotificationController@getNotifications',
+    'POST' => 'System_NotificationController@createNotification'
+];
+
+$routes['/api/notifications/read'] = [
+    'POST' => 'System_NotificationController@markAsRead'
+];
+//---------------------------------------NOTIFICATION ROUTES END-------------------------------------//
+
 //---------------------------------------HOME ROUTES START------------------------------------------//
 $routes['/'] = [
     'GET' => 'Home_HomeController@index'
