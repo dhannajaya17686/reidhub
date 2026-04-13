@@ -50,13 +50,6 @@
         <div class="stat-content">
           <div class="stat-label">Total Sales</div>
           <div class="stat-value" id="total-sales">Rs. 20,000</div>
-          <div class="stat-change stat-change--positive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
-              <polyline points="17,6 23,6 23,12" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            +12.5%
-          </div>
         </div>
       </div>
 
@@ -71,12 +64,6 @@
         <div class="stat-content">
           <div class="stat-label">Total Orders</div>
           <div class="stat-value" id="total-orders">20</div>
-          <div class="stat-change stat-change--positive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            +8.2%
-          </div>
         </div>
       </div>
 
@@ -91,12 +78,6 @@
         <div class="stat-content">
           <div class="stat-label">Total Customers</div>
           <div class="stat-value" id="total-customers">10</div>
-          <div class="stat-change stat-change--positive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            +15.3%
-          </div>
         </div>
       </div>
 
@@ -111,13 +92,6 @@
         <div class="stat-content">
           <div class="stat-label">Average Order Value</div>
           <div class="stat-value" id="avg-order-value">Rs. 2,000</div>
-          <div class="stat-change stat-change--positive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            +5.7%
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -152,30 +126,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Customer Satisfaction & Top Products -->
-    <div class="charts-row">
-      <!-- Customer Satisfaction Chart -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3 class="chart-title">Customer Satisfaction</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="satisfaction-chart" aria-label="Customer satisfaction breakdown"></canvas>
-        </div>
-      </div>
-
-      <!-- Top Products Chart -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3 class="chart-title">Top Selling Products</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="products-chart" aria-label="Top selling products comparison"></canvas>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- Data Tables Section -->
   <section class="data-section">

@@ -149,6 +149,11 @@ $routes['/dashboard/marketplace/admin/reported'] = [
 $routes['/dashboard/marketplace/admin/archived'] = [
     'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceArchivedItems'
 ];
+
+$routes['/dashboard/marketplace/admin/analytics/data'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@adminAnalyticsData'
+];
+
 $routes['/dashboard/marketplace/checkout'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showCheckout'
 ];
