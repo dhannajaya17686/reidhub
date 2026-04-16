@@ -40,9 +40,13 @@ $displayName = $u['first_name'] ?? $u['email'] ?? 'User';
                             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
                         </svg>
                     </button>
-                    <div class="user-avatar">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%230466C8'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-family='Arial' font-size='16' font-weight='bold'%3EU%3C/text%3E%3C/svg%3E" alt="User avatar">
-                    </div>
+                    <a href="/dashboard/profile" class="user-avatar" aria-label="View my profile">
+                        <?php if (!empty($u['profile_picture'])): ?>
+                            <img src="<?php echo htmlspecialchars($u['profile_picture']); ?>?t=<?php echo time(); ?>" alt="Profile picture">
+                        <?php else: ?>
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%230466C8'/%3E%3Ctext x='20' y='26' text-anchor='middle' fill='white' font-family='Arial' font-size='16' font-weight='bold'%3E<?php echo strtoupper(substr($displayName, 0, 1)); ?>%3C/text%3E%3C/svg%3E" alt="User avatar">
+                        <?php endif; ?>
+                    </a>
                 </div>
                 <?php endif; ?>
             </div>
