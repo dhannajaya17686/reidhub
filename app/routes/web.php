@@ -73,6 +73,18 @@ $routes['/dashboard/marketplace/orders'] = [
 $routes['/dashboard/marketplace/orders/get'] = [
     'GET' => 'Marketplace_MarketplaceUserController@getOrdersApi'
 ];
+
+// Order Chat routes
+$routes['/dashboard/marketplace/orders/{id}/chat'] = [
+    'GET' => 'Marketplace_MarketplaceChatController@showOrderChat'
+];
+$routes['/dashboard/marketplace/orders/{id}/chat/send'] = [
+    'POST' => 'Marketplace_MarketplaceChatController@sendMessage'
+];
+$routes['/dashboard/marketplace/orders/{id}/chat/get'] = [
+    'POST' => 'Marketplace_MarketplaceChatController@getMessages'
+];
+
 $routes['/dashboard/marketplace/seller/analytics'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showSellerPortalAnalytics'
 ];

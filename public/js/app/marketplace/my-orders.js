@@ -155,8 +155,8 @@ class OrdersManager {
 
 
   openChat(orderId) {
-    // Navigate to dedicated chat page instead of opening modal
-    window.location.href = `/dashboard/marketplace/chat?order_id=${orderId}`;
+    // Navigate to dedicated chat page for the specific order
+    window.location.href = `/dashboard/marketplace/orders/${orderId}/chat`;
   }
 
   formatDate(s) {
