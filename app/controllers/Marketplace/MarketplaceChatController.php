@@ -86,14 +86,12 @@ class Marketplace_MarketplaceChatController extends Controller
             
             // Validate input
             if ($order_id <= 0) {
-                Logger::warning("sendMessage: Invalid order_id: {$order_id}");
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Invalid order ID']);
                 exit();
             }
             
             if (empty($content)) {
-                Logger::warning("sendMessage: Empty content for order_id={$order_id}");
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Message cannot be empty']);
                 exit();
@@ -101,7 +99,6 @@ class Marketplace_MarketplaceChatController extends Controller
             
             // Limit message length
             if (strlen($content) > 5000) {
-                Logger::warning("sendMessage: Content too long for order_id={$order_id}, length=" . strlen($content));
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Message too long (max 5000 characters)']);
                 exit();
@@ -111,35 +108,29 @@ class Marketplace_MarketplaceChatController extends Controller
             $order = $this->getOrderDetails($order_id);
             
             if (!$order) {
-                Logger::warning("sendMessage: Order not found for order_id={$order_id}");
                 http_response_code(404);
                 echo json_encode(['success' => false, 'message' => 'Order not found']);
                 exit();
             }
             
             if ($user['id'] != $order['buyer_id'] && $user['id'] != $order['seller_id']) {
-                Logger::warning("sendMessage: Access denied for user_id={$user['id']} on order_id={$order_id}");
                 http_response_code(403);
                 echo json_encode(['success' => false, 'message' => 'Access denied']);
                 exit();
             }
             
             // Add message to chat file
-            Logger::info("sendMessage: Adding message to chat file for order_id={$order_id}");
             $message = $this->addMessageToChat($order_id, $user['id'], $user['first_name'], $content);
             
             if ($message) {
-                Logger::info("sendMessage: Chat message added successfully for order_id={$order_id}, message_id={$message['id']}");
                 echo json_encode(['success' => true, 'message' => $message]);
             } else {
-                Logger::error("sendMessage: Failed to add message to chat for order_id={$order_id}");
                 http_response_code(500);
                 echo json_encode(['success' => false, 'message' => 'Failed to save message']);
             }
         } catch (Throwable $e) {
-            Logger::error("sendMessage: Exception - " . $e->getMessage() . " at " . $e->getFile() . ":" . $e->getLine());
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Server error']);
+            echo json_encode(['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
         }
         exit();
     }
@@ -294,56 +285,37 @@ class Marketplace_MarketplaceChatController extends Controller
     {
         try {
             $chat_file = $this->getChatFilePath($order_id);
-            Logger::info("addMessageToChat: Starting for order_id={$order_id}, chat_file={$chat_file}");
             
             // Create chat directory if it doesn't exist
             if (!is_dir($this->chats_dir)) {
-                Logger::info("addMessageToChat: Creating chat directory: {$this->chats_dir}");
                 if (!mkdir($this->chats_dir, 0755, true)) {
-                    Logger::error("addMessageToChat: Failed to create chat directory: {$this->chats_dir}");
                     return false;
                 }
-                Logger::info("addMessageToChat: Chat directory created successfully");
-            } else {
-                Logger::info("addMessageToChat: Chat directory already exists");
             }
             
             // Create file if it doesn't exist
             if (!file_exists($chat_file)) {
-                Logger::info("addMessageToChat: Chat file does not exist, creating: {$chat_file}");
-                if (!touch($chat_file)) {
-                    Logger::error("addMessageToChat: Failed to create chat file: {$chat_file}");
-                    return false;
-                }
-                if (!chmod($chat_file, 0666)) {
-                    Logger::error("addMessageToChat: Failed to set permissions on chat file: {$chat_file}");
-                }
-                Logger::info("addMessageToChat: Chat file created successfully");
-            } else {
-                Logger::info("addMessageToChat: Chat file already exists: {$chat_file}");
+                touch($chat_file);
+                chmod($chat_file, 0666);
             }
             
             // Lock and read existing messages
-            Logger::info("addMessageToChat: Opening file for reading: {$chat_file}");
             $handle = fopen($chat_file, 'r+b');
             if (!$handle) {
-                Logger::error("addMessageToChat: Failed to open chat file: {$chat_file}");
-                return false;
+                $handle = fopen($chat_file, 'c+b');
+                if (!$handle) {
+                    return false;
+                }
             }
             
-            Logger::info("addMessageToChat: File opened, acquiring lock");
             flock($handle, LOCK_EX);
-            $file_content = stream_get_contents($handle);
-            Logger::info("addMessageToChat: File content length: " . strlen($file_content ?? ''));
             
+            $file_content = stream_get_contents($handle);
             $messages = $file_content ? json_decode($file_content, true) : [];
             
             if (!is_array($messages)) {
-                Logger::warning("addMessageToChat: JSON decode failed or returned non-array, initializing empty array");
                 $messages = [];
             }
-            
-            Logger::info("addMessageToChat: Existing messages count: " . count($messages));
             
             // Generate next message ID
             $next_id = (count($messages) > 0) ? $messages[count($messages) - 1]['id'] + 1 : 0;
@@ -357,31 +329,25 @@ class Marketplace_MarketplaceChatController extends Controller
                 'timestamp' => time(),
             ];
             
-            Logger::info("addMessageToChat: New message created with id={$next_id}");
-            
             $messages[] = $new_message;
             
             // Prepare JSON
             $json_content = json_encode($messages);
             if ($json_content === false) {
-                Logger::error("addMessageToChat: JSON encode failed: " . json_last_error_msg());
                 flock($handle, LOCK_UN);
                 fclose($handle);
                 return false;
             }
             
-            Logger::info("addMessageToChat: JSON encoded successfully, length: " . strlen($json_content));
-            
             // Rewrite file
             ftruncate($handle, 0);
             rewind($handle);
-            $written = fwrite($handle, $json_content);
-            Logger::info("addMessageToChat: Bytes written: {$written}");
+            fwrite($handle, $json_content);
             
             flock($handle, LOCK_UN);
             fclose($handle);
             
-            Logger::info("addMessageToChat: Message saved successfully for order_id={$order_id}, message_id={$next_id}");
+            Logger::info("addMessageToChat: Message saved for order_id={$order_id}, message_id={$next_id}");
             return $new_message;
             
         } catch (Throwable $e) {

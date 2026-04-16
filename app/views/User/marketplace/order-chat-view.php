@@ -285,7 +285,9 @@
       const submitBtn = chatForm.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       
-      const response = await fetch(`${API_BASE}/${ORDER_ID}/chat/send`, {
+      const url = `${API_BASE}/${ORDER_ID}/chat/send`;
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -296,7 +298,8 @@
         })
       });
       
-      const data = await response.json();
+      const responseText = await response.text();
+      let data = JSON.parse(responseText);
       
       if (data.success && data.message) {
         removeLoadingMessage();
