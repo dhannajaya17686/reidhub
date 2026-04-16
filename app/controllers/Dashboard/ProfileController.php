@@ -158,7 +158,7 @@ class Dashboard_ProfileController extends Controller
             // Generate unique filename
             $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
             $filename = 'profile_' . $userId . '_' . time() . '.' . $ext;
-            $uploadDir = __DIR__ . '/../../public/storage/profiles/';
+            $uploadDir = __DIR__ . '/../../storage/filestore/profiles/';
             
             // Create directory if it doesn't exist
             if (!is_dir($uploadDir)) {

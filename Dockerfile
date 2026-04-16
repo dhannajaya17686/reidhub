@@ -8,6 +8,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 # Create storage directories with proper permissions
 RUN mkdir -p /var/www/html/storage/filestore/marketplace && \
     mkdir -p /var/www/html/storage/filestore/clubs && \
+    mkdir -p /var/www/html/storage/filestore/profiles && \
     mkdir -p /var/www/html/storage/filestore/events && \
     mkdir -p /var/www/html/storage/filestore/orders && \
     mkdir -p /var/www/html/storage/logs && \

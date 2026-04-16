@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
   first_name VARCHAR(100) NOT NULL,
   last_name  VARCHAR(100) NOT NULL,
   email      VARCHAR(255) NOT NULL,
+  profile_picture VARCHAR(255) NULL DEFAULT NULL,
   reg_no     VARCHAR(32)  NOT NULL,
   password   VARCHAR(255) NOT NULL, -- bcrypt hash
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
