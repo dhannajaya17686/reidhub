@@ -192,11 +192,23 @@ class ReportFoundItemForm {
     
     if (form) {
       form.addEventListener('submit', (e) => {
-        e.preventDefault();
+        console.log('Form submission initiated');
         
-        if (this.validateForm()) {
-          this.submitForm();
+        if (!this.validateForm()) {
+          console.log('Form validation failed');
+          e.preventDefault();
+          return;
         }
+        
+        console.log('Form validation passed, submitting...');
+        
+        // Show loading overlay before natural form submission
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const submitBtn = document.getElementById('submit-btn');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        if (submitBtn) submitBtn.disabled = true;
+        
+        // Let the form submit naturally (POST with redirect)
       });
     }
   }
@@ -205,6 +217,8 @@ class ReportFoundItemForm {
   validateForm() {
     let isValid = true;
     this.clearErrors();
+    
+    console.log('=== Form Validation Starting ===');
 
     // Required field validation
     const requiredFields = [
@@ -221,23 +235,32 @@ class ReportFoundItemForm {
     requiredFields.forEach(field => {
       const element = document.getElementById(field.id);
       if (element && !element.value.trim()) {
+        console.log(`❌ Validation failed: ${field.name} is empty`);
         this.showError(`${field.id}-error`, `${field.name} is required`);
         isValid = false;
+      } else {
+        console.log(`✓ ${field.name} is valid`);
       }
     });
 
     // Condition validation
     const condition = document.querySelector('input[name="condition"]:checked');
     if (!condition) {
+      console.log('❌ Validation failed: Item condition not selected');
       this.showError('condition-error', 'Please select item condition');
       isValid = false;
+    } else {
+      console.log('✓ Item condition selected:', condition.value);
     }
 
     // Image validation - at least one image required
     const mainImage = document.getElementById('image-0');
     if (!mainImage || !mainImage.files || !mainImage.files[0]) {
+      console.log('❌ Validation failed: No main image uploaded');
       this.showError('images-error', 'At least one photo is required');
       isValid = false;
+    } else {
+      console.log('✓ Main image uploaded:', mainImage.files[0].name);
     }
 
     // Other location validation
@@ -245,25 +268,35 @@ class ReportFoundItemForm {
     const otherLocation = document.getElementById('other-location');
     if (currentLocation && currentLocation.value === 'other') {
       if (!otherLocation || !otherLocation.value.trim()) {
+        console.log('❌ Validation failed: Other location not specified');
         this.showError('current-location-error', 'Please specify the current location');
         isValid = false;
+      } else {
+        console.log('✓ Other location specified:', otherLocation.value);
       }
     }
 
     // Email validation
     const email = document.getElementById('email');
     if (email && email.value && !this.isValidEmail(email.value)) {
+      console.log('❌ Validation failed: Invalid email format');
       this.showError('email-error', 'Please enter a valid email address');
       isValid = false;
+    } else if (email && email.value) {
+      console.log('✓ Email format valid');
     }
 
     // Mobile validation
     const mobile = document.getElementById('mobile');
     if (mobile && mobile.value && !this.isValidMobile(mobile.value)) {
+      console.log('❌ Validation failed: Invalid mobile number');
       this.showError('mobile-error', 'Please enter a valid mobile number');
       isValid = false;
+    } else if (mobile && mobile.value) {
+      console.log('✓ Mobile number valid');
     }
 
+    console.log('=== Validation Result:', isValid ? '✓ PASSED' : '❌ FAILED', '===');
     return isValid;
   }
 
@@ -298,39 +331,6 @@ class ReportFoundItemForm {
     document.querySelectorAll('.form-error').forEach(error => {
       error.classList.remove('show');
     });
-  }
-
-  // Submit form
-  submitForm() {
-    const form = document.getElementById('report-found-form');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const submitBtn = document.getElementById('submit-btn');
-
-    if (loadingOverlay) loadingOverlay.style.display = 'flex';
-    if (submitBtn) submitBtn.disabled = true;
-
-    const formData = new FormData(form);
-
-    fetch(form.action, {
-      method: 'POST',
-      body: formData
-    })
-      .then(async (response) => {
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || 'Failed to submit report');
-        }
-        alert('Found item report submitted successfully!');
-        window.location.href = '/dashboard/lost-found';
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error: ' + error.message);
-      })
-      .finally(() => {
-        if (loadingOverlay) loadingOverlay.style.display = 'none';
-        if (submitBtn) submitBtn.disabled = false;
-      });
   }
 }
 

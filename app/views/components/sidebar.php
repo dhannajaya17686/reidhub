@@ -70,7 +70,8 @@ $userItems = [
         'children' => [
             ['label' => 'Report Lost Item', 'href' => '/dashboard/lost-and-found/report-lost-item'],
             ['label' => 'Report Found Item', 'href' => '/dashboard/lost-and-found/report-found-item'],
-            ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items']
+            ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items'],
+            ['label' => 'My Submissions', 'href' => '/dashboard/lost-and-found/my-submissions']
         ]
     ],
 ];
@@ -122,6 +123,7 @@ $sellerItems = [
         'children' => [
             ['label' => 'Report Lost Item', 'href' => '/dashboard/lost-and-found/report-lost-item'],
             ['label' => 'Report Found Item', 'href' => '/dashboard/lost-and-found/report-found-item'],
+            ['label' => 'My Submissions', 'href' => '/dashboard/lost-and-found/my-submissions']
         ]
     ],
 ];
@@ -174,7 +176,8 @@ $clubAdminItems = [
         'children' => [
             ['label' => 'Report Lost Item', 'href' => '/dashboard/lost-and-found/report-lost-item'],
             ['label' => 'Report Found Item', 'href' => '/dashboard/lost-and-found/report-found-item'],
-            ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items']
+            ['label' => 'Lost & Found Items', 'href' => '/dashboard/lost-and-found/items'],
+            ['label' => 'My Submissions', 'href' => '/dashboard/lost-and-found/my-submissions']
         ]
     ],
 ];

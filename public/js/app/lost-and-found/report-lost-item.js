@@ -182,11 +182,18 @@ class ReportLostItemForm {
     
     if (form) {
       form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        if (this.validateForm()) {
-          this.submitForm();
+        if (!this.validateForm()) {
+          e.preventDefault();
+          return;
         }
+        
+        // Show loading overlay before natural form submission
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const submitBtn = document.getElementById('submit-btn');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        if (submitBtn) submitBtn.disabled = true;
+        
+        // Let the form submit naturally (POST with redirect)
       });
     }
   }
@@ -270,39 +277,6 @@ class ReportLostItemForm {
     document.querySelectorAll('.form-error').forEach(error => {
       error.classList.remove('show');
     });
-  }
-
-  // Submit form
-  submitForm() {
-    const form = document.getElementById('report-lost-form');
-    const loadingOverlay = document.getElementById('loading-overlay');
-    const submitBtn = document.getElementById('submit-btn');
-
-    if (loadingOverlay) loadingOverlay.style.display = 'flex';
-    if (submitBtn) submitBtn.disabled = true;
-
-    const formData = new FormData(form);
-
-    fetch(form.action, {
-      method: 'POST',
-      body: formData
-    })
-      .then(async (response) => {
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || !data.success) {
-          throw new Error(data.message || 'Failed to submit report');
-        }
-        alert('Lost item report submitted successfully!');
-        window.location.href = '/dashboard/lost-found';
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Error: ' + error.message);
-      })
-      .finally(() => {
-        if (loadingOverlay) loadingOverlay.style.display = 'none';
-        if (submitBtn) submitBtn.disabled = false;
-      });
   }
 }
 

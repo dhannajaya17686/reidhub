@@ -1,5 +1,5 @@
 /**
- * Lost and Found Items Manager - Minimal Implementation
+ * Lost and Found Items Manager - Backend Integration
  */
 class LostFoundManager {
   constructor() {
@@ -8,55 +8,64 @@ class LostFoundManager {
     this.currentTab = 'all';
     this.currentPage = 1;
     this.itemsPerPage = 12;
-    this.filters = { search: '', category: '', location: '', date: '' };
-    this.currentUserId = 'user123';
+    this.filters = { search: '', category: '', location: '', date: '', severity: '' };
+    this.currentUserId = window.currentUserId || null; // Get from window
     this.init();
   }
 
-  init() {
-    this.loadMockData();
+  async init() {
+    console.log('Initializing Lost & Found Manager...'); // Debug
+    console.log('Current User ID:', this.currentUserId); // Debug
     this.setupEventListeners();
+    const loaded = await this.loadItems();
+    console.log('Items loaded:', loaded, 'Total items:', this.items.length); // Debug
     this.applyFilters();
   }
 
-  loadMockData() {
-    this.items = [
-      {
-        id: '1', title: 'Black iPhone 14 Pro',
-        description: 'Lost my black iPhone 14 Pro with a blue case. Has a small crack on the back. Last seen in the library study area.',
-        category: 'electronics', location: 'library', type: 'lost', status: 'active',
-        image: '/assets/placeholders/product.jpeg', reporter_id: 'user456', reporter_name: 'John Doe', reporter_role: 'Student',
-        created_at: '2024-01-25T10:30:00Z', contact_method: 'email'
-      },
-      {
-        id: '2', title: 'Brown Leather Wallet',
-        description: 'Found a brown leather wallet with some cards inside. No cash visible. Please describe contents to claim.',
-        category: 'bags', location: 'cafeteria', type: 'found', status: 'active',
-        image: '/assets/placeholders/product.jpeg', reporter_id: 'user789', reporter_name: 'Sarah Smith', reporter_role: 'Faculty',
-        created_at: '2024-01-24T14:20:00Z', contact_method: 'both'
-      },
-      {
-        id: '3', title: 'Set of Keys with Red Keychain',
-        description: 'Keys successfully returned to owner. Thank you for reporting!',
-        category: 'keys', location: 'parking', type: 'found', status: 'claimed',
-        image: '/assets/placeholders/product.jpeg', reporter_id: 'user101', reporter_name: 'Mike Johnson', reporter_role: 'Staff',
-        created_at: '2024-01-22T16:30:00Z', claimed_at: '2024-01-24T09:15:00Z', contact_method: 'phone'
-      },
-      {
-        id: '4', title: 'Blue Backpack with Laptop',
-        description: 'Lost my blue Jansport backpack containing a laptop, textbooks, and notebooks. Very important for my studies.',
-        category: 'bags', location: 'classroom', type: 'lost', status: 'active',
-        image: '/assets/placeholders/product.jpeg', reporter_id: this.currentUserId, reporter_name: 'Current User', reporter_role: 'Student',
-        created_at: '2024-01-23T09:15:00Z', contact_method: 'email'
-      },
-      {
-        id: '5', title: 'Programming Textbook',
-        description: 'Found "Introduction to Algorithms" textbook in the computer lab. Has someone\'s name written inside.',
-        category: 'books', location: 'classroom', type: 'found', status: 'active',
-        image: '/assets/placeholders/product.jpeg', reporter_id: 'user234', reporter_name: 'Emily Davis', reporter_role: 'Student',
-        created_at: '2024-01-21T11:45:00Z', contact_method: 'email'
+  async loadItems() {
+    try {
+      const params = new URLSearchParams();
+      if (this.filters.category) params.append('category', this.filters.category);
+      if (this.filters.location) params.append('location', this.filters.location);
+      if (this.filters.date) params.append('date_filter', this.filters.date);
+      if (this.filters.severity) params.append('severity', this.filters.severity);
+      if (this.filters.search) params.append('search', this.filters.search);
+
+      const url = `/dashboard/lost-and-found/items/get-all${params.toString() ? '?' + params.toString() : ''}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      console.log('🔄 API Response:', data); // Debug log
+      console.log('📊 Lost items count:', data.lostItems ? data.lostItems.length : 0);
+      console.log('📊 Found items count:', data.foundItems ? data.foundItems.length : 0);
+      
+      if (data.lostItems && data.lostItems.length > 0) {
+        console.log('📷 First lost item:', data.lostItems[0]);
+        console.log('📷 First lost item images:', data.lostItems[0].images);
       }
-    ];
+      if (data.foundItems && data.foundItems.length > 0) {
+        console.log('📷 First found item:', data.foundItems[0]);
+        console.log('📷 First found item images:', data.foundItems[0].images);
+      }
+
+      if (data.success) {
+        // Combine lost and found items
+        this.items = [
+          ...data.lostItems.map(item => ({ ...item, type: 'lost', user_id: parseInt(item.user_id) })),
+          ...data.foundItems.map(item => ({ ...item, type: 'found', user_id: parseInt(item.user_id) }))
+        ];
+        
+        console.log('✅ Loaded items:', this.items.length, 'items total');
+        console.log('Current user ID:', this.currentUserId);
+        return true;
+      } else {
+        console.error('❌ Failed to load items:', data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error loading items:', error);
+      return false;
+    }
   }
 
   setupEventListeners() {
@@ -73,8 +82,9 @@ class LostFoundManager {
     ['category', 'location', 'date'].forEach(type => {
       const element = document.getElementById(`${type}-filter`);
       if (element) {
-        element.addEventListener('change', (e) => {
+        element.addEventListener('change', async (e) => {
           this.filters[type] = e.target.value;
+          await this.loadItems();
           this.applyFilters();
         });
       }
@@ -100,15 +110,20 @@ class LostFoundManager {
       });
     });
 
-    // Report buttons
+    // Report buttons - Navigate to dedicated pages
     const reportLostBtn = document.getElementById('report-lost-btn');
     const reportFoundBtn = document.getElementById('report-found-btn');
     
-    if (reportLostBtn) reportLostBtn.addEventListener('click', () => this.openModal('lost'));
-    if (reportFoundBtn) reportFoundBtn.addEventListener('click', () => this.openModal('found'));
-
-    // Modal
-    this.setupModal();
+    if (reportLostBtn) {
+      reportLostBtn.addEventListener('click', () => {
+        window.location.href = '/dashboard/lost-and-found/report-lost-item';
+      });
+    }
+    if (reportFoundBtn) {
+      reportFoundBtn.addEventListener('click', () => {
+        window.location.href = '/dashboard/lost-and-found/report-found-item';
+      });
+    }
 
     // Pagination
     const prevBtn = document.getElementById('prev-btn');
@@ -197,44 +212,27 @@ class LostFoundManager {
     if (this.currentTab !== 'all') {
       filtered = filtered.filter(item => {
         switch (this.currentTab) {
-          case 'lost': return item.type === 'lost' && item.status === 'active';
-          case 'found': return item.type === 'found' && item.status === 'active';
-          case 'my-reports': return item.reporter_id === this.currentUserId;
-          case 'claimed': return item.status === 'claimed';
+          case 'lost': 
+            return item.type === 'lost' && item.status === 'Still Missing';
+          case 'found': 
+            return item.type === 'found' && (item.status === 'Available' || item.status === 'Collected');
+          case 'my-reports': 
+            return this.currentUserId && parseInt(item.user_id) === parseInt(this.currentUserId);
+          case 'claimed': 
+            return item.status === 'Returned' || item.status === 'Returned to Owner';
           default: return true;
         }
       });
     }
 
-    // Search filter
+    // Search filter (client-side filtering on top of server-side)
     if (this.filters.search) {
       const search = this.filters.search.toLowerCase();
       filtered = filtered.filter(item => 
-        item.title.toLowerCase().includes(search) ||
-        item.description.toLowerCase().includes(search) ||
-        item.reporter_name.toLowerCase().includes(search)
+        (item.item_name || item.title || '').toLowerCase().includes(search) ||
+        (item.description || '').toLowerCase().includes(search) ||
+        (item.first_name + ' ' + item.last_name).toLowerCase().includes(search)
       );
-    }
-
-    // Other filters
-    ['category', 'location'].forEach(key => {
-      if (this.filters[key]) {
-        filtered = filtered.filter(item => item[key] === this.filters[key]);
-      }
-    });
-
-    // Date filter
-    if (this.filters.date) {
-      const now = new Date();
-      filtered = filtered.filter(item => {
-        const itemDate = new Date(item.created_at);
-        switch (this.filters.date) {
-          case 'today': return itemDate.toDateString() === now.toDateString();
-          case 'week': return itemDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-          case 'month': return itemDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-          default: return true;
-        }
-      });
     }
 
     this.filteredItems = filtered;
@@ -247,10 +245,10 @@ class LostFoundManager {
   updateCounts() {
     const counts = {
       all: this.items.length,
-      lost: this.items.filter(i => i.type === 'lost' && i.status === 'active').length,
-      found: this.items.filter(i => i.type === 'found' && i.status === 'active').length,
-      'my-reports': this.items.filter(i => i.reporter_id === this.currentUserId).length,
-      claimed: this.items.filter(i => i.status === 'claimed').length
+      lost: this.items.filter(i => i.type === 'lost' && i.status === 'Still Missing').length,
+      found: this.items.filter(i => i.type === 'found' && (i.status === 'Available' || i.status === 'Collected')).length,
+      'my-reports': this.currentUserId ? this.items.filter(i => parseInt(i.user_id) === parseInt(this.currentUserId)).length : 0,
+      claimed: this.items.filter(i => i.status === 'Returned' || i.status === 'Returned to Owner').length
     };
 
     Object.entries(counts).forEach(([tab, count]) => {
@@ -262,11 +260,17 @@ class LostFoundManager {
   renderItems() {
     const grid = document.getElementById('items-grid');
     const emptyState = document.getElementById('empty-state');
+    const loadingSpinner = document.getElementById('loading-spinner');
     
     if (!grid) return;
 
+    // Remove loading spinner
+    if (loadingSpinner) loadingSpinner.remove();
+
     const start = (this.currentPage - 1) * this.itemsPerPage;
     const items = this.filteredItems.slice(start, start + this.itemsPerPage);
+
+    console.log('Rendering items. Total filtered:', this.filteredItems.length, 'Current page items:', items.length); // Debug
 
     if (items.length === 0) {
       grid.innerHTML = '';
@@ -276,19 +280,37 @@ class LostFoundManager {
 
     if (emptyState) emptyState.style.display = 'none';
 
-    grid.innerHTML = items.map(item => `
-      <div class="item-card item-card--${item.type} ${item.status === 'claimed' ? 'item-card--claimed' : ''}" data-item-id="${item.id}">
+    grid.innerHTML = items.map(item => {
+      const itemName = item.item_name || item.title || 'Untitled Item';
+      const mainImage = item.images && item.images.length > 0 
+        ? item.images.find(img => img.is_main == 1) || item.images[0]
+        : null;
+      
+      // Ensure image path starts with / if it doesn't already
+      let imageUrl = '/assets/placeholders/product.jpeg';
+      if (mainImage && mainImage.image_path) {
+        imageUrl = mainImage.image_path.startsWith('/') ? mainImage.image_path : '/' + mainImage.image_path;
+      }
+      
+      const isResolved = item.status === 'Returned' || item.status === 'Returned to Owner';
+      const reporterName = `${item.first_name || ''} ${item.last_name || ''}`.trim() || 'Anonymous';
+      
+      return `
+      <div class="item-card item-card--${item.type} ${isResolved ? 'item-card--claimed' : ''}" data-item-id="${item.id}">
         <div class="item-image-container">
-          <img src="${item.image}" alt="${item.title}" class="item-image">
-          <div class="item-status-badge item-status-badge--${item.status === 'claimed' ? 'claimed' : item.type}">
-            ${item.status === 'claimed' ? 'Resolved' : (item.type === 'lost' ? 'Lost' : 'Found')}
+          <img src="${imageUrl}" alt="${itemName}" class="item-image" onerror="this.src='/assets/placeholders/product.jpeg'">
+          <div class="item-status-badge item-status-badge--${isResolved ? 'claimed' : item.type}">
+            ${isResolved ? 'Resolved' : (item.type === 'lost' ? 'Lost' : 'Found')}
           </div>
+          ${item.severity_level && item.severity_level === 'Critical' ? `
+            <div class="item-priority-badge">🚨 Critical</div>
+          ` : ''}
           <div class="item-date">${this.getTimeAgo(item.created_at)}</div>
         </div>
         
         <div class="item-content">
           <div class="item-header">
-            <h3 class="item-title">${item.title}</h3>
+            <h3 class="item-title">${itemName}</h3>
             <div class="item-category">${this.getCategoryName(item.category)}</div>
           </div>
           
@@ -298,61 +320,46 @@ class LostFoundManager {
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
               </svg>
-              ${this.getLocationName(item.location)}
+              ${this.getLocationName(item.last_known_location || item.found_location || item.location)}
             </div>
             
             <div class="item-description">
-              ${item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description}
+              ${item.description && item.description.length > 120 ? item.description.substring(0, 120) + '...' : item.description || ''}
             </div>
           </div>
           
           <div class="item-footer">
-            ${item.status === 'claimed' ? `
+            ${isResolved ? `
               <div class="claimed-info">
                 <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <span>Successfully reunited</span>
+                <span>${item.status === 'Returned' ? 'Item Returned' : 'Report Cancelled'}</span>
               </div>
             ` : `
               <div class="item-reporter">
                 <div class="reporter-avatar">
-                  <img src="/images/placeholders/user.png" alt="${item.reporter_name}">
+                  ${reporterName.charAt(0).toUpperCase()}
                 </div>
                 <div class="reporter-info">
-                  <span class="reporter-name">${item.reporter_name}</span>
-                  <span class="reporter-role">${item.reporter_role}</span>
+                  <span class="reporter-name">${reporterName}</span>
                 </div>
               </div>
               
               <div class="item-actions">
-                <button class="action-btn action-btn--contact" onclick="contactReporter('${item.id}')">
+                <button class="action-btn action-btn--contact" onclick="contactReporter('${item.id}', '${item.type}')">
                   <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
                   Contact
                 </button>
-                ${item.type === 'lost' ? `
-                  <button class="action-btn action-btn--help" onclick="markAsFound('${item.id}')">
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path d="M9 12l2 2 4-4"/>
-                    </svg>
-                    Found It
-                  </button>
-                ` : `
-                  <button class="action-btn action-btn--claim" onclick="claimItem('${item.id}')">
-                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                    </svg>
-                    Mine
-                  </button>
-                `}
               </div>
             `}
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
 
   updatePagination() {
@@ -377,78 +384,39 @@ class LostFoundManager {
   }
 
   clearFilters() {
-    this.filters = { search: '', category: '', location: '', date: '' };
-    document.getElementById('search-input').value = '';
-    document.getElementById('category-filter').value = '';
-    document.getElementById('location-filter').value = '';
-    document.getElementById('date-filter').value = '';
-    this.applyFilters();
-  }
-
-  openModal(type) {
-    const modal = document.getElementById('report-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const reportType = document.getElementById('report-type');
+    this.filters = { search: '', category: '', location: '', date: '', severity: '' };
     
-    if (modal && modalTitle && reportType) {
-      modalTitle.textContent = type === 'lost' ? 'Report Lost Item' : 'Report Found Item';
-      reportType.value = type;
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
-    }
-  }
-
-  closeModal() {
-    const modal = document.getElementById('report-modal');
-    const form = document.getElementById('report-form');
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
     
-    if (modal) {
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('modal-open');
-    }
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) categoryFilter.value = '';
     
-    if (form) {
-      form.reset();
-      this.removeImage();
-    }
+    const locationFilter = document.getElementById('location-filter');
+    if (locationFilter) locationFilter.value = '';
+    
+    const dateFilter = document.getElementById('date-filter');
+    if (dateFilter) dateFilter.value = '';
+    
+    this.loadItems().then(() => this.applyFilters());
   }
 
-  handleFileUpload(file) {
-    if (!file || file.size > 5 * 1024 * 1024) {
-      alert('File must be less than 5MB');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const preview = document.getElementById('upload-preview');
-      const image = document.getElementById('preview-image');
-      const placeholder = document.querySelector('.upload-placeholder');
-
-      if (preview && image && placeholder) {
-        image.src = e.target.result;
-        preview.style.display = 'block';
-        placeholder.style.display = 'none';
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-
-  removeImage() {
-    const preview = document.getElementById('upload-preview');
-    const placeholder = document.querySelector('.upload-placeholder');
-    const fileInput = document.getElementById('item-image');
-
-    if (preview && placeholder && fileInput) {
-      preview.style.display = 'none';
-      placeholder.style.display = 'block';
-      fileInput.value = '';
-    }
-  }
-
-  submitReport() {
-    alert('Report submitted successfully!');
-    this.closeModal();
+  clearFilters() {
+    this.filters = { search: '', category: '', location: '', date: '', severity: '' };
+    
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) categoryFilter.value = '';
+    
+    const locationFilter = document.getElementById('location-filter');
+    if (locationFilter) locationFilter.value = '';
+    
+    const dateFilter = document.getElementById('date-filter');
+    if (dateFilter) dateFilter.value = '';
+    
+    this.loadItems().then(() => this.applyFilters());
   }
 
   getCategoryName(category) {
@@ -483,22 +451,9 @@ class LostFoundManager {
 }
 
 // Global functions
-function contactReporter(itemId) {
-  alert(`Contacting reporter for item ${itemId}`);
-}
-
-function markAsFound(itemId) {
-  alert(`Marking item ${itemId} as found`);
-}
-
-function claimItem(itemId) {
-  alert(`Claiming item ${itemId}`);
-}
-
-function closeReportModal() {
-  if (window.lostFoundManager) {
-    window.lostFoundManager.closeModal();
-  }
+function contactReporter(itemId, itemType) {
+  // Show contact info modal (can be implemented later)
+  alert(`Contact information for item ${itemId} will be displayed here`);
 }
 
 // Initialize

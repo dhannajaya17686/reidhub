@@ -340,12 +340,19 @@ $routes['/dashboard/forum/question'] = [
 $routes['/dashboard/forum/all'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
+<<<<<<< HEAD
+// Quick ask API from dashboard
+$routes['/dashboard/community/forum/quick-ask'] = [
+    'POST' => 'Forum_ForumUserController@quickAsk'
+];
+=======
 
 // --- NEW ROUTE: My Bookmarks ---
 $routes['/dashboard/forum/bookmarks'] = [
     'GET' => 'Forum_ForumUserController@showBookmarks'
 ];
 
+>>>>>>> 3f0f0af7a21fdad6505fed95960213bbea8306ad
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];
@@ -490,15 +497,45 @@ $routes['/dashboard/edu-archive/admin/tags'] = [
 // -------------------------------------------------------------- //
 
 //-------------------------------------LOST AND FOUND ROUTES START--------------------------------------//
+// Report Lost Item - Page & Submission
 $routes['/dashboard/lost-and-found/report-lost-item'] = [
-    'GET' => 'LostAndFound_LostAndFoundUserController@showReportLostItem'
+    'GET' => 'LostAndFound_LostAndFoundUserController@showReportLostItem',
+    'POST' => 'LostAndFound_LostAndFoundUserController@submitLostItemReport'
 ];
+// Report Found Item - Page & Submission
 $routes['/dashboard/lost-and-found/report-found-item'] = [
-    'GET' => 'LostAndFound_LostAndFoundUserController@showReportFoundItem'
+    'GET' => 'LostAndFound_LostAndFoundUserController@showReportFoundItem',
+    'POST' => 'LostAndFound_LostAndFoundUserController@submitFoundItemReport'
 ];
+// View All Items Page
 $routes['/dashboard/lost-and-found/items'] = [
     'GET' => 'LostAndFound_LostAndFoundUserController@showLostAndFoundItems'
 ];
+// My Submissions Page
+$routes['/dashboard/lost-and-found/my-submissions'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@showMySubmissions'
+];
+// API: Get All Items (with filtering)
+$routes['/dashboard/lost-and-found/items/get-all'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@getAllItems'
+];
+// API: Get User's Own Items
+$routes['/dashboard/lost-and-found/items/get-my-items'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@getMyItems'
+];
+// API: Get Item Details
+$routes['/dashboard/lost-and-found/items/details'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@getItemDetails'
+];
+// API: Update Lost Item Status
+$routes['/dashboard/lost-and-found/items/update-status'] = [
+    'POST' => 'LostAndFound_LostAndFoundUserController@updateLostItemStatus'
+];
+// API: Get Notifications
+$routes['/dashboard/lost-and-found/notifications'] = [
+    'GET' => 'LostAndFound_LostAndFoundUserController@getNotifications'
+];
+// Admin Routes
 $routes['/dashboard/community/admin'] = [
     'GET' => 'Community_CommunityAdminController@showCommunityAdminDashboard'
 ];
@@ -547,8 +584,34 @@ $routes['/api/admin/community/events/delete'] = [
     'POST' => 'Community_CommunityAdminController@deleteEvent'
 ];
 $routes['/dashboard/lost-and-found/admin'] = [
-    'GET' => 'Forum_ForumAdminController@manageLostAndFound'
+    'GET' => 'LostAndFound_LostAndFoundAdminController@showAdminDashboard'
 ];
+// Admin API Routes for Lost & Found
+$routes['/dashboard/lost-and-found/admin/get-lost-items'] = [
+    'GET' => 'LostAndFound_LostAndFoundAdminController@getAllLostItems'
+];
+$routes['/dashboard/lost-and-found/admin/get-found-items'] = [
+    'GET' => 'LostAndFound_LostAndFoundAdminController@getAllFoundItems'
+];
+$routes['/dashboard/lost-and-found/admin/get-reports'] = [
+    'GET' => 'LostAndFound_LostAndFoundAdminController@getAllReports'
+];
+$routes['/dashboard/lost-and-found/admin/get-item-details'] = [
+    'GET' => 'LostAndFound_LostAndFoundAdminController@getItemDetails'
+];
+$routes['/dashboard/lost-and-found/admin/update-status'] = [
+    'POST' => 'LostAndFound_LostAndFoundAdminController@updateItemStatus'
+];
+$routes['/dashboard/lost-and-found/admin/delete-item'] = [
+    'POST' => 'LostAndFound_LostAndFoundAdminController@deleteItem'
+];
+$routes['/dashboard/lost-and-found/admin/create-report'] = [
+    'POST' => 'LostAndFound_LostAndFoundAdminController@createReport'
+];
+$routes['/dashboard/lost-and-found/admin/debug-images'] = [
+    'GET' => 'LostAndFound_LostAndFoundAdminController@debugImages'
+];
+//-------------------------------------LOST AND FOUND ROUTES END--------------------------------------//
 
 
 //-------------------------------------HELP & FEEDBACK ROUTES START--------------------------------------//
