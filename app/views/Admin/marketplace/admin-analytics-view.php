@@ -103,27 +103,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Commission Earned -->
-      <div class="metric-card metric-card--warning">
-        <div class="metric-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
-            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 18V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="metric-content">
-          <div class="metric-label">Commission Earned</div>
-          <div class="metric-value" id="commission-earned">Rs. 15,680</div>
-          <div class="metric-change metric-change--positive">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-            +22.1%
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -169,16 +148,6 @@
           <canvas id="categories-chart"></canvas>
         </div>
       </div>
-
-      <!-- Top Sellers -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <h3 class="chart-title">Top Sellers</h3>
-        </div>
-        <div class="chart-container">
-          <canvas id="sellers-chart"></canvas>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -193,7 +162,7 @@
         </div>
         <div class="data-content">
           <div class="table-container">
-            <table class="data-table">
+            <table class="data-table" data-table="recent-orders">
               <thead>
                 <tr>
                   <th>Order ID</th>

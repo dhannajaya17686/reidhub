@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/app/user/marketplace/merch-store.css">
+
 <!-- Main Dashboard Content Area -->
 <main class="dashboard-main" role="main" aria-label="Marketplace Dashboard">
   <!-- Page Header -->
@@ -10,18 +11,18 @@
 
     <!-- Statistics Cards -->
     <div class="page-stats">
-      <div class="stat-card">
-        <div class="stat-number">247</div>
-        <div class="stat-label">Recent Purchases</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">189</div>
-        <div class="stat-label">Active Orders</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">12</div>
-        <div class="stat-label">My Cart</div>
-      </div>
+      <a href="/dashboard/marketplace/orders" class="stat-card stat-card--link" role="button" tabindex="0">
+        <div class="stat-card__number stat-number">247</div>
+        <div class="stat-card__label stat-label">Recent Purchases</div>
+      </a>
+      <a href="/dashboard/marketplace/orders" class="stat-card stat-card--link" role="button" tabindex="0">
+        <div class="stat-card__number stat-number">189</div>
+        <div class="stat-card__label stat-label">Active Orders</div>
+      </a>
+      <a href="/dashboard/marketplace/my-cart" class="stat-card stat-card--link" role="button" tabindex="0">
+        <div class="stat-card__number stat-number">12</div>
+        <div class="stat-card__label stat-label">My Cart</div>
+      </a>
     </div>
   </div>
 
@@ -70,10 +71,13 @@
           <div class="sort-group">
             <label for="sort-type" class="sort-label">Sort by Type:</label>
             <select id="sort-type" class="sort-dropdown" data-sort="type">
-              <option value="">All Types</option>
-              <option value="clothing">Clothing</option>
+              <option value="">Select Category</option>
+              <option value="apparel">Apparel</option>
               <option value="accessories">Accessories</option>
               <option value="stationery">Stationery</option>
+              <option value="electronics">Electronics</option>
+              <option value="books">Books</option>
+              <option value="other">Other</option>
             </select>
           </div>
         </div>
@@ -155,10 +159,13 @@
           <div class="sort-group">
             <label for="sort-type-secondhand" class="sort-label">Sort by Type:</label>
             <select id="sort-type-secondhand" class="sort-dropdown" data-sort="type">
-              <option value="">All Types</option>
-              <option value="books">Books</option>
+              <option value="">Select Category</option>
+              <option value="apparel">Apparel</option>
+              <option value="accessories">Accessories</option>
+              <option value="stationery">Stationery</option>
               <option value="electronics">Electronics</option>
-              <option value="clothing">Clothing</option>
+              <option value="books">Books</option>
+              <option value="other">Other</option>
             </select>
           </div>
         </div>
@@ -218,6 +225,7 @@
 </main>
 
 <!-- JavaScript -->
-<script type="module" src="/js/app/marketplace/marketplace-user-dashboard.js"></script>
+ <script type="module" src="/js/app/marketplace/marketplace-user-dashboard.js"></script>
+
 </body>
 </html>

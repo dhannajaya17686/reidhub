@@ -77,12 +77,28 @@ $routes['/dashboard/marketplace/cart/remove'] = [
 $routes['/dashboard/marketplace/cart/update'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateCartQuantity'
 ];
+// Buyer Stats API
+$routes['/dashboard/marketplace/stats'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getBuyerStats'
+];
 $routes['/dashboard/marketplace/orders'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showMyOrders'
 ];
 $routes['/dashboard/marketplace/orders/get'] = [
     'GET' => 'Marketplace_MarketplaceUserController@getOrdersApi'
 ];
+
+// Order Chat routes
+$routes['/dashboard/marketplace/orders/{id}/chat'] = [
+    'GET' => 'Marketplace_MarketplaceChatController@showOrderChat'
+];
+$routes['/dashboard/marketplace/orders/{id}/chat/send'] = [
+    'POST' => 'Marketplace_MarketplaceChatController@sendMessage'
+];
+$routes['/dashboard/marketplace/orders/{id}/chat/get'] = [
+    'POST' => 'Marketplace_MarketplaceChatController@getMessages'
+];
+
 $routes['/dashboard/marketplace/seller/analytics'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showSellerPortalAnalytics'
 ];
@@ -159,6 +175,11 @@ $routes['/dashboard/marketplace/admin/reported'] = [
 $routes['/dashboard/marketplace/admin/archived'] = [
     'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceArchivedItems'
 ];
+
+$routes['/dashboard/marketplace/admin/analytics/data'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@adminAnalyticsData'
+];
+
 $routes['/dashboard/marketplace/checkout'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showCheckout'
 ];
@@ -166,6 +187,11 @@ $routes['/dashboard/marketplace/checkout'] = [
 $routes['/dashboard/marketplace/checkout/place-order'] = [
     'POST' => 'Marketplace_MarketplaceUserController@submitCheckout'
 ];
+
+$routes['/dashboard/marketplace/terms-and-conditions'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showTermsAndConditions'
+];
+
 $routes['/dashboard/marketplace/cart/payment-method'] = [
     'POST' => 'Marketplace_MarketplaceUserController@updateCartPaymentMethod',
 ];
