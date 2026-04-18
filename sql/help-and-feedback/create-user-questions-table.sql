@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS user_questions (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
-    category ENUM('general_question', 'bug_report', 'feature_request', 'feedback') NOT NULL DEFAULT 'general_question',
+    category ENUM('academic_issues', 'extracurricular_issues', 'sports_issues', 'infrastructure_issues', 'other_issues', 'feedbacks') NOT NULL DEFAULT 'academic_issues',
     subject VARCHAR(255) NOT NULL,
     message LONGTEXT NOT NULL,
     status ENUM('open', 'pending', 'resolved', 'closed') NOT NULL DEFAULT 'open',

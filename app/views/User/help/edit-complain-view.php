@@ -1,7 +1,8 @@
 <div class="help-section">
     <div class="help-header">
-        <h1>Report Your Complain/Feedback Here</h1>
-        <p>We're here to help! Ask us anything about UCSC, ReidHub or report issues you encounter.</p>
+        <a href="/dashboard/help/my-questions" style="margin-bottom: 10px; display: inline-block;">← Back to My Complains</a>
+        <h1>Edit Your Complain</h1>
+        <p>Update your complaint details</p>
     </div>
 
     <?php if (isset($_SESSION['error'])): ?>
@@ -16,16 +17,18 @@
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="/dashboard/help" class="help-form" enctype="multipart/form-data">
+    <form method="POST" action="/dashboard/help/save-edit" class="help-form" enctype="multipart/form-data">
+        <input type="hidden" name="question_id" value="<?php echo htmlspecialchars($question['id']); ?>">
+
         <div class="form-group">
             <label for="category">Category <span class="required">*</span></label>
             <select id="category" name="category" required>
-                <option value="academic_issues">Academic Issues</option>
-                <option value="extracurricular_issues">Extracurricular Issues</option>
-                <option value="sports_issues">Sports Issues</option>
-                <option value="infrastructure_issues">Infrastructure Issues</option>
-                <option value="other_issues">Other Issues</option>
-                <option value="feedbacks">Feedbacks</option>
+                <option value="academic_issues" <?php echo ($question['category'] === 'academic_issues') ? 'selected' : ''; ?>>Academic Issues</option>
+                <option value="extracurricular_issues" <?php echo ($question['category'] === 'extracurricular_issues') ? 'selected' : ''; ?>>Extracurricular Issues</option>
+                <option value="sports_issues" <?php echo ($question['category'] === 'sports_issues') ? 'selected' : ''; ?>>Sports Issues</option>
+                <option value="infrastructure_issues" <?php echo ($question['category'] === 'infrastructure_issues') ? 'selected' : ''; ?>>Infrastructure Issues</option>
+                <option value="other_issues" <?php echo ($question['category'] === 'other_issues') ? 'selected' : ''; ?>>Other Issues</option>
+                <option value="feedbacks" <?php echo ($question['category'] === 'feedbacks') ? 'selected' : ''; ?>>Feedbacks</option>
             </select>
         </div>
 
@@ -36,7 +39,8 @@
                 id="subject" 
                 name="subject" 
                 maxlength="255" 
-                placeholder="Brief subject of your question" 
+                placeholder="Brief subject of your complaint" 
+                value="<?php echo htmlspecialchars($question['subject']); ?>"
                 required
             >
             <small>Max 255 characters</small>
@@ -48,17 +52,30 @@
                 id="message" 
                 name="message" 
                 maxlength="5000" 
-                placeholder="Describe your question or issue in detail..." 
+                placeholder="Describe your complaint or issue in detail..." 
                 rows="8"
                 required
-            ></textarea>
+            ><?php echo htmlspecialchars($question['message']); ?></textarea>
             <div class="char-counter">
-                <span id="char-count">0</span> / 5000 characters
+                <span id="char-count"><?php echo strlen($question['message']); ?></span> / 5000 characters
             </div>
         </div>
 
+        <?php if (!empty($question['image_path'])): ?>
+            <div class="form-group">
+                <label>Current Image</label>
+                <div style="margin-bottom: 15px;">
+                    <img src="<?php echo htmlspecialchars($question['image_path']); ?>" alt="Current Image" style="max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid #ddd; padding: 5px;">
+                </div>
+                <label>
+                    <input type="checkbox" name="remove_image" value="1">
+                    Remove current image
+                </label>
+            </div>
+        <?php endif; ?>
+
         <div class="form-group">
-            <label for="image">Upload Image (Optional)</label>
+            <label for="image">Upload New Image (Optional)</label>
             <input 
                 type="file" 
                 id="image" 
@@ -71,8 +88,8 @@
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Submit Question</button>
-            <a href="/dashboard/help/my-questions" class="btn btn-secondary">View My Complains</a>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/dashboard/help/my-questions" class="btn btn-secondary">Cancel</a>
         </div>
     </form>
 </div>

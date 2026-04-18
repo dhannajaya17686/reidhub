@@ -356,6 +356,7 @@ if ($isAdmin) {
                 <?php endforeach; ?>
                 
                 <!-- Bottom Section: Profile, Help & Feedback, Logout -->
+                <?php if (!$isAdmin): ?>
                 <li class="sidebar-nav-item" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
                     <!-- My Profile -->
                     <a class="sidebar-nav-link<?php echo is_active('/dashboard/profile', $path) ? ' is-active' : ''; ?>"
@@ -366,17 +367,20 @@ if ($isAdmin) {
                         <span class="sidebar-link-text">My Profile</span>
                     </a>
                 </li>
+                <?php else: ?>
+                <li class="sidebar-nav-item" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: var(--space-md);"></li>
+                <?php endif; ?>
                 
                 <!-- Help & Feedback with Dropdown -->
                 <li class="sidebar-nav-item">
                     <?php 
                         $helpActive = is_active('/dashboard/help', $path) || is_active('/dashboard/admin/help', $path);
                         $helpChildren = $isAdmin ? [
-                            ['label' => 'Questions', 'href' => '/dashboard/admin/help'],
+                            ['label' => 'Complains', 'href' => '/dashboard/admin/help'],
                             ['label' => 'FAQ Management', 'href' => '/dashboard/admin/faq'],
                         ] : [
-                            ['label' => 'Ask Your Question', 'href' => '/dashboard/help'],
-                            ['label' => 'My Questions', 'href' => '/dashboard/help/my-questions'],
+                            ['label' => 'Report Your Complain/feedback', 'href' => '/dashboard/help'],
+                            ['label' => 'My Complains', 'href' => '/dashboard/help/my-questions'],
                             ['label' => 'FAQs', 'href' => '/dashboard/help/faq']
                         ];
                         $hasActiveHelpChild = has_active_child($helpChildren, $path);
@@ -387,7 +391,7 @@ if ($isAdmin) {
                             aria-expanded="<?php echo $helpIsExpanded ? 'true' : 'false'; ?>"
                             style="margin-bottom: var(--space-sm);">
                         <span class="sidebar-nav-icon"><?php echo svg_icon('help'); ?></span>
-                        <span class="sidebar-link-text">Help & Feedback</span>
+                        <span class="sidebar-link-text">Feedback & Complain</span>
                         <span class="sidebar-nav-chevron<?php echo $helpIsExpanded ? ' is-expanded' : ''; ?>">
                             <?php echo svg_icon('chevron'); ?>
                         </span>
@@ -425,7 +429,7 @@ if ($isAdmin) {
                 <li class="sidebar-nav-item">
                     <a href="/forum/ask" class="sidebar-nav-link">
                         <span class="sidebar-nav-icon"><?php echo svg_icon('edu'); ?></span>
-                        <span class="sidebar-link-text">Ask Questions</span>
+                        <span class="sidebar-link-text">Add Your Complain</span>
                     </a>
                 </li>
             <?php endif; ?>

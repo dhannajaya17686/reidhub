@@ -16,14 +16,14 @@ class Dashboard_HelpAdminController extends Controller
         $userQuestion = new UserQuestion();
         $totalQuestions = $userQuestion->getTotalCount();
         $pendingCount = $userQuestion->getPendingCount();
-        $bugReportCount = $userQuestion->getCountByCategory('bug_report');
-        $featureRequestCount = $userQuestion->getCountByCategory('feature_request');
+        $academicIssuesCount = $userQuestion->getCountByCategory('academic_issues');
+        $infrastructureIssuesCount = $userQuestion->getCountByCategory('infrastructure_issues');
 
         $this->viewApp('Admin/help-admin-dashboard-view', [
             'totalQuestions' => $totalQuestions,
             'pendingCount' => $pendingCount,
-            'bugReportCount' => $bugReportCount,
-            'featureRequestCount' => $featureRequestCount
+            'bugReportCount' => $academicIssuesCount,
+            'featureRequestCount' => $infrastructureIssuesCount
         ], 'Help & Feedback Admin');
     }
 
@@ -88,9 +88,14 @@ class Dashboard_HelpAdminController extends Controller
 
         $replies = $userQuestion->getReplies($questionId);
 
+        // Get user information
+        $user = new User();
+        $userData = $user->findById($question['user_id']);
+
         $this->viewApp('Admin/help-question-detail-view', [
             'question' => $question,
-            'replies' => $replies
+            'replies' => $replies,
+            'userData' => $userData
         ], 'Question Details');
     }
 
@@ -191,7 +196,7 @@ class Dashboard_HelpAdminController extends Controller
     {
         try {
             $user = new User();
-            $userData = $user->getUserById($question['user_id']);
+            $userData = $user->findById($question['user_id']);
 
             if (!$userData || empty($userData['email'])) {
                 return;
@@ -210,7 +215,7 @@ class Dashboard_HelpAdminController extends Controller
                 <p><strong>Admin Reply:</strong></p>
                 <p>" . nl2br(htmlspecialchars($replyMessage)) . "</p>
                 
-                <p><a href='http://localhost/dashboard/help/my-questions'>View your question</a></p>
+                <p><a href='http://localhost/dashboard/help/my-questions'>View your complain</a></p>
                 
                 <hr>
                 <p style='color: #666; font-size: 12px;'>This is an automated message from ReidHub Help & Feedback system.</p>
@@ -226,6 +231,67 @@ class Dashboard_HelpAdminController extends Controller
         } catch (Exception $e) {
             Logger::error("Error sending email: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Download question image
+     */
+    public function downloadImage()
+    {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        
+        if (!isset($_SESSION['admin_id'])) {
+            header('HTTP/1.0 403 Forbidden');
+            echo 'Unauthorized';
+            return;
+        }
+
+        $questionId = $_GET['question_id'] ?? null;
+        
+        if (!$questionId) {
+            header('HTTP/1.0 400 Bad Request');
+            echo 'Question ID is required';
+            return;
+        }
+
+        $userQuestion = new UserQuestion();
+        $question = $userQuestion->findById($questionId);
+
+        if (!$question || empty($question['image_path'])) {
+            header('HTTP/1.0 404 Not Found');
+            echo 'Image not found';
+            return;
+        }
+
+        // Construct the full file path
+        $basePath = __DIR__ . '/../../public';
+        $filePath = $basePath . $question['image_path'];
+
+        // Security check: ensure file is within storage directory
+        $realPath = realpath($filePath);
+        $allowedDir = realpath($basePath . '/storage/complaints');
+        
+        if (!$realPath || strpos($realPath, $allowedDir) !== 0 || !file_exists($realPath)) {
+            header('HTTP/1.0 403 Forbidden');
+            echo 'Access denied';
+            return;
+        }
+
+        // Get file info
+        $filename = basename($realPath);
+        $filesize = filesize($realPath);
+        $mimeType = mime_content_type($realPath) ?: 'application/octet-stream';
+
+        // Set headers for download
+        header('Content-Type: ' . $mimeType);
+        header('Content-Length: ' . $filesize);
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        // Send file
+        readfile($realPath);
+        exit;
     }
 }
 ?>
