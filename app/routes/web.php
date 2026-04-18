@@ -340,11 +340,154 @@ $routes['/dashboard/forum/question'] = [
 $routes['/dashboard/forum/all'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
+
+// --- NEW ROUTE: My Bookmarks ---
+$routes['/dashboard/forum/bookmarks'] = [
+    'GET' => 'Forum_ForumUserController@showBookmarks'
+];
+
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];
+$routes['/dashboard/forum/admin/question/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateQuestion'
+];
+$routes['/dashboard/forum/admin/answer/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateAnswer'
+];
+$routes['/dashboard/forum/admin/comment/moderate'] = [
+    'POST' => 'Forum_ForumAdminController@moderateComment'
+];
+$routes['/dashboard/forum/admin/question/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateQuestionMetadata'
+];
+$routes['/dashboard/forum/admin/answer/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateAnswer'
+];
+$routes['/dashboard/forum/admin/comment/update'] = [
+    'POST' => 'Forum_ForumAdminController@updateComment'
+];
+$routes['/dashboard/forum/admin/report/review'] = [
+    'POST' => 'Forum_ForumAdminController@reviewReport'
+];
+$routes['/dashboard/forum/admin/user/suspend'] = [
+    'POST' => 'Forum_ForumAdminController@suspendUser'
+];
+$routes['/dashboard/forum/admin/user/lift-suspension'] = [
+    'POST' => 'Forum_ForumAdminController@liftSuspension'
+];
+$routes['/dashboard/forum/admin/user/message'] = [
+    'POST' => 'Forum_ForumAdminController@sendUserMessage'
+];
+
+// NEW: Action Routes (Handle clicks)
+$routes['/dashboard/forum/vote'] = [
+    'POST' => 'Forum_ForumUserController@vote'
+];
+$routes['/dashboard/forum/report'] = [
+    'POST' => 'Forum_ForumUserController@report'
+];
+
+// Route to handle answer submission
+$routes['/dashboard/forum/answer/create'] = [
+    'POST' => 'Forum_ForumUserController@createAnswer'
+];
+
+$routes['/dashboard/forum/create'] = [
+    'POST' => 'Forum_ForumUserController@createQuestion'
+];
+
+$routes['/dashboard/forum/bookmark'] = [
+    'POST' => 'Forum_ForumUserController@bookmark'
+];
+
+
+// Edit & Delete
+$routes['/dashboard/forum/delete'] = [
+    'POST' => 'Forum_ForumUserController@deleteContent'
+];
+$routes['/dashboard/forum/update'] = [
+    'POST' => 'Forum_ForumUserController@updateContent'
+];
+
+// Comments
+$routes['/dashboard/forum/comment/create'] = [
+    'POST' => 'Forum_ForumUserController@createComment'
+];
+
+$routes['/dashboard/forum/comment/delete'] = [
+    'POST' => 'Forum_ForumUserController@deleteComment'
+];
+
+// Add this inside the Forum section
+$routes['/dashboard/forum/answer/accept'] = [
+    'POST' => 'Forum_ForumUserController@acceptAnswer'
+];
+
+// Search Suggestions
+$routes['/dashboard/forum/search-similar'] = [
+    'GET' => 'Forum_ForumUserController@searchSimilar'
+];
 
 //--------------------------------------FORUM ROUTES END---------------------------------------------//
+
+// ------------------ EDU VIDEO ARCHIVE ROUTES ------------------ //
+
+// Public Archive (View All)
+$routes['/dashboard/edu-archive'] = [
+    'GET' => 'EduArchive_EduController@index'
+];
+
+// Upload Content
+$routes['/dashboard/edu-archive/upload'] = [
+    'GET' => 'EduArchive_EduController@showUploadForm',
+    'POST' => 'EduArchive_EduController@handleUpload'
+];
+
+// My Submissions (Track Status)
+$routes['/dashboard/edu-archive/my-submissions'] = [
+    'GET' => 'EduArchive_EduController@showMySubmissions'
+];
+
+// Edit Submission (pending only)
+$routes['/dashboard/edu-archive/edit'] = [
+    'GET' => 'EduArchive_EduController@showEditForm'
+];
+
+// Update Submission (pending only)
+$routes['/dashboard/edu-archive/update'] = [
+    'POST' => 'EduArchive_EduController@updateSubmission'
+];
+
+// Delete Submission
+$routes['/dashboard/edu-archive/delete'] = [
+    'POST' => 'EduArchive_EduController@deleteSubmission'
+];
+
+// Request approved resource removal
+$routes['/dashboard/edu-archive/request-removal'] = [
+    'POST' => 'EduArchive_EduController@requestRemoval'
+];
+
+// Bookmark Resource
+$routes['/dashboard/edu-archive/bookmark'] = [
+    'POST' => 'EduArchive_EduController@bookmark'
+];
+
+// Edu Archive Admin
+$routes['/dashboard/edu-archive/admin'] = [
+    'GET' => 'EduArchive_EduAdminController@showManageArchive'
+];
+
+$routes['/dashboard/edu-archive/admin/moderate'] = [
+    'POST' => 'EduArchive_EduAdminController@moderateResource'
+];
+
+$routes['/dashboard/edu-archive/admin/tags'] = [
+    'POST' => 'EduArchive_EduAdminController@manageFilterTag'
+];
+
+// -------------------------------------------------------------- //
 
 //-------------------------------------LOST AND FOUND ROUTES START--------------------------------------//
 $routes['/dashboard/lost-and-found/report-lost-item'] = [

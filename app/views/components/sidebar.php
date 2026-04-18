@@ -38,6 +38,8 @@ $userItems = [
         'children' => [
             ['label' => 'All Questions', 'href' => '/dashboard/forum/all'],
             ['label' => 'Ask Question', 'href' => '/dashboard/forum/add'],
+            ['label' => 'My Bookmarks', 'href' => '/dashboard/forum/bookmarks'],
+            ['label' => 'Resource Archive', 'href' => '/dashboard/edu-archive'],
         ]
     ],
     [ 
@@ -138,6 +140,8 @@ $clubAdminItems = [
         'children' => [
             ['label' => 'All Questions', 'href' => '/dashboard/forum/all'],
             ['label' => 'Ask Question', 'href' => '/dashboard/forum/add'],
+            ['label' => 'My Bookmarks', 'href' => '/dashboard/forum/bookmarks'],
+            ['label' => 'Resource Archive', 'href' => '/dashboard/edu-archive'],
         ]
     ],
     [ 
@@ -188,6 +192,11 @@ $adminItems = [
         'icon' => 'edu'
     ],
     [ 
+        'label' => 'Edu Archive', 
+        'href' => '/dashboard/edu-archive/admin', 
+        'icon' => 'edu'
+    ],
+    [ 
         'label' => 'Community', 
         'href' => '/dashboard/community/admin', 
         'icon' => 'community',
@@ -207,29 +216,6 @@ $adminItems = [
         'href' => '/dashboard/lost-and-found/admin', 
         'icon' => 'lost',
     ],
-    /*[ 
-        'label' => 'User Management', 
-        'href' => '/dashboard/admin/users', 
-        'icon' => 'users',
-        'children' => [
-            ['label' => 'All Users', 'href' => '/dashboard/admin/users/all'],
-            ['label' => 'User Roles', 'href' => '/dashboard/admin/users/roles'],
-            ['label' => 'Banned Users', 'href' => '/dashboard/admin/users/banned'],
-            ['label' => 'Registration Requests', 'href' => '/dashboard/admin/users/requests'],
-        ]
-    ],
-    [ 
-        'label' => 'System Settings', 
-        'href' => '/dashboard/admin/settings', 
-        'icon' => 'settings',
-        'children' => [
-            ['label' => 'General Settings', 'href' => '/dashboard/admin/settings/general'],
-            ['label' => 'Security Settings', 'href' => '/dashboard/admin/settings/security'],
-            ['label' => 'Email Templates', 'href' => '/dashboard/admin/settings/email'],
-            ['label' => 'Backup & Maintenance', 'href' => '/dashboard/admin/settings/maintenance'],
-        ]
-    ],
-    */
 ];
 
 function is_active(string $href, string $path): bool {
@@ -292,7 +278,6 @@ if ($isAdmin) {
     $currentItems = $userItems;
 }
 ?>
-<!-- Sidebar Navigation -->
 <aside class="forum-sidebar" role="navigation" aria-label="Main navigation">
     <div class="sidebar-brand">
         <div class="sidebar-brand-icon" aria-hidden="true"></div>
@@ -338,7 +323,6 @@ if ($isAdmin) {
                                 <?php endforeach; ?>
                                 
                                 <?php if ($isMarketplaceSection): ?>
-                                    <!-- Account Switch Button for marketplace -->
                                     <li class="sidebar-submenu-item">
                                         <?php if ($isSellerMode): ?>
                                             <a class="sidebar-submenu-link sidebar-account-switch" 
