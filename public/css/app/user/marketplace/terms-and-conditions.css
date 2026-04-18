@@ -1,0 +1,227 @@
+/* Terms and Conditions Page */
+
+.terms-main {
+  padding: var(--space-lg) var(--space-lg) var(--space-3xl);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  margin-bottom: var(--space-2xl);
+}
+
+.breadcrumb__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.breadcrumb__item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumb__item:not(:last-child)::after {
+  content: "›";
+  margin-left: var(--space-xs);
+  color: var(--text-muted);
+}
+
+.breadcrumb__link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-smooth);
+}
+
+.breadcrumb__link:hover {
+  color: var(--secondary-color);
+}
+
+.breadcrumb__item--current {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: var(--space-3xl);
+  text-align: center;
+}
+
+.page-title {
+  font-size: clamp(1.75rem, 1.5rem + 1vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Terms Container */
+.terms-container {
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.terms-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+}
+
+/* Last Updated */
+.last-updated {
+  padding: var(--space-lg);
+  background: var(--surface-subtle);
+  border-left: 4px solid var(--secondary-color);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Sections */
+.terms-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-text {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* Subsections */
+.subsection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-left: var(--space-lg);
+}
+
+.subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Lists */
+.terms-list {
+  list-style: disc;
+  padding-left: var(--space-2xl);
+  color: var(--text-secondary);
+}
+
+.terms-list li {
+  margin-bottom: var(--space-sm);
+  line-height: 1.6;
+}
+
+/* Contact Info */
+.contact-info {
+  background: var(--surface-subtle);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--btn-primary-bg);
+}
+
+.contact-info p {
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  font-size: 0.95rem;
+}
+
+.contact-info p:last-child {
+  margin-bottom: 0;
+}
+
+/* Acknowledgment */
+.terms-acknowledgment {
+  background: var(--vote-active-bg);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--vote-active);
+}
+
+.terms-acknowledgment p {
+  color: var(--text-primary);
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* Footer */
+.terms-footer {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  border: 1px solid transparent;
+}
+
+.btn--secondary {
+  background: var(--btn-secondary-bg);
+  color: var(--text-primary);
+  border-color: var(--btn-secondary-border);
+}
+
+.btn--secondary:hover {
+  background: var(--btn-secondary-hover);
+  border-color: var(--secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .terms-main {
+    padding: var(--space-md);
+  }
+
+  .terms-container {
+    padding: var(--space-lg);
+  }
+
+  .subsection {
+    margin-left: var(--space-md);
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .terms-list {
+    padding-left: var(--space-xl);
+  }
+}

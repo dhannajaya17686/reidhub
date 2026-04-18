@@ -1,122 +1,385 @@
 <?php
 require_once __DIR__ . '/../../controllers/Auth/LoginController.php';
+require_once __DIR__ . '/../../models/CommunityAdmin.php';
+require_once __DIR__ . '/../../models/Blog.php';
+require_once __DIR__ . '/../../models/Club.php';
+require_once __DIR__ . '/../../models/Event.php';
+require_once __DIR__ . '/../../models/Report.php';
 
-class Community_CommunityUserController extends Controller
+class Community_CommunityAdminController extends Controller
 {
-    // ============ BLOGS ============
-    public function showAllBlogs()
+    private function jsonResponse(bool $success, $data = null, string $message = ''): void
     {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/blogs/all-blogs', $data, 'Blogs - ReidHub');
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $success,
+            'message' => $message,
+            'data' => $data
+        ]);
+    }
+
+    private function getJsonBody(): array
+    {
+        $raw = file_get_contents('php://input');
+        if (!$raw) {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    public function showCommunityAdminDashboard()
+    {
+        $admin = Auth_LoginController::getSessionAdmin(true);
+
+        $data = ['admin' => $admin];
+        $this->viewApp('/Admin/community-and-social/manage-community-view', $data, 'Community Management - ReidHub');
+    }
+
+    public function getCommunityAdmins()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $model = new CommunityAdmin();
+            $admins = $model->getAllAdmins();
+            $this->jsonResponse(true, $admins);
+        } catch (Throwable $e) {
+            Logger::error('getCommunityAdmins failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, [], 'Failed to load community admins');
+        }
+    }
+
+    public function searchUsers()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $query = trim($_GET['q'] ?? '');
+            if ($query === '') {
+                $this->jsonResponse(true, []);
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $users = $model->searchUsers($query, 20);
+            $this->jsonResponse(true, $users);
+        } catch (Throwable $e) {
+            Logger::error('searchUsers failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, [], 'Failed to search users');
+        }
+    }
+
+    public function addCommunityAdmin()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $input = $this->getJsonBody();
+            $userId = (int)($input['user_id'] ?? 0);
+            $roleType = trim((string)($input['role_type'] ?? ''));
+
+            $allowedRoles = ['club_admin', 'event_coordinator', 'community_admin'];
+
+            if ($userId <= 0 || !in_array($roleType, $allowedRoles, true)) {
+                http_response_code(422);
+                $this->jsonResponse(false, null, 'Invalid user or permission');
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $ok = $model->addAdmin($userId, $roleType);
+
+            if (!$ok) {
+                http_response_code(409);
+                $this->jsonResponse(false, null, 'Admin already exists for this permission');
+                return;
+            }
+
+            $this->jsonResponse(true, null, 'Community admin added successfully');
+        } catch (Throwable $e) {
+            Logger::error('addCommunityAdmin failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, null, 'Failed to add community admin');
+        }
+    }
+
+    public function removeCommunityAdmin()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $input = $this->getJsonBody();
+            $communityAdminId = (int)($input['community_admin_id'] ?? 0);
+
+            if ($communityAdminId <= 0) {
+                http_response_code(422);
+                $this->jsonResponse(false, null, 'Invalid community admin id');
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $ok = $model->removeAdminById($communityAdminId);
+
+            if (!$ok) {
+                http_response_code(404);
+                $this->jsonResponse(false, null, 'Community admin not found');
+                return;
+            }
+
+            $this->jsonResponse(true, null, 'Community admin removed successfully');
+        } catch (Throwable $e) {
+            Logger::error('removeCommunityAdmin failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, null, 'Failed to remove community admin');
+        }
+    }
+
+    public function getReportedBlogs()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $model = new CommunityAdmin();
+            $blogs = $model->getReportedBlogs();
+            $this->jsonResponse(true, $blogs);
+        } catch (Throwable $e) {
+            Logger::error('getReportedBlogs failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, [], 'Failed to load reported blogs');
+        }
+    }
+
+    public function deleteBlog()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $input = $this->getJsonBody();
+            $blogId = (int)($input['blog_id'] ?? 0);
+
+            if ($blogId <= 0) {
+                http_response_code(422);
+                $this->jsonResponse(false, null, 'Invalid blog id');
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $ok = $model->deleteBlogById($blogId);
+
+            if (!$ok) {
+                http_response_code(404);
+                $this->jsonResponse(false, null, 'Blog not found');
+                return;
+            }
+
+            $this->jsonResponse(true, null, 'Blog deleted successfully');
+        } catch (Throwable $e) {
+            Logger::error('deleteBlog failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, null, 'Failed to delete blog');
+        }
+    }
+
+    public function getClubs()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $model = new CommunityAdmin();
+            $clubs = $model->getAllClubsForAdmin();
+            $this->jsonResponse(true, $clubs);
+        } catch (Throwable $e) {
+            Logger::error('getClubs failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, [], 'Failed to load clubs');
+        }
+    }
+
+    public function deleteClub()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $input = $this->getJsonBody();
+            $clubId = (int)($input['club_id'] ?? 0);
+
+            if ($clubId <= 0) {
+                http_response_code(422);
+                $this->jsonResponse(false, null, 'Invalid club id');
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $ok = $model->deleteClubById($clubId);
+
+            if (!$ok) {
+                http_response_code(404);
+                $this->jsonResponse(false, null, 'Club not found');
+                return;
+            }
+
+            $this->jsonResponse(true, null, 'Club deleted successfully');
+        } catch (Throwable $e) {
+            Logger::error('deleteClub failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, null, 'Failed to delete club');
+        }
+    }
+
+    public function getEvents()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $model = new CommunityAdmin();
+            $events = $model->getAllEventsForAdmin();
+            $this->jsonResponse(true, $events);
+        } catch (Throwable $e) {
+            Logger::error('getEvents failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, [], 'Failed to load events');
+        }
+    }
+
+    public function deleteEvent()
+    {
+        Auth_LoginController::getSessionAdmin(true);
+
+        try {
+            $input = $this->getJsonBody();
+            $eventId = (int)($input['event_id'] ?? 0);
+
+            if ($eventId <= 0) {
+                http_response_code(422);
+                $this->jsonResponse(false, null, 'Invalid event id');
+                return;
+            }
+
+            $model = new CommunityAdmin();
+            $ok = $model->deleteEventById($eventId);
+
+            if (!$ok) {
+                http_response_code(404);
+                $this->jsonResponse(false, null, 'Event not found');
+                return;
+            }
+
+            $this->jsonResponse(true, null, 'Event deleted successfully');
+        } catch (Throwable $e) {
+            Logger::error('deleteEvent failed: ' . $e->getMessage());
+            http_response_code(500);
+            $this->jsonResponse(false, null, 'Failed to delete event');
+        }
     }
 
     public function showViewBlog()
     {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/blogs/view-blog', $data, 'View Blog - ReidHub');
-    }
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $blogId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-    public function showCreateBlog()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = [
-            'user' => $user,
-            'categories' => [
-                'academics' => 'Academics',
-                'campus-life' => 'Campus Life',
-                'student-tips' => 'Student Tips',
-                'events' => 'Events'
-            ]
-        ];
-        $this->viewApp('/User/community/blogs/create-blog', $data, 'Create Blog - ReidHub');
-    }
+        if ($blogId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
 
-    public function showEditBlog()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/blogs/edit-blog', $data, 'Edit Blog - ReidHub');
-    }
+        try {
+            $blogModel = new Blog();
+            $blog = $blogModel->getBlogById($blogId);
+            if (!$blog) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
 
-    // ============ CLUBS ============
-    public function showAllClubs()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/clubs/all-clubs', $data, 'Clubs - ReidHub');
+            $reportModel = new Report();
+            $reports = $reportModel->getReportsByType('blog');
+            $hasReports = false;
+            foreach ($reports as $report) {
+                if ((int)($report['content_id'] ?? 0) === $blogId) {
+                    $hasReports = true;
+                    break;
+                }
+            }
+
+            $data = [
+                'admin' => $admin,
+                'blog' => $blog,
+                'hasReports' => $hasReports
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-blog', $data, 'View Blog - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewBlog failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
     }
 
     public function showViewClub()
     {
-        $user = Auth_LoginController::getSessionUser(true);
-        $clubId = $_GET['id'] ?? null;
-        $data = [
-            'user' => $user,
-            'club' => [
-                'id' => $clubId,
-                'name' => 'Technology & Innovation Club',
-                'description' => 'Join us to explore the latest in technology.',
-                'category' => 'technology',
-                'image_path' => 'https://via.placeholder.com/900x400/4A90E2/ffffff?text=Tech+Club'
-            ],
-            'isOwner' => false
-        ];
-        $this->viewApp('/User/community/clubs/view-club', $data, 'View Club - ReidHub');
-    }
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $clubId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-    public function showCreateClub()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = [
-            'user' => $user,
-            'categories' => [
-                'academic' => 'Academic',
-                'cultural' => 'Cultural',
-                'sports' => 'Sports',
-                'technology' => 'Technology',
-                'arts' => 'Arts',
-                'social' => 'Social',
-                'other' => 'Other'
-            ]
-        ];
-        $this->viewApp('/User/community/clubs/create-club', $data, 'Create Club - ReidHub');
-    }
+        if ($clubId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
 
-    public function showEditClub()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/clubs/edit-club', $data, 'Edit Club - ReidHub');
-    }
+        try {
+            $clubModel = new Club();
+            $club = $clubModel->getClubById($clubId);
+            if (!$club) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
 
-    // ============ EVENTS ============
-    public function showAllEvents()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/events/all-events', $data, 'Events - ReidHub');
+            $data = [
+                'admin' => $admin,
+                'club' => $club
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-club', $data, 'View Club - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewClub failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
     }
 
     public function showViewEvent()
     {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/events/view-event', $data, 'View Event - ReidHub');
-    }
+        $admin = Auth_LoginController::getSessionAdmin(true);
+        $eventId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-    public function showCreateEvent()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/events/create-event', $data, 'Create Event - ReidHub');
-    }
+        if ($eventId <= 0) {
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
 
-    public function showEditEvent()
-    {
-        $user = Auth_LoginController::getSessionUser(true);
-        $data = ['user' => $user];
-        $this->viewApp('/User/community/events/edit-event', $data, 'Edit Event - ReidHub');
+        try {
+            $eventModel = new Event();
+            $event = $eventModel->getEventById($eventId);
+            if (!$event) {
+                header('Location: /dashboard/community/admin', true, 302);
+                exit;
+            }
+
+            $attendees = $eventModel->getEventAttendees($eventId);
+
+            $data = [
+                'admin' => $admin,
+                'event' => $event,
+                'attendees' => $attendees
+            ];
+
+            $this->viewApp('/Admin/community-and-social/view-event', $data, 'View Event - Admin - ReidHub');
+        } catch (Throwable $e) {
+            Logger::error('showViewEvent failed: ' . $e->getMessage());
+            header('Location: /dashboard/community/admin', true, 302);
+            exit;
+        }
     }
 }

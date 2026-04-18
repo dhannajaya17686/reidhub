@@ -17,10 +17,9 @@ class MarketplaceDashboard {
    */
   init() {
     this.setupTabNavigation();
-    this.setupProductCardInteractions();
     this.setupViewProductButtons();
-    this.setupStatCardInteractions();
-    this.addAccessibilityEnhancements();
+    this.setupSorting();
+    this.loadBuyerStats(); 
     this.initializeTabContent();
   }
 
@@ -88,11 +87,7 @@ class MarketplaceDashboard {
     });
 
     // Update URL without page reload
-    this.updateUrlState(targetTab);
-    
-    // Announce tab change to screen readers
-    this.announceToScreenReader(`Switched to ${targetTab} section`);
-    
+    this.updateUrlState(targetTab);    
     // Track tab interaction
     this.trackTabSwitch(targetTab);
   }
@@ -126,45 +121,65 @@ class MarketplaceDashboard {
   }
 
   /**
-   * Enhanced product card hover and focus interactions
-   * Adds smooth animations and keyboard navigation support
+   * Load and display buyer statistics from API
+   * Fetches recent purchases, active orders, and cart items count
    */
-  setupProductCardInteractions() {
-    const productCards = document.querySelectorAll('.product-card');
+  async loadBuyerStats() {
+    try {
+        const response = await fetch('/dashboard/marketplace/stats', {
+    method: 'GET',
+    credentials: 'include',  // ← change from 'same-origin' to 'include'
+    headers: {
+        'Accept': 'application/json'
+    }
+  });
+
+        if (!response.ok) {
+            console.error('API Error: Status', response.status);
+            if (response.status === 401) {
+                this.updateStatCards({ recent_purchases: 0, active_orders: 0, cart_items: 0 });
+            }
+            return;
+        }
+
+        const data = await response.json(); // ← parse AFTER checking ok
+
+        if (data && data.success) {
+            this.updateStatCards(data);
+        } else {
+            console.error('Failed to load buyer stats:', data?.message || 'Unknown error');
+        }
+    } catch (error) {
+        console.error('Error loading buyer stats:', error);
+    }
+}
+
+  /**
+   * Update stat cards with fetched data
+   * @param {Object} data - Stats data from API
+   */
+  updateStatCards(data) {
+    const statCards = document.querySelectorAll('.stat-card');
     
-    productCards.forEach(card => {
-      // Add keyboard navigation support
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('role', 'article');
+    statCards.forEach(card => {
+      // Try BEM naming first, then simple class
+      const labelElement = card.querySelector('.stat-card__label') || card.querySelector('.stat-label');
+      const numberElement = card.querySelector('.stat-card__number') || card.querySelector('.stat-number');
       
-      // Enhanced focus handling with smooth animations
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const viewButton = card.querySelector('.btn--primary');
-          if (viewButton) {
-            this.simulateButtonClick(viewButton);
-          }
-        }
-      });
+      if (!labelElement || !numberElement) return; // Skip if elements not found
+      
+      const label = labelElement.textContent.toLowerCase();
 
-      // Add subtle interaction feedback
-      card.addEventListener('mouseenter', () => {
-        this.addCardHoverEffect(card);
-      });
-
-      card.addEventListener('mouseleave', () => {
-        this.removeCardHoverEffect(card);
-      });
-
-      // Analytics tracking for card interactions
-      card.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('btn')) {
-          this.trackProductView(card);
-        }
-      });
+      if (label.includes('recent') && label.includes('purchase')) {
+        numberElement.textContent = data.recent_purchases || 0;
+      } else if (label.includes('active') && label.includes('order')) {
+        numberElement.textContent = data.active_orders || 0;
+      } else if (label.includes('cart')) {
+        numberElement.textContent = data.cart_items || 0;
+      }
     });
   }
+
 
   /**
    * Add visual hover effects to product cards
@@ -227,10 +242,6 @@ class MarketplaceDashboard {
       // Navigate to product
       this.navigateToProduct(productData);
       
-    } catch (error) {
-      console.error('Error loading product:', error);
-      this.announceToScreenReader('Error loading product. Please try again.');
-      
     } finally {
       // Reset button state
       button.textContent = originalText;
@@ -252,57 +263,83 @@ class MarketplaceDashboard {
   }
 
   /**
-   * Setup interactions for statistics cards
-   * Makes stat cards clickable with smooth transitions
+   * Set up sorting functionality for product grids
+   * Listens to sort dropdown changes and reorders product cards
+   * Supports combined filtering (by type) and sorting (by price)
    */
-  setupStatCardInteractions() {
-    const statCards = document.querySelectorAll('.stat-card');
+  setupSorting() {
+    const sortDropdowns = document.querySelectorAll('.sort-dropdown');
+    console.log('setupSorting initialized, found dropdowns:', sortDropdowns.length);
     
-    statCards.forEach(card => {
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('role', 'button');
+    sortDropdowns.forEach((dropdown, index) => {
+      console.log(`Dropdown ${index}:`, dropdown.id, dropdown.getAttribute('data-sort'));
       
-      const label = card.querySelector('.stat-card__label').textContent.toLowerCase();
-      card.setAttribute('aria-label', `View ${label}`);
-      
-      card.addEventListener('click', () => {
-        this.handleStatCardClick(card, label);
-      });
-
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.handleStatCardClick(card, label);
+      dropdown.addEventListener('change', (e) => {
+        const sortType = dropdown.getAttribute('data-sort');
+        const sortValue = e.target.value;
+        const section = dropdown.closest('.product-section');
+        const productGrid = section ? section.querySelector('.product-grid') : null;
+        
+        console.log('Sort triggered:', { sortType, sortValue, gridFound: !!productGrid });
+        
+        if (!productGrid) {
+          console.warn('Product grid not found for dropdown', dropdown.id);
+          return;
         }
+        
+        const cards = Array.from(productGrid.querySelectorAll('.product-card'));
+        console.log(`Found ${cards.length} cards to sort/filter`);
+        
+        // Get current type filter from the type dropdown
+        const typeDropdown = section.querySelector('.sort-dropdown[data-sort="type"]');
+        const currentTypeFilter = typeDropdown ? typeDropdown.value : '';
+        
+        // Get current price sort from the price dropdown
+        const priceDropdown = section.querySelector('.sort-dropdown[data-sort="price"]');
+        const currentPriceSort = priceDropdown ? priceDropdown.value : '';
+        
+        // Get visible cards (respect current type filter)
+        let visibleCards = cards.filter(card => {
+          if (currentTypeFilter === '') {
+            return true; // Show all if no type filter
+          }
+          const cardType = card.getAttribute('data-type') || '';
+          return cardType === currentTypeFilter;
+        });
+        
+        // Apply price sorting to visible cards
+        if (currentPriceSort !== '') {
+          visibleCards.sort((a, b) => this.sortByPrice(a, b, currentPriceSort));
+        }
+        
+        // Update visibility and order
+        cards.forEach(card => {
+          if (visibleCards.includes(card)) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        
+        // Reorder visible cards in the DOM
+        visibleCards.forEach(card => productGrid.appendChild(card));
+        console.log(`Applied: Type filter="${currentTypeFilter}", Price sort="${currentPriceSort}"`);
       });
     });
   }
 
   /**
-   * Handle stat card interactions
-   * @param {Element} card - Stat card element
-   * @param {string} label - Card label for navigation
+   * Sort product cards by price
+   * @param {Element} cardA - First product card
+   * @param {Element} cardB - Second product card
+   * @param {string} direction - 'low-to-high' or 'high-to-low'
+   * @returns {number} Sort comparison value
    */
-  handleStatCardClick(card, label) {
-    // Add click animation
-    card.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      card.style.transform = '';
-    }, 150);
-
-    // Navigate based on card type
-    if (label.includes('cart')) {
-      this.announceToScreenReader('Navigating to cart');
-      // Navigate to cart page
-    } else if (label.includes('orders')) {
-      this.announceToScreenReader('Navigating to orders');
-      // Navigate to orders page
-    } else if (label.includes('purchases')) {
-      this.announceToScreenReader('Navigating to purchase history');
-      // Navigate to purchase history
-    }
-
-    this.trackStatCardClick(label);
+  sortByPrice(cardA, cardB, direction) {
+    const priceA = parseInt(cardA.getAttribute('data-price')) || 0;
+    const priceB = parseInt(cardB.getAttribute('data-price')) || 0;
+    
+    return direction === 'low-to-high' ? priceA - priceB : priceB - priceA;
   }
 
   /**
@@ -337,9 +374,6 @@ class MarketplaceDashboard {
   navigateToProduct(productData) {
     // Track product view
     this.trackProductView(productData.cardElement);
-    
-    // Enhanced navigation feedback
-    this.announceToScreenReader(`Loading ${productData.title}`);
     
     // In a real application, this would navigate to the product page
     console.log('Navigating to product:', productData);
@@ -414,90 +448,18 @@ class MarketplaceDashboard {
     console.log('Tab switch tracked:', trackingData);
   }
 
-  /**
-   * Track stat card interactions
-   * @param {string} cardType - Type of stat card clicked
-   */
-  trackStatCardClick(cardType) {
-    const trackingData = {
-      event: 'stat_card_click',
-      card_type: cardType,
-      timestamp: new Date().toISOString(),
-      user: 'AmashaRanasinghe'
-    };
-    
-    console.log('Stat card interaction tracked:', trackingData);
-  }
-
-  /**
-   * Enhanced accessibility features
-   * Improves screen reader support and keyboard navigation
-   */
-  addAccessibilityEnhancements() {
-    // Add aria-labels to product cards
-    const productCards = document.querySelectorAll('.product-card');
-    productCards.forEach(card => {
-      const title = card.querySelector('.product-card__title')?.textContent || '';
-      const price = card.querySelector('.product-card__price')?.textContent || '';
-      const condition = card.querySelector('.product-card__condition')?.textContent || '';
-      
-      if (title && price) {
-        card.setAttribute('aria-label', `${title}, ${price}, ${condition}`);
-      }
-    });
-
-    // Setup tab navigation accessibility
-    const tabList = document.querySelector('.tab-list');
-    if (tabList) {
-      tabList.setAttribute('role', 'tablist');
-      tabList.setAttribute('aria-label', 'Product categories');
-    }
-
-    const tabButtons = document.querySelectorAll('[data-tab]');
-    tabButtons.forEach(button => {
-      button.setAttribute('role', 'tab');
-      button.setAttribute('aria-controls', `tab-content-${button.dataset.tab}`);
-    });
-
-    // Add live region for dynamic content updates
-    this.createLiveRegion();
-  }
-
-  /**
-   * Create live region for screen reader announcements
-   */
-  createLiveRegion() {
-    const liveRegion = document.createElement('div');
-    liveRegion.setAttribute('aria-live', 'polite');
-    liveRegion.setAttribute('aria-atomic', 'true');
-    liveRegion.className = 'visually-hidden';
-    liveRegion.id = 'dashboard-live-region';
-    document.body.appendChild(liveRegion);
-  }
-
-  /**
-   * Announce changes to screen readers
-   * @param {string} message - Message to announce
-   */
-  announceToScreenReader(message) {
-    const liveRegion = document.getElementById('dashboard-live-region');
-    if (liveRegion) {
-      liveRegion.textContent = message;
-      setTimeout(() => {
-        liveRegion.textContent = '';
-      }, 1000);
-    }
-  }
 }
 
 /**
  * Initialize dashboard when DOM is ready
  * Ensures all elements are available before setup
  */
-document.addEventListener('DOMContentLoaded', () => {
-  new MarketplaceDashboard();
-});
-
+// Replace the bottom of your JS file:
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new MarketplaceDashboard());
+} else {
+    new MarketplaceDashboard(); // DOM already ready when module executes
+}
 /**
  * Handle browser back/forward navigation
  * Updates tab state when user navigates with browser controls

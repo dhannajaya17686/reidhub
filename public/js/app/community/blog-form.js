@@ -104,9 +104,45 @@ class BlogFormManager {
     if (!this.form) return;
 
     this.form.addEventListener('submit', (e) => {
+      console.log('🔵 Form submission started');
+      e.preventDefault();
+
+      // Clear any previous errors first
+      this.clearError('blog-name-error');
+      this.clearError('category-error');
+      this.clearError('description-error');
+      this.clearError('blog-image-error');
+
+      // Validate form
       if (!this.validateForm()) {
-        e.preventDefault();
+        console.error('❌ Form validation failed');
+        e.stopPropagation();
+        // Scroll to first error
+        const firstError = this.form.querySelector('.form-error[style*="display: block"]');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return false;
       }
+
+      console.log('✓ Form validation passed, submitting via traditional form submission');
+
+      // Add loading state to submit button
+      const submitBtn = this.form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Submitting...';
+        console.log('Submit button disabled, showing "Submitting..." state');
+      }
+
+      // Submit the form using traditional method (FormData with multipart for file upload)
+      console.log('📤 Submitting form data...');
+      console.log('Form action:', this.form.action);
+      console.log('Form method:', this.form.method);
+
+      // Use traditional form submission to handle file uploads
+      this.form.submit();
     });
   }
 
@@ -118,8 +154,6 @@ class BlogFormManager {
     if (blogName && !blogName.value.trim()) {
       this.showError('blog-name-error', 'Blog name is required');
       isValid = false;
-    } else if (blogName) {
-      this.clearError('blog-name-error');
     }
 
     // Validate category
@@ -127,8 +161,6 @@ class BlogFormManager {
     if (category && !category.value) {
       this.showError('category-error', 'Please select a category');
       isValid = false;
-    } else if (category) {
-      this.clearError('category-error');
     }
 
     // Validate description
@@ -136,15 +168,10 @@ class BlogFormManager {
     if (description && !description.value.trim()) {
       this.showError('description-error', 'Description is required');
       isValid = false;
-    } else if (description) {
-      this.clearError('description-error');
     }
 
-    // Validate image (only for create form)
-    if (this.form.id === 'create-blog-form' && this.fileInput && !this.fileInput.files.length) {
-      this.showError('blog-image-error', 'Blog image is required');
-      isValid = false;
-    }
+    // Validate image (optional for both create and edit)
+    // Images are not required
 
     return isValid;
   }

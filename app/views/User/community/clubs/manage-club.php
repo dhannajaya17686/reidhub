@@ -8,9 +8,6 @@
   <nav class="breadcrumb" aria-label="Breadcrumb">
     <ol class="breadcrumb__list">
       <li class="breadcrumb__item">
-        <a href="/community" class="breadcrumb__link">Community & Social</a>
-      </li>
-      <li class="breadcrumb__item">
         <a href="/community/clubs" class="breadcrumb__link">Clubs & Societies</a>
       </li>
       <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">
