@@ -1,7 +1,7 @@
 <div class="help-admin-section">
     <div class="help-admin-header">
-        <h1>Help & Feedback Management</h1>
-        <p>View and respond to user questions and feedback.</p>
+        <h1>Feedbacks and Complains Management</h1>
+        <p>View and respond to user complains and feedbacks</p>
     </div>
 
     <?php if (isset($_SESSION['error'])): ?>
@@ -21,11 +21,11 @@
         </div>
         <div class="stat-card stat-bug">
             <div class="stat-value"><?php echo $bugReportCount; ?></div>
-            <div class="stat-label">Bug Reports</div>
+            <div class="stat-label">Academic Issues</div>
         </div>
         <div class="stat-card stat-feature">
             <div class="stat-value"><?php echo $featureRequestCount; ?></div>
-            <div class="stat-label">Feature Requests</div>
+            <div class="stat-label">Infrastructure Issues</div>
         </div>
     </div>
 
@@ -45,10 +45,12 @@
             <label for="category-filter">Category:</label>
             <select id="category-filter">
                 <option value="">All Categories</option>
-                <option value="bug_report">Bug Report</option>
-                <option value="feature_request">Feature Request</option>
-                <option value="general_question">General Question</option>
-                <option value="feedback">Feedback</option>
+                <option value="academic_issues">Academic Issues</option>
+                <option value="extracurricular_issues">Extracurricular Issues</option>
+                <option value="sports_issues">Sports Issues</option>
+                <option value="infrastructure_issues">Infrastructure Issues</option>
+                <option value="other_issues">Other Issues</option>
+                <option value="feedbacks">Feedbacks</option>
             </select>
         </div>
 
@@ -119,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         questions.forEach(question => {
             const categoryDisplay = question.category.replace(/_/g, ' ').toUpperCase();
             const statusDisplay = question.status.charAt(0).toUpperCase() + question.status.slice(1);
+            const imageHtml = question.image_path ? `<div style="margin-top: 10px; margin-bottom: 10px;"><img src="${escapeHtml(question.image_path)}" alt="Question Image" style="max-width: 100%; max-height: 200px; border-radius: 6px;"></div>` : '';
             
             html += `
                 <div class="admin-question-card">
@@ -131,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="date">${new Date(question.created_at).toLocaleDateString()}</span>
                     </div>
                     <p class="question-preview">${escapeHtml(question.message).substring(0, 100)}...</p>
+                    ${imageHtml}
                     <a href="/dashboard/admin/help/question?id=${question.id}" class="btn btn-small">View & Reply</a>
                 </div>
             `;

@@ -561,6 +561,12 @@ $routes['/dashboard/help'] = [
 $routes['/dashboard/help/my-questions'] = [
     'GET' => 'Dashboard_HelpController@showMyQuestions'
 ];
+$routes['/dashboard/help/edit'] = [
+    'GET' => 'Dashboard_HelpController@showEditForm'
+];
+$routes['/dashboard/help/save-edit'] = [
+    'POST' => 'Dashboard_HelpController@saveEdit'
+];
 $routes['/dashboard/help/questions-api'] = [
     'GET' => 'Dashboard_HelpController@getQuestionsApi'
 ];
@@ -588,6 +594,9 @@ $routes['/dashboard/admin/help/reply'] = [
 ];
 $routes['/dashboard/admin/help/resolve'] = [
     'POST' => 'Dashboard_HelpAdminController@resolveQuestion'
+];
+$routes['/dashboard/admin/help/download-image'] = [
+    'GET' => 'Dashboard_HelpAdminController@downloadImage'
 ];
 
 // Admin FAQ Routes

@@ -32,12 +32,30 @@
 
             <div class="user-info">
                 <h4>User Information</h4>
-                <p><strong>User ID:</strong> <?php echo $question['user_id']; ?></p>
+                <?php if ($userData): ?>
+                    <p><strong>Name:</strong> <?php echo htmlspecialchars($userData['first_name'] . ' ' . $userData['last_name']); ?></p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($userData['email']); ?></p>
+                    <p><strong>User ID:</strong> <?php echo $question['user_id']; ?></p>
+                <?php else: ?>
+                    <p><strong>User ID:</strong> <?php echo $question['user_id']; ?></p>
+                    <p><em>User information not found</em></p>
+                <?php endif; ?>
             </div>
 
             <div class="question-message">
                 <h4>Question:</h4>
                 <p><?php echo nl2br(htmlspecialchars($question['message'])); ?></p>
+                <?php if (!empty($question['image_path'])): ?>
+                    <div class="question-image" style="margin-top: 15px;">
+                        <h4>Attached Image:</h4>
+                        <img src="<?php echo htmlspecialchars($question['image_path']); ?>" alt="Question Image" style="max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid #ddd; padding: 5px;">
+                        <div style="margin-top: 10px;">
+                            <a href="/dashboard/admin/help/download-image?question_id=<?php echo htmlspecialchars($question['id']); ?>" class="btn btn-secondary" download>
+                                ⬇ Download Image
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 

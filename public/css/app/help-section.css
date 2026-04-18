@@ -189,24 +189,34 @@
     color: #1890ff;
 }
 
-.badge-category.badge-bug_report {
-    background: #fff1f0;
-    color: var(--help-danger);
+.badge-category.badge-academic_issues {
+    background: #e6f7ff;
+    color: #1890ff;
 }
 
-.badge-category.badge-feature_request {
-    background: #f9f0ff;
-    color: var(--help-secondary);
-}
-
-.badge-category.badge-general_question {
+.badge-category.badge-extracurricular_issues {
     background: #f0f5ff;
-    color: var(--help-primary);
+    color: #1890ff;
 }
 
-.badge-category.badge-feedback {
+.badge-category.badge-sports_issues {
+    background: #f9f0ff;
+    color: #722ed1;
+}
+
+.badge-category.badge-infrastructure_issues {
+    background: #fff1f0;
+    color: #ff4d4f;
+}
+
+.badge-category.badge-other_issues {
     background: #fffbe6;
-    color: var(--help-warning);
+    color: #faad14;
+}
+
+.badge-category.badge-feedbacks {
+    background: #f6ffed;
+    color: #52c41a;
 }
 
 .badge-status {

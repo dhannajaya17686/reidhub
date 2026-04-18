@@ -4,15 +4,15 @@ class UserQuestion extends Model
     /**
      * Create a new question
      */
-    public function create($userId, $category, $subject, $message)
+    public function create($userId, $category, $subject, $message, $imagePath = null)
     {
         try {
             $stmt = $this->db->prepare("
-                INSERT INTO user_questions (user_id, category, subject, message, status)
-                VALUES (?, ?, ?, ?, 'pending')
+                INSERT INTO user_questions (user_id, category, subject, message, image_path, status)
+                VALUES (?, ?, ?, ?, ?, 'pending')
             ");
             
-            if ($stmt->execute([$userId, $category, $subject, $message])) {
+            if ($stmt->execute([$userId, $category, $subject, $message, $imagePath])) {
                 return $this->db->lastInsertId();
             }
             return false;
@@ -159,6 +159,33 @@ class UserQuestion extends Model
             return $stmt->execute([$status, $questionId]);
         } catch (Exception $e) {
             Logger::error("Error updating question status: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Update question details
+     */
+    public function update($questionId, $userId, $category, $subject, $message, $imagePath = null)
+    {
+        try {
+            if ($imagePath !== null) {
+                $stmt = $this->db->prepare("
+                    UPDATE user_questions 
+                    SET category = ?, subject = ?, message = ?, image_path = ?, updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = ? AND user_id = ?
+                ");
+                return $stmt->execute([$category, $subject, $message, $imagePath, $questionId, $userId]);
+            } else {
+                $stmt = $this->db->prepare("
+                    UPDATE user_questions 
+                    SET category = ?, subject = ?, message = ?, updated_at = CURRENT_TIMESTAMP 
+                    WHERE id = ? AND user_id = ?
+                ");
+                return $stmt->execute([$category, $subject, $message, $questionId, $userId]);
+            }
+        } catch (Exception $e) {
+            Logger::error("Error updating question: " . $e->getMessage());
             return false;
         }
     }

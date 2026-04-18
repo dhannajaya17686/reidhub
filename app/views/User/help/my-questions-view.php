@@ -1,7 +1,7 @@
 <div class="help-section">
     <div class="help-header">
-        <h1>My Questions</h1>
-        <p>Track the status of your questions and replies from our support team.</p>
+        <h1>My Complains</h1>
+        <p>Track the status of your complains and replies from Students Union</p>
     </div>
 
     <?php if (isset($_SESSION['error'])): ?>
@@ -44,6 +44,11 @@
 
                     <div class="question-body">
                         <p><?php echo nl2br(htmlspecialchars($question['message'])); ?></p>
+                        <?php if (!empty($question['image_path'])): ?>
+                            <div class="question-image" style="margin-top: 15px;">
+                                <img src="<?php echo htmlspecialchars($question['image_path']); ?>" alt="Complaint Image" style="max-width: 100%; max-height: 400px; border-radius: 8px;">
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <?php if ($question['status'] === 'replied' || $question['status'] === 'resolved'): ?>
@@ -70,6 +75,12 @@
                                 endforeach;
                             endif;
                             ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($question['status'] === 'open' || $question['status'] === 'pending'): ?>
+                        <div class="question-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                            <a href="/dashboard/help/edit?id=<?php echo htmlspecialchars($question['id']); ?>" class="btn btn-secondary">✎ Edit</a>
                         </div>
                     <?php endif; ?>
                 </div>
