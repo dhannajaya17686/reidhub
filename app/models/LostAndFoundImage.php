@@ -26,7 +26,17 @@ class LostAndFoundImage extends Model
         try {
             Logger::info("Adding image for {$itemType} item id={$itemId}");
 
-            $sql = "CALL sp_add_item_image(?, ?, ?, ?, ?, ?, ?, @image_id)";
+            // If marking as main, unmark all existing main images for this item first
+            if ($isMain) {
+                $unmark = $this->db->prepare(
+                    "UPDATE lostandfound_images SET is_main = 0 WHERE item_type = ? AND item_id = ?"
+                );
+                $unmark->execute([$itemType, $itemId]);
+            }
+
+            $sql = "INSERT INTO lostandfound_images
+                        (item_type, item_id, image_path, image_name, is_main, file_size, mime_type)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->db->prepare($sql);
             $ok = $stmt->execute([
                 $itemType,
@@ -43,10 +53,7 @@ class LostAndFoundImage extends Model
                 return false;
             }
 
-            // Get the output parameter
-            $result = $this->db->query("SELECT @image_id as id")->fetch(PDO::FETCH_ASSOC);
-            $id = (int)$result['id'];
-
+            $id = (int)$this->db->lastInsertId();
             Logger::info("Image added successfully with id={$id}");
             return $id;
         } catch (Throwable $e) {

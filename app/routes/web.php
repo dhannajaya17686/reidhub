@@ -208,6 +208,10 @@ $routes['/dashboard/forum/question'] = [
 $routes['/dashboard/forum/all'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
+// Quick ask API from dashboard
+$routes['/dashboard/community/forum/quick-ask'] = [
+    'POST' => 'Forum_ForumUserController@quickAsk'
+];
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];

@@ -18,6 +18,17 @@ spl_autoload_register(function ($class) {
         __DIR__ . '/../app/controllers/' . $classPath . '.php',
         __DIR__ . '/../app/models/' . $classPath . '.php'
     ];
+    
+    // For controllers with underscore naming (e.g., Auth_LoginController -> Auth/LoginController.php)
+    if (strpos($class, '_') !== false) {
+        $parts = explode('_', $class, 2);
+        if (count($parts) === 2) {
+            $subdir = $parts[0];
+            $className = $parts[1];
+            $paths[] = __DIR__ . '/../app/controllers/' . $subdir . '/' . $className . '.php';
+        }
+    }
+    
     foreach ($paths as $file) {
         if (file_exists($file)) {
             require_once $file;
