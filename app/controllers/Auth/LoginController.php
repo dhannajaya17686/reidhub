@@ -9,6 +9,11 @@ class Auth_LoginController extends Controller
     public function showLoginForm(){$this->view('Auth/log-in-view');}
     public function showSignupForm(){$this->view('Auth/sign-up-view');}
     
+    public function showDebugSession() {
+        if (session_status() === PHP_SESSION_NONE) { session_start(); }
+        require_once __DIR__ . '/../views/debug-session.php';
+    }
+    
     
     
     private function isAjax(): bool
@@ -47,6 +52,8 @@ class Auth_LoginController extends Controller
         if ($user && password_verify($password, $user['password'] ?? '')) {
             if (session_status() === PHP_SESSION_NONE) { session_start(); }
             session_regenerate_id(true);
+            // Clear any previous session data to avoid conflicts
+            $_SESSION = [];
             $_SESSION['user_id'] = (int)$user['id'];
             $_SESSION['user'] = $user;
             Logger::info('Login success: user_id=' . $_SESSION['user_id']);
@@ -64,6 +71,8 @@ class Auth_LoginController extends Controller
         $adminModel = new Admin();
         $admin = $adminModel->findByEmail($identifier);
         if ($admin && password_verify($password, $admin['password'] ?? '')) {
+            // Clear any previous session data to avoid conflicts
+            $_SESSION = [];
             if (session_status() === PHP_SESSION_NONE) { session_start(); }
             session_regenerate_id(true);
             $_SESSION['admin_id'] = (int)$admin['id'];

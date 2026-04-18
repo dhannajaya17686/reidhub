@@ -9,6 +9,21 @@ $isSellerMode = str_contains($path, '/seller/');
 // Check if user is in club admin mode
 $isClubAdminMode = str_contains($path, '/club-admin/');
 
+// Check if user has club admin permission (granted by system admin)
+$userIsClubAdmin = false;
+if (isset($_SESSION['user_id'])) {
+    try {
+        require_once __DIR__ . '/../../core/Database.php';
+        $db = Database::getInstance()->getConnection();
+        $stmt = $db->prepare("SELECT COUNT(*) as count FROM community_admins WHERE user_id = ? AND role_type = 'club_admin'");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $userIsClubAdmin = $result && (int)$result['count'] > 0;
+    } catch (Exception $e) {
+        $userIsClubAdmin = false;
+    }
+}
+
 // User sidebar items (buyer mode)
 $userItems = [
     [ 
@@ -135,10 +150,10 @@ $clubAdminItems = [
         'icon' => 'club-admin',
         'children' => [
             ['label' => 'Dashboard', 'href' => '/dashboard/club-admin/dashboard'],
-            ['label' => 'Members', 'href' => '/dashboard/club-admin/members'],
             ['label' => 'Events', 'href' => '/dashboard/club-admin/events'],
             ['label' => 'Announcements', 'href' => '/dashboard/club-admin/announcements'],
             ['label' => 'Applications', 'href' => '/dashboard/club-admin/applications'],
+            ['label' => '← Back to Community', 'href' => '/dashboard/community/clubs', 'is_switch' => true],
         ]
     ],
     [ 
@@ -243,6 +258,8 @@ function svg_icon(string $name): string {
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
         case 'club-user':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm10 0a3 3 0 1 1 0-6 3 3 0 0 1 0 6ZM7 13c2.67 0 8 1.34 8 4v2H-1v-2c0-2.66 5.33-4 8-4Zm9-0.95A8.2 8.2 0 0 1 20 16v2h-4v-2c0-.7-.1-1.3-.3-1.95Z"/></svg>';
+        case 'profile':
+            return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 2c2.67 0 8 1.34 8 4v2H4v-2c0-2.66 5.33-4 8-4z"/></svg>';
         case 'chevron':
             return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>';
         default:
@@ -291,11 +308,15 @@ if ($isAdmin) {
                             </button>
                             <ul class="sidebar-submenu<?php echo $isExpanded ? ' is-expanded' : ''; ?>" role="list">
                                 <?php foreach ($it['children'] as $child): ?>
-                                    <?php $childActive = is_active($child['href'], $path); ?>
+                                    <?php 
+                                        $childActive = is_active($child['href'], $path); 
+                                        $isSwitch = isset($child['is_switch']) && $child['is_switch'];
+                                    ?>
                                     <li class="sidebar-submenu-item">
-                                        <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?>"
+                                        <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?><?php echo $isSwitch ? ' sidebar-account-switch' : ''; ?>"
                                            href="<?php echo htmlspecialchars($child['href']); ?>"
-                                           <?php echo $childActive ? 'aria-current="page"' : ''; ?>>
+                                           <?php echo $childActive ? 'aria-current="page"' : ''; ?>
+                                           <?php echo $isSwitch ? 'style="margin-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.75rem;"' : ''; ?>>
                                             <?php echo htmlspecialchars($child['label']); ?>
                                         </a>
                                     </li>
@@ -321,25 +342,7 @@ if ($isAdmin) {
                                     </li>
                                 <?php endif; ?>
 
-                                <?php if ($isCommunitySection): ?>
-                                    <li class="sidebar-submenu-item">
-                                        <?php if ($isClubAdminMode): ?>
-                                            <a class="sidebar-submenu-link sidebar-account-switch" 
-                                               href="/dashboard/community/clubs"
-                                               title="Switch to Regular User">
-                                                <span class="account-switch-icon"><?php echo svg_icon('club-user'); ?></span>
-                                                <span class="account-switch-text">Switch to Regular User</span>
-                                            </a>
-                                        <?php else: ?>
-                                            <a class="sidebar-submenu-link sidebar-account-switch" 
-                                               href="/dashboard/club-admin/dashboard"
-                                               title="Switch to Club Admin">
-                                                <span class="account-switch-icon"><?php echo svg_icon('club-admin'); ?></span>
-                                                <span class="account-switch-text">Switch to Club Admin</span>
-                                            </a>
-                                        <?php endif; ?>
-                                    </li>
-                                <?php endif; ?>
+                                <!-- Club Admin mode removed - admins have full access on login -->
                             </ul>
                         <?php else: ?>
                             <a class="sidebar-nav-link<?php echo $active ? ' is-active' : ''; ?>"
@@ -352,7 +355,59 @@ if ($isAdmin) {
                     </li>
                 <?php endforeach; ?>
                 
+                <!-- Bottom Section: Profile, Help & Feedback, Logout -->
                 <li class="sidebar-nav-item" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: var(--space-md);">
+                    <!-- My Profile -->
+                    <a class="sidebar-nav-link<?php echo is_active('/dashboard/profile', $path) ? ' is-active' : ''; ?>"
+                       href="/dashboard/profile"
+                       <?php echo is_active('/dashboard/profile', $path) ? 'aria-current="page"' : ''; ?>
+                       style="margin-bottom: var(--space-sm);">
+                        <span class="sidebar-nav-icon"><?php echo svg_icon('profile'); ?></span>
+                        <span class="sidebar-link-text">My Profile</span>
+                    </a>
+                </li>
+                
+                <!-- Help & Feedback with Dropdown -->
+                <li class="sidebar-nav-item">
+                    <?php 
+                        $helpActive = is_active('/dashboard/help', $path) || is_active('/dashboard/admin/help', $path);
+                        $helpChildren = $isAdmin ? [
+                            ['label' => 'Questions', 'href' => '/dashboard/admin/help'],
+                            ['label' => 'FAQ Management', 'href' => '/dashboard/admin/faq'],
+                        ] : [
+                            ['label' => 'Ask Your Question', 'href' => '/dashboard/help'],
+                            ['label' => 'My Questions', 'href' => '/dashboard/help/my-questions'],
+                            ['label' => 'FAQs', 'href' => '/dashboard/help/faq']
+                        ];
+                        $hasActiveHelpChild = has_active_child($helpChildren, $path);
+                        $helpIsExpanded = $helpActive || $hasActiveHelpChild;
+                    ?>
+                    <button class="sidebar-nav-link sidebar-nav-toggle<?php echo ($helpActive || $hasActiveHelpChild) ? ' is-active' : ''; ?>"
+                            data-toggle="dropdown"
+                            aria-expanded="<?php echo $helpIsExpanded ? 'true' : 'false'; ?>"
+                            style="margin-bottom: var(--space-sm);">
+                        <span class="sidebar-nav-icon"><?php echo svg_icon('help'); ?></span>
+                        <span class="sidebar-link-text">Help & Feedback</span>
+                        <span class="sidebar-nav-chevron<?php echo $helpIsExpanded ? ' is-expanded' : ''; ?>">
+                            <?php echo svg_icon('chevron'); ?>
+                        </span>
+                    </button>
+                    <ul class="sidebar-submenu<?php echo $helpIsExpanded ? ' is-expanded' : ''; ?>" role="list">
+                        <?php foreach ($helpChildren as $child): ?>
+                            <?php $childActive = is_active($child['href'], $path); ?>
+                            <li class="sidebar-submenu-item">
+                                <a class="sidebar-submenu-link<?php echo $childActive ? ' is-active' : ''; ?>"
+                                   href="<?php echo htmlspecialchars($child['href']); ?>"
+                                   <?php echo $childActive ? 'aria-current="page"' : ''; ?>>
+                                    <?php echo htmlspecialchars($child['label']); ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+                
+                <!-- Logout Button -->
+                <li class="sidebar-nav-item" style="margin-top: var(--space-md);">
                     <form method="POST" action="/logout" style="margin: 0;">
                         <button type="submit" class="sidebar-nav-link" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); display: flex; align-items: center; gap: var(--space-sm);">
                             <span class="sidebar-nav-icon"><?php echo svg_icon('logout'); ?></span>

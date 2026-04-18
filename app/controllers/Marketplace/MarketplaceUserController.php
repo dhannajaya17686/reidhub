@@ -135,6 +135,20 @@ class Marketplace_MarketplaceUserController extends Controller
                 $categoryLabel = ($row['category'] === 'second-hand') ? 'Second Hand' : 'Merchandise';
                 $productTypeLabel = ucfirst((string)($row['product_type'] ?? ''));
 
+                // Fetch seller information
+                $sellerName = 'Unknown Seller';
+                $sellerId = (int)$row['seller_id'];
+                if ($sellerId > 0) {
+                    $userModel = new User();
+                    $seller = $userModel->findById($sellerId);
+                    if ($seller) {
+                        $sellerName = trim(($seller['first_name'] ?? '') . ' ' . ($seller['last_name'] ?? ''));
+                        if (empty($sellerName)) {
+                            $sellerName = $seller['email'] ?? 'Unknown Seller';
+                        }
+                    }
+                }
+
                 $product = [
                     'id' => (int)$row['id'],
                     'title' => $row['title'],
@@ -154,7 +168,8 @@ class Marketplace_MarketplaceUserController extends Controller
                     'images' => $thumbs,
                     'category_label' => $categoryLabel,
                     'product_type_label' => $productTypeLabel,
-                    'seller_id' => (int)$row['seller_id'],
+                    'seller_id' => $sellerId,
+                    'seller_name' => $sellerName,
                 ];
             }
         }
@@ -553,7 +568,7 @@ class Marketplace_MarketplaceUserController extends Controller
         $limit = min(4, count($files['name']));
 
         $projectRoot = dirname(__DIR__, 3); // /var/www/html
-        $storageDir  = $projectRoot . '/storage/marketplace';
+        $storageDir  = $projectRoot . '/storage/filestore/marketplace';
 
         // Log user and perms context
         $uid = function_exists('posix_geteuid') ? posix_geteuid() : null;
@@ -610,8 +625,8 @@ class Marketplace_MarketplaceUserController extends Controller
                 continue;
             }
 
-            // Public URL via symlink public/storage/marketplace -> storage/marketplace
-            $saved[] = '/storage/marketplace/' . $name;
+            // Public URL via filestore volume
+            $saved[] = '/storage/filestore/marketplace/' . $name;
         }
 
         Logger::info('Saved images: ' . json_encode($saved));
@@ -1147,7 +1162,15 @@ class Marketplace_MarketplaceUserController extends Controller
         );
     }
 
-    // Submit: create 1 transaction + N orders (each item is its own entity)
+    public function showTermsAndConditions()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp(
+            '/User/marketplace/terms-and-conditions-view',
+            ['user' => $user],
+            'Terms and Conditions - ReidHub Marketplace'
+        );
+    }
     public function submitCheckout()
     {
         header('Content-Type: application/json');
@@ -1300,14 +1323,14 @@ class Marketplace_MarketplaceUserController extends Controller
         if (($file['size'] ?? 0) > 8 * 1024 * 1024) return null;
 
         $ext = $allowed[$file['type']];
-        $baseDir = __DIR__ . '/../../../public/storage/orders/' . $buyerId;
+        $baseDir = __DIR__ . '/../../../storage/filestore/orders/' . $buyerId;
         if (!is_dir($baseDir)) @mkdir($baseDir, 0775, true);
 
         $name = 'slip_' . $productId . '_' . date('Ymd_His') . '.' . $ext;
         $dest = $baseDir . '/' . $name;
         if (!@move_uploaded_file($file['tmp_name'], $dest)) return null;
 
-        return '/storage/orders/' . $buyerId . '/' . $name;
+        return '/storage/filestore/orders/' . $buyerId . '/' . $name;
     }
 
     /**
@@ -1618,5 +1641,69 @@ class Marketplace_MarketplaceUserController extends Controller
     {
         http_response_code(404);
         $this->viewApp('/Errors/404', ['message'=>$msg], 'Not Found');
+    }
+
+    /**
+     * GET /dashboard/marketplace/buyer/stats
+     * Returns buyer dashboard stats: recent purchases, active orders, cart items
+     */
+    public function getBuyerStats()
+    {
+        header('Content-Type: application/json');
+        try {
+            Logger::info('getBuyerStats: Called');
+            
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) {
+                Logger::warning('getBuyerStats: User not authenticated');
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            Logger::info('getBuyerStats: User ID = ' . $user['id']);
+            
+            $userId = (int)$user['id'];
+            $orderModel = new Order();
+            $cartModel = new Cart();
+
+            // Get all buyer orders
+            $allOrders = $orderModel->getOrdersForBuyer($userId);
+            Logger::info('getBuyerStats: Found ' . count($allOrders) . ' orders');
+
+            // Recent Purchases (delivered orders from last 30 days)
+            $recentPurchases = 0;
+            $thirtyDaysAgo = date('Y-m-d', strtotime('-30 days'));
+            foreach ($allOrders as $order) {
+                if ($order['status'] === 'delivered' && strtotime($order['created_at']) >= strtotime($thirtyDaysAgo)) {
+                    $recentPurchases++;
+                }
+            }
+
+            // Active Orders (pending/processing/shipped orders)
+            $activeOrders = 0;
+            foreach ($allOrders as $order) {
+                if (in_array($order['status'], ['yet_to_ship', 'processing', 'shipped'], true)) {
+                    $activeOrders++;
+                }
+            }
+
+            // Cart Items (total items in cart)
+            $cartRows = $cartModel->getItemsForUser($userId);
+            $cartItems = count($cartRows);
+
+            Logger::info('getBuyerStats: recent=' . $recentPurchases . ', active=' . $activeOrders . ', cart=' . $cartItems);
+
+            echo json_encode([
+                'success' => true,
+                'recent_purchases' => (int)$recentPurchases,
+                'active_orders' => (int)$activeOrders,
+                'cart_items' => (int)$cartItems,
+            ]);
+        } catch (Throwable $e) {
+            Logger::error('getBuyerStats error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error']);
+        }
     }
 }

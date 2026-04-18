@@ -69,7 +69,7 @@
           </button>
           
           <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: var(--space-sm);">
-            By placing this order, you agree to our terms and conditions.
+            By placing this order, you agree to our <a href="/dashboard/marketplace/terms-and-conditions" style="color: var(--secondary-color); text-decoration: none; font-weight: 500;" target="_blank">terms and conditions</a>.
           </p>
         </div>
       </div>

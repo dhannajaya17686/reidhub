@@ -109,10 +109,17 @@ $prd = $product ?? null;
         <h3 class="seller-title">Seller Information</h3>
         <div class="seller-card">
           <div class="seller-avatar">
-            <img src="https://via.placeholder.com/48x48/0466C8/ffffff?text=SU" alt="Seller avatar">
+            <div class="seller-avatar-initials">
+              <?php 
+                $names = explode(' ', trim($prd['seller_name']), 2);
+                $first = strtoupper(substr($names[0], 0, 1));
+                $last = isset($names[1]) ? strtoupper(substr($names[1], 0, 1)) : '';
+                echo htmlspecialchars($first . $last, ENT_QUOTES, 'UTF-8');
+              ?>
+            </div>
           </div>
           <div class="seller-details">
-            <div class="seller-name"><?php echo 'Seller #' . (int)$prd['seller_id']; ?></div>
+            <div class="seller-name"><?php echo htmlspecialchars($prd['seller_name'], ENT_QUOTES, 'UTF-8'); ?></div>
             <div class="seller-location">UCSC Community</div>
           </div>
         </div>

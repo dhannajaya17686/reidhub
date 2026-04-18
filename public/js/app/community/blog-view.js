@@ -1,6 +1,7 @@
 class BlogViewManager {
   constructor() {
     this.blogId = this.getBlogIdFromUrl();
+    this.currentReport = { type: null, id: null };
     this.init();
   }
 
@@ -63,14 +64,9 @@ class BlogViewManager {
   }
 
   setupModals() {
-    // Report modal
-    const reportBtn = document.getElementById('report-blog-btn');
+    // Report modal (submission handled by generic handler)
     const reportModal = document.getElementById('report-modal');
     const reportForm = document.getElementById('report-form');
-
-    reportBtn?.addEventListener('click', () => {
-      reportModal.style.display = 'flex';
-    });
 
     reportForm?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -120,60 +116,51 @@ class BlogViewManager {
   }
 
   setupReportButton() {
-    const reportBtn = document.getElementById('report-blog-btn');
-    reportBtn?.addEventListener('click', () => {
-      document.getElementById('report-modal').style.display = 'flex';
+    // Attach generic handlers to any report-icon button with data-report-type and data-id
+    const reportButtons = document.querySelectorAll('.report-icon[data-report-type][data-id]');
+    console.log('Found report buttons:', reportButtons.length, reportButtons);
+
+    reportButtons.forEach(btn => {
+      console.log('Attaching listener to button:', btn);
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Report button clicked via event listener!');
+        const type = btn.getAttribute('data-report-type');
+        const id = btn.getAttribute('data-id');
+        console.log('Report type:', type, 'ID:', id);
+        this.currentReport.type = type;
+        this.currentReport.id = id;
+        const reportModal = document.getElementById('report-modal');
+        console.log('Opening modal:', reportModal);
+        if (reportModal) reportModal.style.display = 'flex';
+      });
     });
   }
 
   async handleReport() {
-    const description = document.getElementById('report-description').value;
-    const blogId = this.blogId;
-
-    try {
-      const response = await fetch(`/api/community/blogs/${blogId}/report`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ description })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        document.getElementById('report-modal').style.display = 'none';
-        alert('Report submitted successfully');
-      } else {
-        alert('Failed to submit report');
-      }
-    } catch (error) {
-      console.error('Report failed:', error);
-      alert('An error occurred');
-    }
-  }
+  \n    const description = document.getElementById('report-description').value; \n    const { type, id } = this.currentReport; \n\n    if (!type || !id) { \n      alert('Unable to determine report target.'); \n      return; \n } \n\n    // Map to API path: /api/community/{type}s/report\n    const plural = type.endsWith('s') ? type : type + 's';\n    const endpoint = `/api/community/${plural}/report`;\n\n    try {\n      const payload = { description, id };\n      console.log('Submitting report to:', endpoint);\n      console.log('Payload:', payload);\n\n      const response = await fetch(endpoint, {\n        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json'\n        },\n        body: JSON.stringify(payload)\n      });\n\n      console.log('Response status:', response.status);\n      const responseText = await response.text();\n      console.log('Response text:', responseText);\n      \n      let data;\n      try {\n        data = JSON.parse(responseText);\n      } catch (parseError) {\n        console.error('Failed to parse JSON:', parseError);\n        console.error('Response was:', responseText.substring(0, 200));\n        alert('Server error: Invalid response format');\n        return;\n      }\n      \n      console.log('Response data:', data);\n\n      if (data.success) {\n        document.getElementById('report-form').reset();\n        document.getElementById('report-modal').style.display = 'none';\n        alert('Report submitted successfully');\n      } else {\n        alert('Failed to submit report: ' + (data.message || 'Unknown error'));\n      }\n    } catch (error) {\n      console.error('Report failed:', error);\n      alert('An error occurred: ' + error.message);\n    }\n  }
 
   async handleDelete() {
-    const blogId = this.blogId;
+      const blogId = this.blogId;
 
-    try {
-      const response = await fetch(`/api/community/blogs/${blogId}`, {
-        method: 'DELETE'
-      });
+      try {
+        const response = await fetch(`/api/community/blogs/${blogId}`, {
+          method: 'DELETE'
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        window.location.href = '/dashboard/community/blogs';
-      } else {
-        alert('Failed to delete blog');
+        if (data.success) {
+          window.location.href = '/dashboard/community/blogs';
+        } else {
+          alert('Failed to delete blog');
+        }
+      } catch (error) {
+        console.error('Delete failed:', error);
+        alert('An error occurred');
       }
-    } catch (error) {
-      console.error('Delete failed:', error);
-      alert('An error occurred');
     }
   }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
   new BlogViewManager();

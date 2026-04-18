@@ -40,7 +40,7 @@
 }
 
 .breadcrumb__link:hover {
-  text-decoration: underline;
+  color: #0353a4;
 }
 
 .breadcrumb__item--current {
@@ -238,7 +238,7 @@
 }
 
 .contact-link:hover {
-  text-decoration: underline;
+  color: #0353a4;
 }
 
 /* Responsive Design */
