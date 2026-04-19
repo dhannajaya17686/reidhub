@@ -340,19 +340,16 @@ $routes['/dashboard/forum/question'] = [
 $routes['/dashboard/forum/all'] = [
     'GET' => 'Forum_ForumUserController@showAllQuestions'
 ];
-<<<<<<< HEAD
 // Quick ask API from dashboard
 $routes['/dashboard/community/forum/quick-ask'] = [
     'POST' => 'Forum_ForumUserController@quickAsk'
 ];
-=======
 
 // --- NEW ROUTE: My Bookmarks ---
 $routes['/dashboard/forum/bookmarks'] = [
     'GET' => 'Forum_ForumUserController@showBookmarks'
 ];
 
->>>>>>> 3f0f0af7a21fdad6505fed95960213bbea8306ad
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];

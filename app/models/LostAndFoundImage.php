@@ -153,10 +153,25 @@ class LostAndFoundImage extends Model
                 return false;
             }
 
-            // Create directory if it doesn't exist
-            $uploadDir = __DIR__ . '/../../public/storage/lostandfound/' . $itemType . '/' . $itemId;
+            // Create directory in filestore if it doesn't exist
+            $projectRoot = dirname(__DIR__, 2); // /var/www/html
+            $uploadDir = $projectRoot . '/storage/filestore/lostandfound/' . $itemType . '/' . $itemId;
             if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+                // Suppress warnings and use @ to handle permission issues gracefully
+                $dirCreated = @mkdir($uploadDir, 0777, true);
+                if (!$dirCreated && !is_dir($uploadDir)) {
+                    Logger::error("Failed to create directory: " . $uploadDir . " - Check permissions");
+                    return false;
+                }
+            }
+            
+            // Ensure directory is writable
+            if (!is_writable($uploadDir)) {
+                @chmod($uploadDir, 0777);
+                if (!is_writable($uploadDir)) {
+                    Logger::error("Directory not writable: " . $uploadDir);
+                    return false;
+                }
             }
 
             // Generate unique filename
@@ -166,12 +181,12 @@ class LostAndFoundImage extends Model
 
             // Move uploaded file
             if (!move_uploaded_file($file['tmp_name'], $filepath)) {
-                Logger::error("Failed to move uploaded file");
+                Logger::error("Failed to move uploaded file to: " . $filepath);
                 return false;
             }
 
-            // Return path relative to public directory
-            $relativePath = '/storage/lostandfound/' . $itemType . '/' . $itemId . '/' . $filename;
+            // Return path relative to filestore volume (accessible via /storage/filestore/)
+            $relativePath = '/storage/filestore/lostandfound/' . $itemType . '/' . $itemId . '/' . $filename;
 
             return [
                 'path' => $relativePath,

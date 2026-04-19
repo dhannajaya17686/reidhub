@@ -111,7 +111,6 @@ class Forum_ForumUserController extends Controller
         $this->viewApp('User/edu-forum/add-question-view', [], 'Ask a Question - ReidHub');
     }
 
-<<<<<<< HEAD
     /**
      * API: Quick ask question from dashboard
      */
@@ -173,8 +172,6 @@ class Forum_ForumUserController extends Controller
             echo json_encode(['success' => false, 'message' => 'Server error occurred']);
         }
     }
-}
-=======
     // ==================================================================
     // 2. FORM SUBMISSION METHODS (POST Requests)
     // ==================================================================
@@ -214,11 +211,11 @@ class Forum_ForumUserController extends Controller
                         exit;
                     } else {
                         // Log failure for easier debugging
-                        Logger::error('Failed to save forum answer', [
+                        Logger::error('Failed to save forum answer: ' . json_encode([
                             'user_id' => $_SESSION['user_id'] ?? null,
                             'question_id' => $questionId,
                             'content_length' => strlen($content)
-                        ]);
+                        ]));
                     }
             }
         }
@@ -574,4 +571,3 @@ class Forum_ForumUserController extends Controller
         ], 'My Bookmarks - ReidHub');
     }
 }
->>>>>>> 3f0f0af7a21fdad6505fed95960213bbea8306ad
