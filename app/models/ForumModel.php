@@ -457,4 +457,21 @@ class ForumModel extends Model {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * Get total count of active forum posts (questions + answers)
+     */
+    public function getTotalActivePostsCount(): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM forum_questions WHERE moderation_status = 'active'";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)($result['count'] ?? 0);
+        } catch (Throwable $e) {
+            Logger::error("getTotalActivePostsCount error: " . $e->getMessage());
+            return 0;
+        }
+    }
 }

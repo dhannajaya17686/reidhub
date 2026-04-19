@@ -250,4 +250,38 @@ class User extends Model
             return false;
         }
     }
+
+    /**
+     * Get total count of users
+     */
+    public function getTotalCount(): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM {$this->table}";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)($result['count'] ?? 0);
+        } catch (Throwable $e) {
+            Logger::error("getTotalCount error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get recent users
+     */
+    public function getRecentUsers(int $limit = 5): array
+    {
+        try {
+            $sql = "SELECT id, first_name, last_name, email, created_at FROM {$this->table} ORDER BY created_at DESC LIMIT :limit";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (Throwable $e) {
+            Logger::error("getRecentUsers error: " . $e->getMessage());
+            return [];
+        }
+    }
 }

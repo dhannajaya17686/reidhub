@@ -41,6 +41,9 @@ spl_autoload_register(function ($class) {
     throw new Exception("Class '$class' not found.");
 });
 
+// Load helper functions
+require_once __DIR__ . '/../app/helpers/functions.php';
+
 // Load routes
 $routes = require __DIR__ . '/../app/routes/web.php';
 if (!is_array($routes)) {
