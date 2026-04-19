@@ -55,7 +55,7 @@ if (!empty($data['events'])) {
           <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
           <line x1="14" y1="14" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <input type="text" id="event-search" class="search-input" placeholder="Search events by name">
+        <input type="text" id="event-search" class="search-input" placeholder="Search events by name or category">
       </div>
     </div>
 
@@ -76,7 +76,7 @@ if (!empty($data['events'])) {
       <?php else: ?>
       <div class="blogs-grid" id="events-grid">
         <?php foreach ($data['events'] as $event): ?>
-        <article class="blog-card event-card" data-event-id="<?= $event['id'] ?>" data-status="<?= htmlspecialchars($event['status']) ?>">
+        <article class="blog-card event-card" data-event-id="<?= $event['id'] ?>" data-status="<?= htmlspecialchars($event['status']) ?>" data-category="<?= htmlspecialchars($event['category'] ?? '') ?>">
           <a href="/dashboard/community/events/view?id=<?= $event['id'] ?>" class="blog-card__link">
             <div class="blog-card__image event-card__image">
               <img src="<?= htmlspecialchars($event['image_url'] ?? 'https://via.placeholder.com/400x400/E74C3C/ffffff?text=' . urlencode(substr($event['title'], 0, 1))) ?>" 
@@ -182,7 +182,7 @@ if (!empty($data['events'])) {
       <?php else: ?>
       <div class="blogs-grid">
         <?php foreach ($myEvents as $event): ?>
-        <article class="blog-card event-card" data-event-id="<?= $event['id'] ?>" data-status="<?= htmlspecialchars($event['status']) ?>">
+        <article class="blog-card event-card" data-event-id="<?= $event['id'] ?>" data-status="<?= htmlspecialchars($event['status']) ?>" data-category="<?= htmlspecialchars($event['category'] ?? '') ?>">
           <a href="/dashboard/community/events/view?id=<?= $event['id'] ?>" class="blog-card__link">
             <div class="blog-card__image event-card__image">
               <img src="<?= htmlspecialchars($event['image_url'] ?? 'https://via.placeholder.com/400x400/E74C3C/ffffff?text=' . urlencode(substr($event['title'], 0, 1))) ?>"
@@ -653,37 +653,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Search functionality
+  // Search and status filtering (combined)
   const eventSearch = document.getElementById('event-search');
-  if (eventSearch) {
-    eventSearch.addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase();
-      document.querySelectorAll('.event-card').forEach(card => {
-        const titleElement = card.querySelector('.blog-card__title');
-        if (titleElement) {
-          const title = titleElement.textContent.toLowerCase();
-          card.style.display = title.includes(query) ? '' : 'none';
-        }
-      });
+  const allEventsTab = document.querySelector('[data-tab-content="all"]');
+
+  function applyEventFilters() {
+    if (!allEventsTab) return;
+
+    const query = (eventSearch ? eventSearch.value : '').trim().toLowerCase();
+    const activePill = document.querySelector('.category-pills .pill.pill--active');
+    const selectedStatus = activePill ? activePill.dataset.status : '';
+
+    allEventsTab.querySelectorAll('.event-card').forEach(card => {
+      const cardStatus = (card.dataset.status || '').toLowerCase();
+      const cardCategory = (card.dataset.category || '').toLowerCase();
+      const titleElement = card.querySelector('.blog-card__title');
+      const cardTitle = titleElement ? titleElement.textContent.toLowerCase() : '';
+
+      const matchesStatus = !selectedStatus || cardStatus === selectedStatus;
+      const matchesSearch = !query || cardTitle.includes(query) || cardCategory.includes(query);
+
+      card.style.display = (matchesStatus && matchesSearch) ? '' : 'none';
     });
+  }
+
+  if (eventSearch) {
+    eventSearch.addEventListener('input', applyEventFilters);
   }
 
   // Status filter - only apply to All Events tab
   document.querySelectorAll('.category-pills .pill').forEach(pill => {
     pill.addEventListener('click', function() {
-      const status = this.dataset.status;
-      
       document.querySelectorAll('.category-pills .pill').forEach(p => p.classList.remove('pill--active'));
       this.classList.add('pill--active');
-      
-      // Only filter cards in the All Events tab
-      const allEventsTab = document.querySelector('[data-tab-content="all"]');
-      if (allEventsTab) {
-        allEventsTab.querySelectorAll('.event-card').forEach(card => {
-          const cardStatus = card.dataset.status;
-          card.style.display = !status || cardStatus === status ? '' : 'none';
-        });
-      }
+      applyEventFilters();
     });
   });
   

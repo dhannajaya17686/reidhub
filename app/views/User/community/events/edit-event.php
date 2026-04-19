@@ -40,7 +40,25 @@
 
         <div class="form-group">
           <label for="event-category" class="form-label">Category</label>
-          <input type="text" id="event-category" name="category" class="form-input" placeholder="e.g. Workshop, Conference, Social" value="<?= htmlspecialchars($data['event']['category']) ?>" required>
+          <?php $defaultCategories = ['Social', 'Academia', 'Event', 'Celebration']; ?>
+          <?php $currentCategory = $data['event']['category'] ?? ''; ?>
+          <select id="event-category" name="category" class="form-select" required>
+            <option value="">Select category</option>
+            <option value="Social" <?= $currentCategory === 'Social' ? 'selected' : '' ?>>Social</option>
+            <option value="Academia" <?= $currentCategory === 'Academia' ? 'selected' : '' ?>>Academia</option>
+            <option value="Event" <?= $currentCategory === 'Event' ? 'selected' : '' ?>>Event</option>
+            <option value="Celebration" <?= $currentCategory === 'Celebration' ? 'selected' : '' ?>>Celebration</option>
+            <option value="other" <?= !in_array($currentCategory, $defaultCategories, true) ? 'selected' : '' ?>>Other</option>
+          </select>
+          <input
+            type="text"
+            id="event-category-other"
+            name="category_other"
+            class="form-input"
+            placeholder="Type custom category"
+            value="<?= !in_array($currentCategory, $defaultCategories, true) ? htmlspecialchars($currentCategory) : '' ?>"
+            style="margin-top: 0.5rem; display: none;"
+          >
           <div class="form-error" id="category-error"></div>
         </div>
 

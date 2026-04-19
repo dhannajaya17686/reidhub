@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const filePreview = document.getElementById('file-preview');
     const previewImage = document.getElementById('preview-image');
     const previewRemove = document.getElementById('preview-remove');
+    const eventCategorySelect = document.getElementById('event-category');
+    const eventCategoryOtherInput = document.getElementById('event-category-other');
     const eventClubSelect = document.getElementById('event-club');
     const eventClubOtherInput = document.getElementById('event-club-other');
 
@@ -21,6 +23,23 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!isOther) {
             eventClubOtherInput.value = '';
         }
+    }
+
+    function toggleOtherCategoryInput() {
+        if (!eventCategorySelect || !eventCategoryOtherInput) return;
+
+        const isOther = eventCategorySelect.value === 'other';
+        eventCategoryOtherInput.style.display = isOther ? 'block' : 'none';
+        eventCategoryOtherInput.required = isOther;
+
+        if (!isOther) {
+            eventCategoryOtherInput.value = '';
+        }
+    }
+
+    if (eventCategorySelect && eventCategoryOtherInput) {
+        eventCategorySelect.addEventListener('change', toggleOtherCategoryInput);
+        toggleOtherCategoryInput();
     }
 
     if (eventClubSelect && eventClubOtherInput) {
@@ -90,6 +109,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const formData = new FormData(form);
+
+        if (eventCategorySelect && eventCategoryOtherInput && eventCategorySelect.value === 'other') {
+            const customCategory = eventCategoryOtherInput.value.trim();
+            if (!customCategory) {
+                const categoryError = document.getElementById('category-error');
+                if (categoryError) {
+                    categoryError.textContent = 'Please type a custom category';
+                }
+                eventCategoryOtherInput.focus();
+                return;
+            }
+            formData.set('category', customCategory);
+        }
+
         const isEdit = !!document.getElementById('edit-event-form');
 
         console.log('Submitting form to:', form.action);
