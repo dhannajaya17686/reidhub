@@ -294,5 +294,48 @@ class MarketPlace extends Model
             return false;
         }
     }
+
+    /**
+     * Get total count of active marketplace items
+     */
+    public function getTotalActiveCount(): int
+    {
+        try {
+            $sql = "SELECT COUNT(*) as count FROM {$this->table} WHERE status = 'active'";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)($result['count'] ?? 0);
+        } catch (Throwable $e) {
+            Logger::error("getTotalActiveCount error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get recent marketplace items
+     */
+    public function getRecentItems(int $limit = 5): array
+    {
+        try {
+            $sql = "SELECT 
+                        id,
+                        title,
+                        seller_id,
+                        created_at
+                    FROM {$this->table}
+                    WHERE status = 'active'
+                    ORDER BY created_at DESC
+                    LIMIT :limit";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (Throwable $e) {
+            Logger::error("getRecentItems error: " . $e->getMessage());
+            return [];
+        }
+    }
 }
 

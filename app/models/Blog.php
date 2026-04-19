@@ -177,6 +177,35 @@ class Blog extends Model
     }
 
     /**
+     * Get recent blogs
+     */
+    public function getRecentBlogs(int $limit = 5): array
+    {
+        try {
+            $sql = "SELECT 
+                        b.id,
+                        b.title,
+                        b.author_id,
+                        b.created_at,
+                        u.first_name,
+                        u.last_name
+                    FROM blogs b
+                    INNER JOIN users u ON b.author_id = u.id
+                    WHERE b.status = 'published'
+                    ORDER BY b.created_at DESC
+                    LIMIT :limit";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (Throwable $e) {
+            Logger::error("getRecentBlogs error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
      * Update a blog post
      */
     public function updateBlog(int $blogId, array $data): bool

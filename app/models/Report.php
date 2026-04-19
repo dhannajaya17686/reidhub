@@ -123,4 +123,45 @@ class Report extends Model {
         }
         return null;
     }
+
+    /**
+     * Get count of pending reports
+     * @return int
+     */
+    public function getPendingReportsCount(): int {
+        try {
+            $query = "SELECT COUNT(*) as count FROM {$this->table} WHERE status = 'pending'";
+            $stmt = $this->db->prepare($query);
+            if ($stmt) {
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                return (int)($result['count'] ?? 0);
+            }
+            return 0;
+        } catch (Throwable $e) {
+            Logger::error("getPendingReportsCount error: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Get recent reports
+     * @return array
+     */
+    public function getRecentReports(int $limit = 5): array
+    {
+        try {
+            $query = "SELECT id, reason, status, created_at FROM {$this->table} ORDER BY created_at DESC LIMIT :limit";
+            $stmt = $this->db->prepare($query);
+            if ($stmt) {
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            }
+            return [];
+        } catch (Throwable $e) {
+            Logger::error("getRecentReports error: " . $e->getMessage());
+            return [];
+        }
+    }
 }

@@ -279,4 +279,32 @@ class Event extends Model
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Get recent events
+     */
+    public function getRecentEvents(int $limit = 5): array
+    {
+        try {
+            $sql = "SELECT 
+                        e.id,
+                        e.title,
+                        e.creator_id,
+                        e.created_at,
+                        u.first_name,
+                        u.last_name
+                    FROM events e
+                    INNER JOIN users u ON e.creator_id = u.id
+                    ORDER BY e.created_at DESC
+                    LIMIT :limit";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        } catch (Throwable $e) {
+            Logger::error("getRecentEvents error: " . $e->getMessage());
+            return [];
+        }
+    }
 }

@@ -59,3 +59,47 @@ function ensureStorageDirectory($category, $subdir = null, $mode = 0775)
     
     return true;
 }
+
+/**
+ * Get time ago string (e.g., "5 minutes ago")
+ * 
+ * @param string $datetime DateTime string
+ * @return string Human readable time difference
+ */
+function getTimeAgo($datetime)
+{
+    $time = strtotime($datetime);
+    $now = time();
+    $diff = $now - $time;
+    
+    if ($diff < 60) {
+        return 'Just now';
+    } elseif ($diff < 3600) {
+        $minutes = round($diff / 60);
+        return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' ago';
+    } elseif ($diff < 86400) {
+        $hours = round($diff / 3600);
+        return $hours . ' hour' . ($hours > 1 ? 's' : '') . ' ago';
+    } elseif ($diff < 604800) {
+        $days = round($diff / 86400);
+        return $days . ' day' . ($days > 1 ? 's' : '') . ' ago';
+    } else {
+        $weeks = round($diff / 604800);
+        return $weeks . ' week' . ($weeks > 1 ? 's' : '') . ' ago';
+    }
+}
+
+/**
+ * Get user initials from first and last name
+ * 
+ * @param string $firstName First name
+ * @param string $lastName Last name
+ * @return string User initials (e.g., "JS" for John Smith)
+ */
+function getUserInitials($firstName = '', $lastName = '')
+{
+    $first = strtoupper(substr($firstName, 0, 1));
+    $last = strtoupper(substr($lastName, 0, 1));
+    return ($first ?: 'U') . ($last ?: '');
+}
+
