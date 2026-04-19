@@ -250,6 +250,10 @@
   box-shadow: var(--shadow-md);
 }
 
+a .stat-card {
+  cursor: pointer;
+}
+
 .stat-icon {
   width: 48px;
   height: 48px;
@@ -423,6 +427,8 @@
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all var(--transition-smooth);
+  text-decoration: none;
+  color: inherit;
 }
 
 .quick-action-btn:hover {
@@ -432,6 +438,15 @@
 
 .action-icon {
   font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-icon .material-symbols-outlined {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .action-text {
