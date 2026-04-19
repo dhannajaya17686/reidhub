@@ -32,7 +32,22 @@
 
         <div class="form-group">
           <label for="event-category" class="form-label">Category</label>
-          <input type="text" id="event-category" name="category" class="form-input" placeholder="e.g. Workshop, Conference, Social" required>
+          <select id="event-category" name="category" class="form-select" required>
+            <option value="">Select category</option>
+            <option value="Social">Social</option>
+            <option value="Academia">Academia</option>
+            <option value="Event">Event</option>
+            <option value="Celebration">Celebration</option>
+            <option value="other">Other</option>
+          </select>
+          <input
+            type="text"
+            id="event-category-other"
+            name="category_other"
+            class="form-input"
+            placeholder="Type custom category"
+            style="margin-top: 0.5rem; display: none;"
+          >
           <div class="form-error" id="category-error"></div>
         </div>
 

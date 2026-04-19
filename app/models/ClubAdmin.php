@@ -1,5 +1,5 @@
 <?php
-class ClubAdmin extends Model
+class AdminRequest extends Model
 {
     /**
      * Get request by ID
