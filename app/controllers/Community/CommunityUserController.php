@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../controllers/Auth/LoginController.php';
 require_once __DIR__ . '/../../models/Club.php';
 require_once __DIR__ . '/../../models/Event.php';
-require_once __DIR__ . '/../../models/AdminRequest.php';
+require_once __DIR__ . '/../../models/ClubAdmin.php';
 require_once __DIR__ . '/../../models/Blog.php';
 require_once __DIR__ . '/../../models/Report.php';
 
@@ -42,8 +42,8 @@ class Community_CommunityUserController extends Controller
             }
             
             // Also check if they have an approved request
-            $adminRequestModel = new AdminRequest();
-            return $adminRequestModel->isApprovedClubAdmin($userId);
+            $clubAdminModel = new ClubAdmin();
+            return $clubAdminModel->isApprovedClubAdmin($userId);
         } catch (Exception $e) {
             Logger::warning("Error checking club admin status: " . $e->getMessage());
             return false;
