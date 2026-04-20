@@ -27,6 +27,8 @@ ReidHub uses a **MySQL relational database** to store all application data. The 
 - **cart_items** - Shopping cart items
 - **transactions** - Transaction records for orders
 - **orders** - Individual order details with payment tracking
+- **marketplace_reports** - Buyer-submitted reports for marketplace orders
+- **marketplace_seller_actions** - Admin warning/ban/unban actions per report
 
 ### Database Details
 - **Database Name**: `reidhub`
@@ -483,6 +485,61 @@ yet_to_ship → cancelled     (cancelled before shipping)
 **Preorder-Specific Fields**:
 - `slip_path`: Path to payment receipt image
 - Bank details (name, branch, account_name, account_number) are snapshots taken at order time
+
+---
+
+### 7. Marketplace Reports Table
+
+**Purpose**: Store buyer reports against marketplace orders for admin moderation.
+
+**SQL Definition**:
+```sql
+CREATE TABLE IF NOT EXISTS marketplace_reports (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT UNSIGNED NOT NULL,
+  product_id BIGINT UNSIGNED NOT NULL,
+  reporter_id BIGINT UNSIGNED NOT NULL,
+  seller_id BIGINT UNSIGNED NOT NULL,
+  category ENUM('inappropriate','spam','fraud','copyright','other') NOT NULL DEFAULT 'other',
+  reason TEXT NOT NULL,
+  status ENUM('pending','under-review','resolved','archived') NOT NULL DEFAULT 'pending',
+  admin_notes TEXT NULL,
+  reviewed_by_admin_id BIGINT UNSIGNED NULL,
+  reviewed_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)
+```
+
+**Report Lifecycle**:
+```
+pending → under-review → resolved
+pending|under-review|resolved → archived
+```
+
+---
+
+### 8. Marketplace Seller Actions Table
+
+**Purpose**: Store manual admin actions for sellers tied to each report.
+
+**SQL Definition**:
+```sql
+CREATE TABLE IF NOT EXISTS marketplace_seller_actions (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  seller_id BIGINT UNSIGNED NOT NULL,
+  report_id BIGINT UNSIGNED NOT NULL,
+  admin_id BIGINT UNSIGNED NOT NULL,
+  action_type ENUM('warning','ban','unban') NOT NULL,
+  reason TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+**Manual Moderation Rules**:
+- `warning` is an explicit action by admin with required reason.
+- `ban` and `unban` are explicit toggle actions by admin with required reason.
+- Seller UI reads warning count and latest ban/unban state from this table.
 
 ---
 

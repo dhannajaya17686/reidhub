@@ -2,6 +2,7 @@
 
 <!-- Main Active Items Page -->
 <main class="active-items-main" role="main" aria-label="Active Items Management">
+  <section id="seller-moderation-status" data-moderation-context="active-items"></section>
   
   <!-- Page Header -->
   <div class="page-header">
@@ -44,4 +45,5 @@
 </div>
 
 <!-- JavaScript -->
+<script src="/js/app/marketplace/seller-moderation-status.js"></script>
 <script src="/js/app/marketplace/seller-portal-active-items.js"></script>

@@ -211,6 +211,12 @@ class Marketplace_MarketplaceUserController extends Controller
         $user = Auth_LoginController::getSessionUser(true);
         $this->viewApp('/User/marketplace/seller-portal-add-items-view', ['user' => $user], 'Seller Portal Add Items - ReidHub Marketplace');
     }
+
+    public function showSellerPortalReportsCenter()
+    {
+        $user = Auth_LoginController::getSessionUser(true);
+        $this->viewApp('/User/marketplace/seller-portal-reports-center-view', ['user' => $user], 'Seller Reports Center - ReidHub Marketplace');
+    }
     public function showSellerPortalActiveItems()
     {
         $user = Auth_LoginController::getSessionUser(true);
@@ -257,6 +263,9 @@ class Marketplace_MarketplaceUserController extends Controller
                     'stock' => (int)$r['stock_quantity'],
                     'image' => (is_array($imgs) && !empty($imgs)) ? $imgs[0] : null,
                     'updated_at' => $r['updated_at'],
+                    'is_hidden_by_admin' => (int)($r['is_hidden_by_admin'] ?? 0) === 1,
+                    'hidden_by_admin_reason' => (string)($r['hidden_by_admin_reason'] ?? ''),
+                    'hidden_by_admin_at' => $r['hidden_by_admin_at'] ?? null,
                 ];
             }
         }
@@ -465,6 +474,16 @@ class Marketplace_MarketplaceUserController extends Controller
             if (!$user) {
                 http_response_code(401);
                 echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            $moderation = $this->getSellerModerationSnapshot((int)$user['id']);
+            if (($moderation['is_banned'] ?? false) === true) {
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Your seller account is currently banned from adding new items.',
+                ]);
                 return;
             }
 
@@ -1402,6 +1421,63 @@ class Marketplace_MarketplaceUserController extends Controller
     }
 
     /**
+     * POST /dashboard/marketplace/orders/report
+        * Submit a report against marketplace product/seller.
+     */
+    public function submitOrderReport()
+    {
+        header('Content-Type: application/json');
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+                http_response_code(405);
+                echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+                return;
+            }
+
+            $orderId = (int)($_POST['order_id'] ?? 0);
+            $productId = (int)($_POST['product_id'] ?? 0);
+            $category = trim((string)($_POST['category'] ?? 'other'));
+            $reason = trim((string)($_POST['reason'] ?? ''));
+
+            if ($reason === '' || ($orderId <= 0 && $productId <= 0)) {
+                http_response_code(422);
+                echo json_encode(['success' => false, 'message' => 'Product (or order) and reason are required']);
+                return;
+            }
+
+            $reportModel = new MarketplaceReport();
+            $result = $productId > 0
+                ? $reportModel->createForProduct($productId, (int)$user['id'], $category, $reason)
+                : $reportModel->createForOrder($orderId, (int)$user['id'], $category, $reason);
+
+            if (!$result['success']) {
+                $notFoundMessages = ['Order not found', 'Product not found'];
+                $code = in_array((string)($result['message'] ?? ''), $notFoundMessages, true) ? 404 : 422;
+                http_response_code($code);
+                echo json_encode($result);
+                return;
+            }
+
+            echo json_encode([
+                'success' => true,
+                'report_id' => (int)$result['id'],
+                'message' => 'Report submitted successfully',
+            ]);
+        } catch (Throwable $e) {
+            Logger::error('submitOrderReport error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error']);
+        }
+    }
+
+    /**
      * GET /dashboard/marketplace/seller/analytics/data
      * Returns aggregated analytics for the logged-in seller.
      * Query params:
@@ -1443,8 +1519,13 @@ class Marketplace_MarketplaceUserController extends Controller
             $sellerId = (int)$user['id'];
             $order = new Order();
             $rows = $order->getOrdersForSeller($sellerId);
+            $orderIds = array_map(fn($row) => (int)($row['id'] ?? 0), $rows);
 
-            $items = array_map(function($r) {
+            $reportModel = new MarketplaceReport();
+            $reportSummariesByOrder = $reportModel->getSellerOrderReportSummaries($sellerId, $orderIds);
+            $moderation = $this->getSellerModerationSnapshot($sellerId);
+
+            $items = array_map(function($r) use ($reportSummariesByOrder) {
                 // Map DB status -> UI status class used in tabs and badges
                 $db = strtolower((string)$r['status']);
                 $uiStatus = 'yet-to-ship';
@@ -1457,24 +1538,140 @@ class Marketplace_MarketplaceUserController extends Controller
                 $payment = ($pm === 'preorder') ? 'preorder' : 'cod';
 
                 $buyerName = trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? '')) ?: ('Buyer #' . (int)$r['buyer_id']);
+                $orderId = (int)$r['id'];
+                $summary = $reportSummariesByOrder[$orderId] ?? null;
 
                 return [
-                    'id' => (int)$r['id'],
+                    'id' => $orderId,
                     'title' => $r['title'],
                     'buyer_name' => $buyerName,
                     'payment' => $payment,                  // 'preorder' | 'cod'
                     'created_at' => $r['created_at'],
                     'status' => $uiStatus,                  // 'yet-to-ship' | 'delivered' | 'canceled' | 'returned'
                     'slip_path' => $r['slip_path'] ?: null,
+                    'has_report' => $summary !== null,
+                    'report_id' => $summary['report_id'] ?? null,
+                    'report_status' => $summary['status'] ?? null,
+                    'report_category' => $summary['category'] ?? null,
+                    'report_reason' => $summary['reason'] ?? null,
+                    'report_warning_count' => $summary['warning_count'] ?? 0,
+                    'report_is_banned' => $summary['is_banned'] ?? false,
                 ];
             }, $rows);
 
-            echo json_encode(['success'=>true,'items'=>$items, 'count'=>count($items)]);
+            echo json_encode([
+                'success' => true,
+                'items' => $items,
+                'count' => count($items),
+                'moderation' => $moderation,
+            ]);
         } catch (Throwable $e) {
             Logger::error('getSellerOrdersApi error: ' . $e->getMessage());
             http_response_code(500);
             echo json_encode(['success'=>false,'message'=>'Server error']);
         }
+    }
+
+    /**
+     * GET /dashboard/marketplace/seller/moderation/summary
+     */
+    public function getSellerModerationSummary()
+    {
+        header('Content-Type: application/json');
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            $summary = $this->getSellerModerationSnapshot((int)$user['id']);
+            echo json_encode(['success' => true, 'summary' => $summary]);
+        } catch (Throwable $e) {
+            Logger::error('getSellerModerationSummary error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error']);
+        }
+    }
+
+    /**
+     * GET /dashboard/marketplace/seller/reports/data
+     */
+    public function getSellerReportsCenterData()
+    {
+        header('Content-Type: application/json');
+        try {
+            $user = Auth_LoginController::getSessionUser(true);
+            if (!$user) {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+                return;
+            }
+
+            $sellerId = (int)$user['id'];
+            $reportModel = new MarketplaceReport();
+            $rows = $reportModel->getSellerReportsCenterItems($sellerId, [
+                'status' => $_GET['status'] ?? 'all',
+                'search' => $_GET['search'] ?? '',
+            ]);
+
+            $items = array_map(function (array $row) {
+                $images = json_decode((string)($row['product_images'] ?? '[]'), true);
+                $firstImage = (is_array($images) && !empty($images)) ? $images[0] : '/images/placeholders/product.png';
+                $reporterName = trim((string)($row['reporter_first_name'] ?? '') . ' ' . (string)($row['reporter_last_name'] ?? ''));
+
+                return [
+                    'id' => (int)$row['id'],
+                    'order_id' => isset($row['order_id']) && $row['order_id'] !== null ? (int)$row['order_id'] : null,
+                    'product_id' => (int)$row['product_id'],
+                    'product_title' => (string)($row['product_title'] ?? 'Unknown Product'),
+                    'product_price' => (float)($row['product_price'] ?? 0),
+                    'product_image' => $firstImage,
+                    'category' => (string)($row['category'] ?? 'other'),
+                    'reason' => (string)($row['reason'] ?? ''),
+                    'status' => (string)($row['status'] ?? 'pending'),
+                    'created_at' => $row['created_at'] ?? null,
+                    'reporter_name' => $reporterName !== '' ? $reporterName : 'Unknown Reporter',
+                    'reporter_email' => (string)($row['reporter_email'] ?? ''),
+                    'is_hidden_by_admin' => (int)($row['is_hidden_by_admin'] ?? 0) === 1,
+                    'hidden_by_admin_reason' => (string)($row['hidden_by_admin_reason'] ?? ''),
+                    'hidden_by_admin_at' => $row['hidden_by_admin_at'] ?? null,
+                ];
+            }, $rows);
+
+            echo json_encode([
+                'success' => true,
+                'items' => $items,
+                'count' => count($items),
+                'moderation' => $this->getSellerModerationSnapshot($sellerId),
+            ]);
+        } catch (Throwable $e) {
+            Logger::error('getSellerReportsCenterData error: ' . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Server error']);
+        }
+    }
+
+    private function getSellerModerationSnapshot(int $sellerId): array
+    {
+        $actionModel = new MarketplaceSellerAction();
+        $warningCount = $actionModel->getWarningCount($sellerId);
+        $isBanned = $actionModel->isSellerBanned($sellerId);
+
+        $accountStatus = 'active';
+        if ($isBanned) {
+            $accountStatus = 'banned';
+        } elseif ($warningCount > 0) {
+            $accountStatus = 'warned';
+        }
+
+        return [
+            'seller_id' => $sellerId,
+            'warning_count' => $warningCount,
+            'is_banned' => $isBanned,
+            'account_status' => $accountStatus,
+        ];
     }
 
     /**

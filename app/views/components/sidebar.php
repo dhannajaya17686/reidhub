@@ -114,6 +114,7 @@ $sellerItems = [
             ['label' => 'Active Items', 'href' => '/dashboard/marketplace/seller/active'],
             ['label' => 'Archived Items', 'href' => '/dashboard/marketplace/seller/archived'],
             ['label' => 'Orders', 'href' => '/dashboard/marketplace/seller/orders'],
+            ['label' => 'Reports Center', 'href' => '/dashboard/marketplace/seller/reports'],
         ]
     ],
     [ 
@@ -212,6 +213,7 @@ $adminItems = [
         'children' => [
             ['label' => 'Analytics', 'href' => '/dashboard/marketplace/admin/analytics'],
             ['label' => 'Reported Items', 'href' => '/dashboard/marketplace/admin/reported'],
+            ['label' => 'Seller Moderation', 'href' => '/dashboard/marketplace/admin/sellers'],
         ]
     ],
     [ 

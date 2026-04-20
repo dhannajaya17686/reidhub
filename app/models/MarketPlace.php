@@ -3,15 +3,7 @@ class MarketPlace extends Model
 {
     protected $table = 'products';
 
-    /**
-     * Create a marketplace item.
-     * Returns inserted ID on success, false on failure.
-     *
-     * Expected $data keys:
-     *  seller_id, title, description, price, category, product_type, condition_type,
-     *  stock_quantity, status, payment_methods (JSON), images (JSON),
-     *  bank_name, bank_branch, account_name, account_number
-     */
+    /** * Create a marketplace item. * Returns inserted ID on success, false on failure.*/
     public function createItem(array $data)
     {
         try {
@@ -58,15 +50,13 @@ class MarketPlace extends Model
     }
     
     /**
-     * Get minimal data of active items for a seller (for Active Items page).
-     * Returns: id, title, price, condition_type, images (JSON), stock_quantity, updated_at
-     */
+     * Get minimal data of active items for a seller (for Active Items page).* */
     public function findActiveBySellerMinimal(int $sellerId): array
     {
         try {
             $sql = "SELECT id, title, price, condition_type, images, stock_quantity, updated_at
                     FROM {$this->table}
-                    WHERE seller_id = ? AND status = 'active'
+                WHERE seller_id = ? AND status = 'active' AND COALESCE(is_hidden_by_admin, 0) = 0
                     ORDER BY updated_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$sellerId]);
@@ -87,7 +77,7 @@ class MarketPlace extends Model
         try {
             $sql = "SELECT id, title, price, condition_type, images, stock_quantity, product_type, created_at
                     FROM {$this->table}
-                    WHERE status = 'active' AND category = :category";
+                    WHERE status = 'active' AND COALESCE(is_hidden_by_admin, 0) = 0 AND category = :category";
             $params = [':category' => $category];
 
             if ($condition !== null) {
@@ -136,9 +126,12 @@ class MarketPlace extends Model
     public function findArchivedBySellerMinimal(int $sellerId): array
     {
         try {
-            $sql = "SELECT id, title, price, condition_type, images, stock_quantity, updated_at
+            $sql = "SELECT id, title, price, condition_type, images, stock_quantity, updated_at,
+                           COALESCE(is_hidden_by_admin, 0) AS is_hidden_by_admin,
+                           hidden_by_admin_reason,
+                           hidden_by_admin_at
                     FROM {$this->table}
-                    WHERE seller_id = ? AND status = 'archived'
+                    WHERE seller_id = ? AND (status = 'archived' OR COALESCE(is_hidden_by_admin, 0) = 1)
                     ORDER BY updated_at DESC";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$sellerId]);
@@ -157,7 +150,7 @@ class MarketPlace extends Model
         try {
             $sql = "UPDATE {$this->table}
                     SET status = 'active', updated_at = NOW()
-                    WHERE id = ? AND seller_id = ? AND status = 'archived'";
+                    WHERE id = ? AND seller_id = ? AND status = 'archived' AND COALESCE(is_hidden_by_admin, 0) = 0";
             $stmt = $this->db->prepare($sql);
             if (!$stmt->execute([$itemId, $sellerId])) {
                 Logger::error("unarchiveItemForSeller failed: " . implode(' | ', $stmt->errorInfo()));
@@ -177,7 +170,8 @@ class MarketPlace extends Model
     {
         try {
             $sql = "SELECT id, seller_id, title, description, price, category, product_type, condition_type,
-                           stock_quantity, status, payment_methods, images,
+                           stock_quantity, status, COALESCE(is_hidden_by_admin, 0) AS is_hidden_by_admin,
+                           hidden_by_admin_reason, hidden_by_admin_at, payment_methods, images,
                            bank_name, bank_branch, account_name, account_number, created_at, updated_at
                     FROM {$this->table}
                     WHERE id = ? AND seller_id = ?";
@@ -239,9 +233,10 @@ class MarketPlace extends Model
     {
         try {
             $sql = "SELECT id, seller_id, title, description, price, category, product_type, condition_type,
-                           stock_quantity, status, images, payment_methods, created_at, updated_at
+                           stock_quantity, status, COALESCE(is_hidden_by_admin, 0) AS is_hidden_by_admin,
+                           hidden_by_admin_reason, hidden_by_admin_at, images, payment_methods, created_at, updated_at
                     FROM {$this->table}
-                    WHERE id = ? AND status = 'active'
+                    WHERE id = ? AND status = 'active' AND COALESCE(is_hidden_by_admin, 0) = 0
                     LIMIT 1";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$id]);
@@ -335,6 +330,42 @@ class MarketPlace extends Model
         } catch (Throwable $e) {
             Logger::error("getRecentItems error: " . $e->getMessage());
             return [];
+        }
+    }
+
+    public function setAdminHiddenStatus(int $productId, bool $hidden, ?string $reason = null): bool
+    {
+        try {
+            if ($productId <= 0) {
+                return false;
+            }
+
+            if ($hidden) {
+                $sql = "UPDATE {$this->table}
+                        SET is_hidden_by_admin = 1,
+                            hidden_by_admin_reason = ?,
+                            hidden_by_admin_at = NOW(),
+                            updated_at = NOW()
+                        WHERE id = ?
+                        LIMIT 1";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([trim((string)$reason), $productId]);
+            } else {
+                $sql = "UPDATE {$this->table}
+                        SET is_hidden_by_admin = 0,
+                            hidden_by_admin_reason = NULL,
+                            hidden_by_admin_at = NULL,
+                            updated_at = NOW()
+                        WHERE id = ?
+                        LIMIT 1";
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([$productId]);
+            }
+
+            return $stmt->rowCount() > 0;
+        } catch (Throwable $e) {
+            Logger::error('setAdminHiddenStatus error: ' . $e->getMessage());
+            return false;
         }
     }
 }

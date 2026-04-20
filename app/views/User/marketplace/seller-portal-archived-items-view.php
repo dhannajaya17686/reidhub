@@ -3,6 +3,7 @@
 
 <!-- Main Archived Items Page -->
 <main class="active-items-main" role="main" aria-label="Archived Items Management">
+  <section id="seller-moderation-status" data-moderation-context="archived-items"></section>
   
   <!-- Page Header -->
   <div class="page-header">
@@ -16,15 +17,22 @@
   <div class="items-grid" id="items-grid" style="<?php echo empty($items) ? 'display:none;' : 'display:grid;'; ?>">
     <?php if (!empty($items)): ?>
       <?php foreach ($items as $item): ?>
-        <div class="item-card" data-item-id="<?php echo (int)$item['id']; ?>">
+        <?php $isHiddenByAdmin = !empty($item['is_hidden_by_admin']); ?>
+        <div class="item-card <?php echo $isHiddenByAdmin ? 'item-card--admin-hidden' : ''; ?>" data-item-id="<?php echo (int)$item['id']; ?>" data-admin-hidden="<?php echo $isHiddenByAdmin ? '1' : '0'; ?>">
           <div class="item-content">
             <div class="item-info">
               <h3 class="item-title"><?php echo htmlspecialchars($item['title'], ENT_QUOTES, 'UTF-8'); ?></h3>
               <div class="item-price">Rs.<?php echo number_format($item['price'], 0, '.', ','); ?></div>
               <div class="item-meta">
                 <span class="item-condition">Condition: <?php echo ($item['condition'] === 'brand_new') ? 'Brand New' : 'Used'; ?></span>
-                <span class="item-status archived">Archived</span>
+                <span class="item-status archived"><?php echo $isHiddenByAdmin ? 'Hidden by Admin' : 'Archived'; ?></span>
               </div>
+              <?php if ($isHiddenByAdmin): ?>
+                <div class="admin-hidden-banner">⚠️ Hidden by Administrator due to Reports.</div>
+                <?php if (!empty($item['hidden_by_admin_reason'])): ?>
+                  <div class="admin-hidden-reason">Reason: <?php echo htmlspecialchars($item['hidden_by_admin_reason'], ENT_QUOTES, 'UTF-8'); ?></div>
+                <?php endif; ?>
+              <?php endif; ?>
               <div class="item-actions">
                 <button class="btn btn-primary btn-sm" onclick="viewItem(<?php echo (int)$item['id']; ?>)">
                   <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
@@ -40,14 +48,14 @@
                   </svg>
                   Edit
                 </button>
-                <button class="btn btn-success btn-sm" onclick="unarchiveItem(<?php echo (int)$item['id']; ?>)">
+                <button class="btn btn-success btn-sm" onclick="unarchiveItem(<?php echo (int)$item['id']; ?>)" <?php echo $isHiddenByAdmin ? 'disabled title="Hidden by admin cannot be unarchived by seller"' : ''; ?>>
                   <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
                     <polyline points="17,1 21,5 17,9" stroke="currentColor" stroke-width="2"/>
                     <path d="M3 11V9a4 4 0 0 1 4-4h14" stroke="currentColor" stroke-width="2"/>
                     <polyline points="7,23 3,19 7,15" stroke="currentColor" stroke-width="2"/>
                     <path d="M21 13v2a4 4 0 0 1-4 4H3" stroke="currentColor" stroke-width="2"/>
                   </svg>
-                  Unarchive Item
+                  <?php echo $isHiddenByAdmin ? 'Admin Hidden' : 'Unarchive Item'; ?>
                 </button>
               </div>
             </div>
@@ -92,4 +100,5 @@
 </div>
 
 <!-- JavaScript -->
+<script src="/js/app/marketplace/seller-moderation-status.js"></script>
 <script src="/js/app/marketplace/seller-portal-archived-items.js"></script>
