@@ -35,6 +35,13 @@ class OrdersManager {
         status: o.status || 'yet-to-ship',
         payment: o.payment || 'cod',
         slip_path: o.slip_path || null,
+        has_report: Boolean(o.has_report),
+        report_id: o.report_id ? String(o.report_id) : '',
+        report_status: o.report_status || '',
+        report_category: o.report_category || '',
+        report_reason: o.report_reason || '',
+        report_warning_count: Number(o.report_warning_count || 0),
+        report_is_banned: Boolean(o.report_is_banned),
       }));
       this.filtered = [...this.orders];
       this.renderTable();
@@ -105,7 +112,21 @@ class OrdersManager {
   renderTable() {
     const tbody = document.getElementById('orders-tbody');
     if (!tbody) return;
-    tbody.innerHTML = this.filtered.map(o => `
+    tbody.innerHTML = this.filtered.map(o => {
+      const moderationBadge = o.has_report
+        ? `<div class="moderation-cell">
+            <span class="moderation-badge moderation-badge--${o.report_is_banned ? 'banned' : 'active'}">
+              Report #${this.esc(o.report_id)} • ${this.esc(o.report_status || 'pending')}
+            </span>
+            <div class="moderation-meta">Warnings: ${o.report_warning_count}${o.report_is_banned ? ' • BANNED' : ''}</div>
+          </div>`
+        : '<div class="moderation-meta">No report</div>';
+
+      const reportChatBtn = o.has_report
+        ? `<a href="/dashboard/marketplace/seller/reported/${o.report_id}/chat" class="action-btn chat-btn">Report Chat</a>`
+        : '';
+
+      return `
       <tr class="order-row" data-status="${o.status}" data-payment="${o.payment}" data-order-id="${o.id}">
         <td class="order-id">#${o.id}</td>
         <td class="item-name">${this.esc(o.item)}</td>
@@ -116,6 +137,7 @@ class OrdersManager {
           </span>
         </td>
         <td class="date-placed">${this.esc(o.date)}</td>
+        <td class="date-placed">${moderationBadge}</td>
         <td class="status">
           <span class="status-badge ${o.status}">
             ${o.status === 'delivered' ? 'Delivered' :
@@ -127,13 +149,16 @@ class OrdersManager {
           ${o.status === 'delivered' || o.status === 'canceled' ? `
             <button class="action-btn view-btn" onclick="viewOrder('#${o.id}')">View</button>
             <a href="/dashboard/marketplace/orders/${o.id}/chat" class="action-btn chat-btn">Chat</a>
+            ${reportChatBtn}
           ` : `
             <button class="action-btn manage-btn" onclick="manageOrder('#${o.id}', '${o.status}', '${o.payment}')">Manage</button>
             <a href="/dashboard/marketplace/orders/${o.id}/chat" class="action-btn chat-btn">Chat</a>
+            ${reportChatBtn}
           `}
         </td>
       </tr>
-    `).join('');
+    `;
+    }).join('');
   }
 
   readExistingRows() {

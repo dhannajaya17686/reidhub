@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS products (
     condition_type ENUM('brand_new', 'used') NOT NULL,
     stock_quantity INT NOT NULL DEFAULT 1,
     status ENUM('active', 'archived') NOT NULL DEFAULT 'active',
+    is_hidden_by_admin TINYINT(1) NOT NULL DEFAULT 0,
+    hidden_by_admin_reason TEXT NULL,
+    hidden_by_admin_at DATETIME NULL,
     payment_methods JSON, -- Store accepted payment methods: ['cash_on_delivery', 'preorder']
     images JSON, -- Store image URLs as JSON array
     bank_name VARCHAR(100),
@@ -23,5 +26,6 @@ CREATE TABLE IF NOT EXISTS products (
     INDEX idx_product_type (product_type),
     INDEX idx_condition (condition_type),
     INDEX idx_status (status),
+    INDEX idx_hidden_by_admin (is_hidden_by_admin),
     INDEX idx_seller (seller_id)
 );

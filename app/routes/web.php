@@ -87,6 +87,12 @@ $routes['/dashboard/marketplace/orders'] = [
 $routes['/dashboard/marketplace/orders/get'] = [
     'GET' => 'Marketplace_MarketplaceUserController@getOrdersApi'
 ];
+$routes['/dashboard/marketplace/orders/report'] = [
+    'POST' => 'Marketplace_MarketplaceUserController@submitOrderReport'
+];
+$routes['/dashboard/marketplace/products/report'] = [
+    'POST' => 'Marketplace_MarketplaceUserController@submitOrderReport'
+];
 
 // Order Chat routes
 $routes['/dashboard/marketplace/orders/{id}/chat'] = [
@@ -132,6 +138,15 @@ $routes['/dashboard/marketplace/seller/edit'] = [
 $routes['/dashboard/marketplace/seller/orders'] = [
     'GET' => 'Marketplace_MarketplaceUserController@showSellerPortalOrders'
 ];
+$routes['/dashboard/marketplace/seller/reports'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@showSellerPortalReportsCenter'
+];
+$routes['/dashboard/marketplace/seller/reports/data'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getSellerReportsCenterData'
+];
+$routes['/dashboard/marketplace/seller/moderation/summary'] = [
+    'GET' => 'Marketplace_MarketplaceUserController@getSellerModerationSummary'
+];
 $routes['/dashboard/marketplace/seller/orders/get'] = [
     'GET' => 'Marketplace_MarketplaceUserController@getSellerOrdersApi'
 ];
@@ -171,6 +186,60 @@ $routes['/dashboard/marketplace/admin/analytics'] = [
 ];
 $routes['/dashboard/marketplace/admin/reported'] = [
     'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceReportedItems'
+];
+$routes['/dashboard/marketplace/admin/sellers'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceSellers'
+];
+$routes['/dashboard/marketplace/admin/sellers/data'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@getAdminSellerModerationData'
+];
+$routes['/dashboard/marketplace/admin/sellers/{id}'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceSellerDetail'
+];
+$routes['/dashboard/marketplace/admin/sellers/{id}/data'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@getAdminSellerModerationDetailData'
+];
+$routes['/dashboard/marketplace/admin/sellers/{id}/warn'] = [
+    'POST' => 'Marketplace_MarketplaceAdminController@warnMarketplaceSeller'
+];
+$routes['/dashboard/marketplace/admin/sellers/{id}/toggle-ban'] = [
+    'POST' => 'Marketplace_MarketplaceAdminController@toggleMarketplaceSellerBan'
+];
+$routes['/dashboard/marketplace/admin/moderation'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceSellers'
+];
+$routes['/dashboard/marketplace/admin/reported/data'] = [
+    'GET' => 'Marketplace_MarketplaceAdminController@getReportedItemsData'
+];
+$routes['/dashboard/marketplace/admin/reported/update-status'] = [
+    'POST' => 'Marketplace_MarketplaceAdminController@updateReportedItemStatus'
+];
+$routes['/dashboard/marketplace/admin/reported/hide-product'] = [
+    'POST' => 'Marketplace_MarketplaceAdminController@hideReportedProduct'
+];
+$routes['/dashboard/marketplace/admin/reported/unhide-product'] = [
+    'POST' => 'Marketplace_MarketplaceAdminController@unhideReportedProduct'
+];
+// Report Chat routes (admin <-> reported seller)
+$routes['/dashboard/marketplace/admin/reported/{id}/chat'] = [
+    'GET' => 'Marketplace_MarketplaceReportChatController@showAdminReportChat'
+];
+$routes['/dashboard/marketplace/admin/reported/{id}/chat/send'] = [
+    'POST' => 'Marketplace_MarketplaceReportChatController@sendMessage'
+];
+$routes['/dashboard/marketplace/admin/reported/{id}/chat/get'] = [
+    'POST' => 'Marketplace_MarketplaceReportChatController@getMessages'
+];
+
+// Report Chat routes (seller <-> admin) using report id
+$routes['/dashboard/marketplace/seller/reported/{id}/chat'] = [
+    'GET' => 'Marketplace_MarketplaceReportChatController@showSellerReportChat'
+];
+$routes['/dashboard/marketplace/seller/reported/{id}/chat/send'] = [
+    'POST' => 'Marketplace_MarketplaceReportChatController@sendMessage'
+];
+$routes['/dashboard/marketplace/seller/reported/{id}/chat/get'] = [
+    'POST' => 'Marketplace_MarketplaceReportChatController@getMessages'
 ];
 $routes['/dashboard/marketplace/admin/archived'] = [
     'GET' => 'Marketplace_MarketplaceAdminController@showAdminMarketplaceArchivedItems'

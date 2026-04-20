@@ -27,6 +27,99 @@
 }
 
 /* ==========================================================================
+   Seller Moderation Status Card
+   ========================================================================== */
+
+.seller-status-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.seller-status-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: 6px;
+}
+
+.seller-status-card__title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.seller-status-card__badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+}
+
+.seller-status-card__meta {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.seller-status-card__warning,
+.seller-status-card__ban {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.seller-status-card--active {
+  border-color: #86EFAC;
+}
+
+.seller-status-card--active .seller-status-card__badge {
+  background: #DCFCE7;
+  color: #166534;
+}
+
+.seller-status-card--warned {
+  border-color: #FCD34D;
+  background: #FFFBEB;
+}
+
+.seller-status-card--warned .seller-status-card__badge {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.seller-status-card--banned {
+  border-color: #FCA5A5;
+  background: #FEF2F2;
+}
+
+.seller-status-card--banned .seller-status-card__badge {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* ==========================================================================
+   Report Category Tags (Reports Center)
+   ========================================================================== */
+
+.reason-tag {
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: inline-block;
+}
+
+.reason-tag.inappropriate { background: #FEE2E2; color: #991B1B; }
+.reason-tag.spam { background: #FEF3C7; color: #92400E; }
+.reason-tag.fraud { background: #FECACA; color: #7F1D1D; }
+.reason-tag.copyright { background: #E0E7FF; color: #3730A3; }
+.reason-tag.other { background: #F3E8FF; color: #6B21A8; }
+
+/* ==========================================================================
    Order Tabs
    ========================================================================== */
 
@@ -164,6 +257,38 @@
 }
 
 .date-placed {
+  color: var(--text-secondary);
+}
+
+.moderation-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.moderation-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.moderation-badge--active {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.moderation-badge--banned {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.moderation-meta {
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 

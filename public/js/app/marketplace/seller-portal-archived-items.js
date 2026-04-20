@@ -86,6 +86,12 @@ function editItem(itemId) {
 
 // Unarchive with simple popup + refresh UI (POST only)
 function unarchiveItem(itemId) {
+  const card = document.querySelector(`.item-card[data-item-id="${itemId}"]`);
+  if (card && card.getAttribute('data-admin-hidden') === '1') {
+    alert('This item is hidden by an administrator due to reports and cannot be unarchived by seller.');
+    return;
+  }
+
   if (!confirm('Unarchive this item?')) return;
 
   const manager = window.archivedItemsManager;

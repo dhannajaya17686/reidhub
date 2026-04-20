@@ -2,6 +2,7 @@
 
 <!-- Main Orders Page -->
 <main class="orders-main" role="main" aria-label="Orders Management">
+  <section id="seller-moderation-status" data-moderation-context="orders"></section>
   
   <!-- Page Header -->
   <div class="page-header">
@@ -57,6 +58,7 @@
           <th>User</th>
           <th>Payment Method</th>
           <th>Date placed</th>
+          <th>Report</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -73,6 +75,7 @@
             <span class="payment-badge preorder">Pre-order</span>
           </td>
           <td class="date-placed">2023-07-25</td>
+          <td class="date-placed"><div class="moderation-meta">No report</div></td>
           <td class="status">
             <span class="status-badge yet-to-ship">Yet to ship</span>
           </td>
@@ -96,6 +99,7 @@
             <span class="payment-badge cod">Cash on Delivery</span>
           </td>
           <td class="date-placed">2023-07-25</td>
+          <td class="date-placed"><div class="moderation-meta">No report</div></td>
           <td class="status">
             <span class="status-badge yet-to-ship">Yet to ship</span>
           </td>
@@ -118,6 +122,7 @@
             <span class="payment-badge preorder">Pre-order</span>
           </td>
           <td class="date-placed">2023-07-26</td>
+          <td class="date-placed"><div class="moderation-meta">No report</div></td>
           <td class="status">
             <span class="status-badge delivered">Delivered</span>
           </td>
@@ -140,6 +145,7 @@
             <span class="payment-badge cod">Cash on Delivery</span>
           </td>
           <td class="date-placed">2023-07-25</td>
+          <td class="date-placed"><div class="moderation-meta">No report</div></td>
           <td class="status">
             <span class="status-badge canceled">Canceled</span>
           </td>
@@ -243,4 +249,5 @@
 </div>
 
 <!-- JavaScript -->
+<script src="/js/app/marketplace/seller-moderation-status.js"></script>
 <script src="/js/app/marketplace/seller-portal-orders.js"></script>

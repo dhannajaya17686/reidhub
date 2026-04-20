@@ -2,6 +2,7 @@
 
 <!-- Main Add Items Form -->
 <main class="add-items-main" role="main" aria-label="Add New Item Form">
+  <section id="seller-moderation-status" data-moderation-context="add-items"></section>
   
   <!-- Page Header -->
   <div class="page-header">
@@ -369,4 +370,5 @@
 </main>
 
 <!-- JavaScript -->
+<script src="/js/app/marketplace/seller-moderation-status.js"></script>
 <script src="/js/app/marketplace/seller-portal-add-items.js"></script>

@@ -162,29 +162,54 @@ class ProductPage {
 
   async handleReportSubmission(form) {
     const formData = new FormData(form);
-    const productId = document.querySelector('.btn--report').dataset.productId;
-    
-    const reportData = {
-      productId: productId,
-      reason: formData.get('reason'),
-      details: formData.get('details')
+    const reason = String(formData.get('reason') || '').trim();
+    const details = String(formData.get('details') || '').trim();
+    const productId = parseInt(document.querySelector('.btn--report')?.dataset.productId || '0', 10);
+
+    const categoryMap = {
+      inappropriate: 'inappropriate',
+      counterfeit: 'fraud',
+      misleading: 'other',
+      overpriced: 'other',
+      prohibited: 'inappropriate',
+      other: 'other',
     };
 
+    const category = categoryMap[reason] || 'other';
+    const fullReason = details
+      ? `${reason}: ${details}`
+      : reason;
+
+    if (!reason || !productId) {
+      this.showNotification('Please select a report reason.', 'error');
+      return;
+    }
+
     try {
-      // In a real application, you would send this to your backend
-      console.log('Report submitted:', reportData);
-      
-      // Show success message
-      this.showNotification('Report submitted successfully. Thank you for helping keep our marketplace safe.', 'success');
-      
-      // Close modal
+      const payload = new URLSearchParams({
+        product_id: String(productId),
+        category,
+        reason: fullReason,
+      });
+
+      const response = await fetch('/dashboard/marketplace/products/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload,
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data?.success) {
+        this.showNotification(data?.message || 'Failed to submit report. Please try again.', 'error');
+        return;
+      }
+
+      this.showNotification('Report submitted successfully. Our moderation team will review it.', 'success');
       document.getElementById('report-modal').style.display = 'none';
       document.body.style.overflow = '';
       form.reset();
-      
-    } catch (error) {
-      console.error('Error submitting report:', error);
-      this.showNotification('Failed to submit report. Please try again.', 'error');
+    } catch {
+      this.showNotification('Network error while submitting report.', 'error');
     }
   }
 
