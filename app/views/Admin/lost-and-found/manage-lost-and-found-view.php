@@ -27,9 +27,6 @@
       <button class="nav-tab" onclick="switchNav('lf-found-items', event)" role="tab" aria-selected="false">
         Found Items
       </button>
-      <button class="nav-tab" onclick="switchNav('lf-reports', event)" role="tab" aria-selected="false">
-        Reports
-      </button>
     </div>
   </nav>
 
@@ -58,7 +55,6 @@
       <button class="filter-tab active" onclick="filterLostItems('all', event)">All Items</button>
       <button class="filter-tab" onclick="filterLostItems('active', event)">Active Items</button>
       <button class="filter-tab" onclick="filterLostItems('resolved', event)">Resolved Items</button>
-      <button class="filter-tab" onclick="filterLostItems('expired', event)">Expired Items</button>
     </div>
 
     <!-- Lost Items Content -->
@@ -71,9 +67,6 @@
       </div>
       <div class="items-grid" id="lost-items-resolved" style="display: none;">
         <!-- Resolved items will be loaded here -->
-      </div>
-      <div class="items-grid" id="lost-items-expired" style="display: none;">
-        <!-- Expired items will be loaded here -->
       </div>
     </div>
   </div>
@@ -103,7 +96,6 @@
       <button class="filter-tab active" onclick="filterFoundItems('all', event)">All Items</button>
       <button class="filter-tab" onclick="filterFoundItems('active', event)">Active Items</button>
       <button class="filter-tab" onclick="filterFoundItems('returned', event)">Returned Items</button>
-      <button class="filter-tab" onclick="filterFoundItems('expired', event)">Expired Items</button>
     </div>
 
     <!-- Found Items Content -->
@@ -117,89 +109,6 @@
       <div class="items-grid" id="found-items-returned" style="display: none;">
         <!-- Returned items will be loaded here -->
       </div>
-      <div class="items-grid" id="found-items-expired" style="display: none;">
-        <!-- Expired items will be loaded here -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Reports Section -->
-  <div class="lf-section" id="lf-reports">
-    <div class="section-header">
-      <h2 class="section-title">Reports</h2>
-      <p class="section-subtitle">Manage all lost and found reports submitted by students</p>
-    </div>
-
-    <!-- Reports Filter Tabs -->
-    <div class="filter-tabs">
-      <button class="filter-tab active" onclick="filterLFReports('all', event)">All Reports</button>
-      <button class="filter-tab" onclick="filterLFReports('lost', event)">Lost Items</button>
-      <button class="filter-tab" onclick="filterLFReports('found', event)">Found Items</button>
-      <button class="filter-tab" onclick="filterLFReports('pending', event)">Pending Items for Approvals</button>
-      <button class="filter-tab" onclick="filterLFReports('rejected', event)">Rejected</button>
-    </div>
-
-    <!-- Search and Filters -->
-    <div class="reports-filters">
-      <div class="search-box">
-        <input type="text" 
-               placeholder="Search reports by item name, user, or report ID" 
-               class="search-input"
-               id="lf-report-search">
-        <button class="search-btn">🔍</button>
-      </div>
-      <div class="filter-controls">
-        <select class="filter-select" id="status-filter">
-          <option value="">Status</option>
-          <option value="missing">Missing</option>
-          <option value="returned">Returned</option>
-          <option value="collected">Collected</option>
-          <option value="pending">Pending</option>
-          <option value="rejected">Rejected</option>
-        </select>
-        <select class="filter-select" id="severity-filter">
-          <option value="">Severity</option>
-          <option value="high">High</option>
-          <option value="medium">Medium</option>
-          <option value="low">Low</option>
-        </select>
-        <select class="filter-select" id="date-filter">
-          <option value="">Date</option>
-          <option value="today">Today</option>
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Reports Table -->
-    <div class="reports-table-container">
-      <table class="reports-table">
-        <thead>
-          <tr>
-            <th>Report ID</th>
-            <th>Item</th>
-            <th>User</th>
-            <th>Date Reported</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="lf-reports-table">
-          <!-- Reports will be loaded here by JavaScript -->
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-      <button class="pagination-btn" disabled>‹</button>
-      <button class="pagination-btn active">1</button>
-      <button class="pagination-btn">2</button>
-      <button class="pagination-btn">3</button>
-      <span class="pagination-dots">...</span>
-      <button class="pagination-btn">10</button>
-      <button class="pagination-btn">›</button>
     </div>
   </div>
 

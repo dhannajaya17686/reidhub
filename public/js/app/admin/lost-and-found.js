@@ -90,8 +90,6 @@ function switchNav(sectionId, event) {
   } else if (sectionId === 'lf-found-items') {
     console.log('Loading found items...');
     loadFoundItems('all');
-  } else if (sectionId === 'lf-reports') {
-    loadReports('all');
   }
 }
 
@@ -152,21 +150,6 @@ function filterFoundItems(filter, evt) {
   loadFoundItems(filter);
 }
 
-// Filter reports
-function filterLFReports(filter, evt) {
-  currentFilter = filter;
-  
-  // Update active tab
-  document.querySelectorAll('#lf-reports .filter-tab').forEach(tab => {
-    tab.classList.remove('active');
-  });
-  if (evt && evt.target) {
-    evt.target.classList.add('active');
-  }
-
-  loadReports(filter);
-}
-
 // Load lost items from backend
 async function loadLostItems(filter = 'all') {
   try {
@@ -216,38 +199,6 @@ async function loadFoundItems(filter = 'all') {
   } catch (error) {
     console.error('❌ Error loading found items:', error);
     showError('Error loading found items');
-  }
-}
-
-// Load reports from backend
-async function loadReports(filter = 'all') {
-  try {
-    const searchTerm = document.getElementById('lf-report-search')?.value || '';
-    const statusFilter = document.getElementById('status-filter')?.value || '';
-    const severityFilter = document.getElementById('severity-filter')?.value || '';
-    const dateFilter = document.getElementById('date-filter')?.value || '';
-
-    const params = new URLSearchParams({
-      filter: filter,
-      search: searchTerm,
-      status: statusFilter,
-      severity: severityFilter,
-      date: dateFilter
-    });
-
-    const response = await fetch(`/dashboard/lost-and-found/admin/get-reports?${params.toString()}`);
-    const data = await response.json();
-
-    if (data.success) {
-      reportsData = data.reports;
-      renderReports(data.reports);
-    } else {
-      console.error('Failed to load reports:', data.message);
-      showError('Failed to load reports');
-    }
-  } catch (error) {
-    console.error('Error loading reports:', error);
-    showError('Error loading reports');
   }
 }
 
@@ -305,39 +256,6 @@ function renderFoundItems(items, filter) {
     console.error('❌ Error creating item cards:', error);
     grid.innerHTML = '<div class="empty-state"><p>Error rendering items</p></div>';
   }
-}
-
-// Render reports table
-function renderReports(reports) {
-  const tbody = document.getElementById('lf-reports-table');
-  if (!tbody) return;
-
-  if (reports.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No reports found</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = reports.map(report => {
-    const statusClass = report.status === 'Returned' || report.status === 'Returned to Owner' ? 'resolved' : 
-                       report.status === 'Still Missing' || report.status === 'Available' ? 'active' : 'pending';
-    const reportDate = new Date(report.created_at).toLocaleDateString();
-    const userName = report.user_email || 'Unknown User';
-
-    return `
-      <tr onclick="openItemModal(${report.id}, '${report.type}')">
-        <td>#${report.id}</td>
-        <td>${report.item_name}</td>
-        <td>${userName}</td>
-        <td>${reportDate}</td>
-        <td><span class="status-badge status-${statusClass}">${report.status}</span></td>
-        <td>
-          <button class="action-btn" onclick="event.stopPropagation(); openItemModal(${report.id}, '${report.type}')">
-            View Details
-          </button>
-        </td>
-      </tr>
-    `;
-  }).join('');
 }
 
 // Create item card
@@ -740,7 +658,7 @@ window.debugFoundItems = function() {
   }
   
   console.log('\nFound Items Grids:');
-  ['all', 'active', 'returned', 'expired'].forEach(filter => {
+  ['all', 'active', 'returned'].forEach(filter => {
     const grid = document.getElementById(`found-items-${filter}`);
     if (!grid) {
       console.error(`❌ Grid #found-items-${filter} not found!`);

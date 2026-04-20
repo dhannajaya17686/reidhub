@@ -62,22 +62,6 @@ CREATE TABLE IF NOT EXISTS found_items (
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table: lostandfound_notifications
--- Tracks notifications sent for lost and found items
-CREATE TABLE IF NOT EXISTS lostandfound_notifications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    item_type ENUM('lost', 'found') NOT NULL,
-    item_id INT NOT NULL,
-    notification_type ENUM('user_broadcast', 'noc_alert', 'union_alert') NOT NULL,
-    recipient_type ENUM('all_users', 'noc', 'union', 'specific_user') NOT NULL,
-    recipient_id BIGINT UNSIGNED NULL,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    message TEXT,
-    INDEX idx_item_type_id (item_type, item_id),
-    INDEX idx_recipient (recipient_type, recipient_id),
-    INDEX idx_sent_at (sent_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- Table: lostandfound_matches
 -- Optional: Track potential matches between lost and found items
 CREATE TABLE IF NOT EXISTS lostandfound_matches (
@@ -160,24 +144,6 @@ BEGIN
     );
     
     SET p_lost_item_id = LAST_INSERT_ID();
-    
-    -- Log user broadcast notification
-    INSERT INTO lostandfound_notifications (
-        item_type, item_id, notification_type, recipient_type, message
-    ) VALUES (
-        'lost', p_lost_item_id, 'user_broadcast', 'all_users',
-        CONCAT('New lost item reported: ', p_item_name)
-    );
-    
-    -- Log NOC alert if critical
-    IF p_severity_level = 'Critical' THEN
-        INSERT INTO lostandfound_notifications (
-            item_type, item_id, notification_type, recipient_type, message
-        ) VALUES (
-            'lost', p_lost_item_id, 'noc_alert', 'noc',
-            CONCAT('CRITICAL lost item: ', p_item_name)
-        );
-    END IF;
 END$$
 
 -- ============================================
@@ -214,22 +180,6 @@ BEGIN
     );
     
     SET p_found_item_id = LAST_INSERT_ID();
-    
-    -- Log user broadcast notification
-    INSERT INTO lostandfound_notifications (
-        item_type, item_id, notification_type, recipient_type, message
-    ) VALUES (
-        'found', p_found_item_id, 'user_broadcast', 'all_users',
-        CONCAT('New found item reported: ', p_item_name)
-    );
-    
-    -- Log union alert (auto-reported to Students' Union)
-    INSERT INTO lostandfound_notifications (
-        item_type, item_id, notification_type, recipient_type, message
-    ) VALUES (
-        'found', p_found_item_id, 'union_alert', 'union',
-        CONCAT('Found item reported to Union: ', p_item_name)
-    );
 END$$
 
 -- ============================================
