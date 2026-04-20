@@ -162,7 +162,7 @@ class User extends Model
     public function findById(int $id): ?array
     {
         $stmt = $this->db->prepare("
-            SELECT id, first_name, last_name, email, reg_no, profile_picture, created_at, updated_at
+            SELECT id, first_name, last_name, email, reg_no, created_at, updated_at
             FROM {$this->table}
             WHERE id = ? LIMIT 1
         ");

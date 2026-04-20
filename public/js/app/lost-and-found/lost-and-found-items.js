@@ -17,6 +17,7 @@ class LostFoundManager {
     console.log('Initializing Lost & Found Manager...'); // Debug
     console.log('Current User ID:', this.currentUserId); // Debug
     this.setupEventListeners();
+    this.setupModal();
     const loaded = await this.loadItems();
     console.log('Items loaded:', loaded, 'Total items:', this.items.length); // Debug
     this.applyFilters();
@@ -152,57 +153,242 @@ class LostFoundManager {
   }
 
   setupModal() {
-    const modal = document.getElementById('report-modal');
+    const modal = document.getElementById('item-details-modal');
     const closeBtn = modal?.querySelector('.modal-close');
     const backdrop = modal?.querySelector('.modal-backdrop');
-    const form = document.getElementById('report-form');
-    const fileInput = document.getElementById('item-image');
-    const uploadArea = document.getElementById('file-upload-area');
-    const textarea = document.getElementById('item-description');
-    const charCount = document.getElementById('char-count');
 
     // Close handlers
     [closeBtn, backdrop].forEach(el => {
-      if (el) el.addEventListener('click', () => this.closeModal());
+      if (el) el.addEventListener('click', () => this.closeDetailsModal());
     });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false') {
-        this.closeModal();
+        this.closeDetailsModal();
       }
     });
+  }
 
-    // File upload
-    if (uploadArea && fileInput) {
-      uploadArea.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', (e) => this.handleFileUpload(e.target.files[0]));
+  closeDetailsModal() {
+    const modal = document.getElementById('item-details-modal');
+    if (modal) {
+      modal.setAttribute('aria-hidden', 'true');
+      modal.style.display = 'none';
     }
+  }
 
-    // Character counter
-    if (textarea && charCount) {
-      textarea.addEventListener('input', () => {
-        const length = textarea.value.length;
-        charCount.textContent = length;
-        if (length >= 500) {
-          textarea.value = textarea.value.substring(0, 500);
-          charCount.textContent = '500';
-        }
-      });
-    }
+  async showItemDetails(itemId, itemType) {
+    const modal = document.getElementById('item-details-modal');
+    const content = document.getElementById('item-details-content');
+    
+    if (!modal || !content) return;
 
-    // Form submit
-    if (form) {
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        this.submitReport();
-      });
-    }
+    // Show modal with loading state
+    modal.setAttribute('aria-hidden', 'false');
+    modal.style.display = 'flex';
+    content.innerHTML = `
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading details...</p>
+      </div>
+    `;
 
-    // Remove image
-    const removeBtn = document.getElementById('remove-image');
-    if (removeBtn) {
-      removeBtn.addEventListener('click', () => this.removeImage());
+    try {
+      const response = await fetch(`/dashboard/lost-and-found/items/details?id=${itemId}&type=${itemType}`);
+      const data = await response.json();
+
+      if (data.success && data.item) {
+        this.renderItemDetails(data.item, itemType);
+      } else {
+        content.innerHTML = `
+          <div class="error-message">
+            <p>Failed to load item details. Please try again.</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading item details:', error);
+      content.innerHTML = `
+        <div class="error-message">
+          <p>An error occurred while loading item details.</p>
+        </div>
+      `;
     }
+  }
+
+  renderItemDetails(item, itemType) {
+    const content = document.getElementById('item-details-content');
+    if (!content) return;
+
+    const isLost = itemType === 'lost';
+    const statusBadge = item.status === 'Returned' || item.status === 'Returned to Owner' ? 'Resolved' : (isLost ? 'Lost' : 'Found');
+    const statusClass = item.status === 'Returned' || item.status === 'Returned to Owner' ? 'claimed' : itemType;
+
+    // Format date and time
+    const dateTimeLost = new Date(item.date_time_lost || item.date_time_found);
+    const formattedDate = dateTimeLost.toLocaleDateString('en-US', { 
+      year: 'numeric', month: 'long', day: 'numeric' 
+    });
+    const formattedTime = dateTimeLost.toLocaleTimeString('en-US', { 
+      hour: '2-digit', minute: '2-digit' 
+    });
+
+    content.innerHTML = `
+      <div class="item-details-grid">
+        <!-- Images Section -->
+        <div class="details-images">
+          ${item.images && item.images.length > 0 ? `
+            <div class="main-image-container">
+              <img src="${item.images.find(img => img.is_main == 1)?.image_path || item.images[0].image_path}" 
+                   alt="${item.item_name}" 
+                   class="main-detail-image"
+                   onerror="this.src='/assets/placeholders/product.jpeg'">
+            </div>
+            ${item.images.length > 1 ? `
+              <div class="thumbnail-grid">
+                ${item.images.map((img, idx) => `
+                  <img src="${img.image_path}" 
+                       alt="Image ${idx + 1}" 
+                       class="thumbnail-image ${img.is_main == 1 ? 'active' : ''}"
+                       onclick="document.querySelector('.main-detail-image').src = this.src"
+                       onerror="this.src='/assets/placeholders/product.jpeg'">
+                `).join('')}
+              </div>
+            ` : ''}
+          ` : `
+            <div class="main-image-container">
+              <img src="/assets/placeholders/product.jpeg" alt="No image" class="main-detail-image">
+            </div>
+          `}
+        </div>
+
+        <!-- Details Section -->
+        <div class="details-info">
+          <div class="details-header">
+            <div>
+              <h3 class="details-title">${item.item_name}</h3>
+              <div class="details-badges">
+                <span class="status-badge status-badge--${statusClass}">${statusBadge}</span>
+                ${item.severity_level === 'Critical' ? '<span class="priority-badge">🚨 Critical</span>' : ''}
+                ${item.severity_level === 'Important' ? '<span class="priority-badge priority-badge--medium">⚠️ Important</span>' : ''}
+              </div>
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h4 class="section-title">Item Information</h4>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Category:</span>
+                <span class="info-value">${this.getCategoryName(item.category)}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">${isLost ? 'Last Known Location:' : 'Found Location:'}</span>
+                <span class="info-value">${this.getLocationName(item.last_known_location || item.found_location)}</span>
+              </div>
+              ${item.specific_area ? `
+                <div class="info-item">
+                  <span class="info-label">Specific Area:</span>
+                  <span class="info-value">${item.specific_area}</span>
+                </div>
+              ` : ''}
+              <div class="info-item">
+                <span class="info-label">${isLost ? 'Date Lost:' : 'Date Found:'}</span>
+                <span class="info-value">${formattedDate} at ${formattedTime}</span>
+              </div>
+              ${!isLost && item.item_condition ? `
+                <div class="info-item">
+                  <span class="info-label">Condition:</span>
+                  <span class="info-value">${item.item_condition}</span>
+                </div>
+              ` : ''}
+              ${!isLost && item.current_location ? `
+                <div class="info-item">
+                  <span class="info-label">Current Location:</span>
+                  <span class="info-value">${item.current_location}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="details-section">
+            <h4 class="section-title">Description</h4>
+            <p class="description-text">${item.description || 'No description provided.'}</p>
+          </div>
+
+          ${item.special_instructions ? `
+            <div class="details-section">
+              <h4 class="section-title">Special Instructions</h4>
+              <p class="description-text">${item.special_instructions}</p>
+            </div>
+          ` : ''}
+
+          ${isLost && item.reward_offered ? `
+            <div class="details-section reward-section">
+              <h4 class="section-title">💰 Reward Offered</h4>
+              ${item.reward_amount ? `<p class="reward-amount">LKR ${parseFloat(item.reward_amount).toFixed(2)}</p>` : ''}
+              ${item.reward_details ? `<p class="description-text">${item.reward_details}</p>` : ''}
+            </div>
+          ` : ''}
+
+          <div class="details-section">
+            <h4 class="section-title">Contact Information</h4>
+            <div class="contact-grid">
+              <div class="contact-item">
+                <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <div class="contact-info">
+                  <span class="contact-label">Reported by:</span>
+                  <span class="contact-value">${item.first_name} ${item.last_name}</span>
+                </div>
+              </div>
+              ${item.mobile ? `
+                <div class="contact-item">
+                  <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <div class="contact-info">
+                    <span class="contact-label">Mobile:</span>
+                    <a href="tel:${item.mobile}" class="contact-value contact-link">${item.mobile}</a>
+                  </div>
+                </div>
+              ` : ''}
+              ${item.email ? `
+                <div class="contact-item">
+                  <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                  </svg>
+                  <div class="contact-info">
+                    <span class="contact-label">Email:</span>
+                    <a href="mailto:${item.email}" class="contact-value contact-link">${item.email}</a>
+                  </div>
+                </div>
+              ` : ''}
+              ${item.alt_contact ? `
+                <div class="contact-item">
+                  <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <div class="contact-info">
+                    <span class="contact-label">Alternate Contact:</span>
+                    <span class="contact-value">${item.alt_contact}</span>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="details-footer">
+            <p class="posted-date">Posted on ${new Date(item.created_at).toLocaleDateString('en-US', { 
+              year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+            })}</p>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   applyFilters() {
@@ -296,7 +482,11 @@ class LostFoundManager {
       const reporterName = `${item.first_name || ''} ${item.last_name || ''}`.trim() || 'Anonymous';
       
       return `
-      <div class="item-card item-card--${item.type} ${isResolved ? 'item-card--claimed' : ''}" data-item-id="${item.id}">
+      <div class="item-card item-card--${item.type} ${isResolved ? 'item-card--claimed' : ''}" 
+           data-item-id="${item.id}" 
+           data-item-type="${item.type}"
+           onclick="window.lostFoundManager.showItemDetails('${item.id}', '${item.type}')"
+           style="cursor: pointer;">
         <div class="item-image-container">
           <img src="${imageUrl}" alt="${itemName}" class="item-image" onerror="this.src='/assets/placeholders/product.jpeg'">
           <div class="item-status-badge item-status-badge--${isResolved ? 'claimed' : item.type}">
@@ -347,11 +537,12 @@ class LostFoundManager {
               </div>
               
               <div class="item-actions">
-                <button class="action-btn action-btn--contact" onclick="contactReporter('${item.id}', '${item.type}')">
+                <button class="action-btn action-btn--view" onclick="event.stopPropagation(); window.lostFoundManager.showItemDetails('${item.id}', '${item.type}')">
                   <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
                   </svg>
-                  Contact
+                  View Details
                 </button>
               </div>
             `}
@@ -448,12 +639,6 @@ class LostFoundManager {
     if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) !== 1 ? 's' : ''} ago`;
     return `${Math.floor(days / 30)} month${Math.floor(days / 30) !== 1 ? 's' : ''} ago`;
   }
-}
-
-// Global functions
-function contactReporter(itemId, itemType) {
-  // Show contact info modal (can be implemented later)
-  alert(`Contact information for item ${itemId} will be displayed here`);
 }
 
 // Initialize

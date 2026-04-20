@@ -156,6 +156,28 @@
   </div>
 </main>
 
+<!-- Item Details Modal -->
+<div class="modal" id="item-details-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+  <div class="modal-backdrop"></div>
+  <div class="modal-content modal-content--large">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Item Details</h2>
+      <button class="modal-close" aria-label="Close modal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="modal-body" id="item-details-content">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading details...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <style>
 .loading-spinner {
   grid-column: 1 / -1;

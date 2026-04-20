@@ -344,12 +344,10 @@ $routes['/dashboard/forum/all'] = [
 $routes['/dashboard/community/forum/quick-ask'] = [
     'POST' => 'Forum_ForumUserController@quickAsk'
 ];
-
-// --- NEW ROUTE: My Bookmarks ---
+// My Bookmarks
 $routes['/dashboard/forum/bookmarks'] = [
     'GET' => 'Forum_ForumUserController@showBookmarks'
 ];
-
 $routes['/dashboard/forum/admin'] = [
     'GET' => 'Forum_ForumAdminController@showForumAdminDashboard'
 ];
@@ -527,10 +525,6 @@ $routes['/dashboard/lost-and-found/items/details'] = [
 // API: Update Lost Item Status
 $routes['/dashboard/lost-and-found/items/update-status'] = [
     'POST' => 'LostAndFound_LostAndFoundUserController@updateLostItemStatus'
-];
-// API: Get Notifications
-$routes['/dashboard/lost-and-found/notifications'] = [
-    'GET' => 'LostAndFound_LostAndFoundUserController@getNotifications'
 ];
 // Admin Routes
 $routes['/dashboard/community/admin'] = [

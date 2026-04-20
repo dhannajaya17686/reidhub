@@ -93,30 +93,21 @@ class FoundItem extends Model
                 fi.email,
                 fi.alt_contact,
                 fi.contact_details,
-                fi.item_condition,
-                fi.current_location,
+                fi.current_custody,
+                fi.condition_status,
+                fi.distinguishing_features,
                 fi.special_instructions,
-                fi.reported_to_union,
                 fi.status,
-                fi.admin_notes,
                 fi.created_at,
                 fi.updated_at,
-                u.email as user_email,
-                u.first_name,
-                u.last_name
+                u.email as user_email
             FROM found_items fi
-            LEFT JOIN users u ON fi.user_id = u.id
+            INNER JOIN users u ON fi.user_id = u.id
             ORDER BY fi.created_at DESC";
-            
             $stmt = $this->db->query($sql);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-            
-            Logger::info("FoundItem findAll() returned " . count($result) . " items");
-            
-            return $result;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Throwable $e) {
             Logger::error('findAll found items error: ' . $e->getMessage());
-            Logger::error('SQL error details: ' . print_r($this->db->errorInfo(), true));
             return [];
         }
     }
@@ -129,46 +120,12 @@ class FoundItem extends Model
     public function findByUserId(int $userId): array
     {
         try {
-            // Use direct SQL query instead of stored procedure for better column control
-            $sql = "SELECT 
-                fi.id,
-                fi.user_id,
-                fi.item_name,
-                fi.category,
-                fi.description,
-                fi.found_location,
-                fi.specific_area,
-                fi.date_time_found,
-                fi.mobile,
-                fi.email,
-                fi.alt_contact,
-                fi.contact_details,
-                fi.item_condition,
-                fi.current_location,
-                fi.special_instructions,
-                fi.reported_to_union,
-                fi.status,
-                fi.admin_notes,
-                fi.created_at,
-                fi.updated_at,
-                u.email as user_email,
-                u.first_name,
-                u.last_name
-            FROM found_items fi
-            LEFT JOIN users u ON fi.user_id = u.id
-            WHERE fi.user_id = ?
-            ORDER BY fi.created_at DESC";
-            
+            $sql = "CALL sp_get_user_found_items(?)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([$userId]);
-            $result = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-            
-            Logger::info("FoundItem findByUserId({$userId}) returned " . count($result) . " items");
-            
-            return $result;
+            return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (Throwable $e) {
             Logger::error('findByUserId found items error: ' . $e->getMessage());
-            Logger::error('SQL error details: ' . print_r($this->db->errorInfo(), true));
             return [];
         }
     }
