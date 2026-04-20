@@ -56,7 +56,6 @@ $answers = $answers ?? [];
 $comments = $comments ?? [];
 $reports = $reports ?? [];
 $activeSuspensions = $active_suspensions ?? [];
-$recentAdminMessages = $recent_admin_messages ?? [];
 $flashSuccess = $_GET['success'] ?? null;
 $flashError = $_GET['error'] ?? null;
 $flashMessages = [
@@ -78,14 +77,11 @@ $flashMessages = [
     'user_suspend_failed' => 'User suspension failed. Please try again.',
     'suspension_lifted' => 'Suspension was lifted successfully.',
     'suspension_lift_failed' => 'Could not lift the suspension.',
-    'message_sent' => 'Admin message was sent successfully.',
-    'message_send_failed' => 'Admin message could not be sent.',
     'invalid_question_update_input' => 'Question update requires a title, category, and content.',
     'invalid_answer_update_input' => 'Answer update requires content.',
     'invalid_comment_update_input' => 'Comment update requires content.',
     'invalid_suspension_input' => 'Suspension requires a user ID and reason.',
-    'invalid_suspension_duration' => 'Suspension duration must be greater than zero.',
-    'invalid_message_input' => 'Message requires a user ID, subject, and body.'
+    'invalid_suspension_duration' => 'Suspension duration must be greater than zero.'
 ];
 $flashSuccessText = $flashSuccess && isset($flashMessages[$flashSuccess]) ? $flashMessages[$flashSuccess] : $flashSuccess;
 $flashErrorText = $flashError && isset($flashMessages[$flashError]) ? $flashMessages[$flashError] : $flashError;
@@ -941,7 +937,7 @@ $questionSectionBaseFilters = [
     <div class="table-controls" id="discipline-section" style="margin-top: 20px;">
         <div class="section-heading">
             <h2 class="page-title" style="font-size: 20px;">User Discipline</h2>
-            <p class="section-heading-subtitle">Suspend accounts, send warnings, and review recent discipline activity.</p>
+            <p class="section-heading-subtitle">Suspend accounts and review recent discipline activity.</p>
         </div>
         <div class="discipline-grid">
             <form method="POST" action="/dashboard/forum/admin/user/suspend" class="moderation-form discipline-card" data-suspension-form>
@@ -985,47 +981,6 @@ $questionSectionBaseFilters = [
                     <button class="action-btn action-btn--danger" type="submit">Apply Suspension</button>
                 </div>
             </form>
-
-            <form method="POST" action="/dashboard/forum/admin/user/message" class="moderation-form discipline-card" data-message-form>
-                <div class="discipline-card-header">
-                    <div>
-                        <h3 class="text-primary">Send Warning/Message</h3>
-                        <p class="discipline-card-subtitle">Notify a user with a formal warning or a general moderation message.</p>
-                    </div>
-                </div>
-
-                <div class="discipline-form-grid">
-                    <div class="discipline-field">
-                        <label class="filter-label" for="discipline-message-user-id">User ID</label>
-                        <input id="discipline-message-user-id" class="filter-select discipline-input" type="number" name="user_id" min="1" placeholder="Enter user ID" required>
-                    </div>
-
-                    <div class="discipline-field">
-                        <label class="filter-label" for="discipline-message-type">Type</label>
-                        <select id="discipline-message-type" class="filter-select discipline-input" name="message_type">
-                            <option value="warning">Warning</option>
-                            <option value="message">Message</option>
-                        </select>
-                    </div>
-
-                    <div class="discipline-field discipline-field--full">
-                        <label class="filter-label" for="discipline-message-subject">Subject</label>
-                        <input id="discipline-message-subject" class="table-search-input discipline-input" type="text" name="subject" placeholder="Short summary of the message" required>
-                    </div>
-
-                    <div class="discipline-field discipline-field--full">
-                        <label class="filter-label" for="discipline-message-body">Body</label>
-                        <textarea id="discipline-message-body" class="table-search-input discipline-input discipline-textarea" name="body" rows="4" placeholder="Write the full warning or message here" required></textarea>
-                    </div>
-                </div>
-
-                <div class="discipline-actions">
-                    <button class="action-btn action-btn--primary" type="submit">Send Message</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="discipline-history-grid">
             <section class="discipline-history-panel">
                 <div class="discipline-history-header">
                     <div>
@@ -1063,41 +1018,6 @@ $questionSectionBaseFilters = [
                     <div class="discipline-empty-state">
                         <strong>No active suspensions</strong>
                         <span>Users you suspend will appear here until the suspension is lifted or expires.</span>
-                    </div>
-                <?php endif; ?>
-            </section>
-
-            <section class="discipline-history-panel">
-                <div class="discipline-history-header">
-                    <div>
-                        <h3 class="text-primary">Recent Admin Messages</h3>
-                        <p class="discipline-card-subtitle">Latest warnings and messages sent to forum users.</p>
-                    </div>
-                </div>
-
-                <?php foreach ($recentAdminMessages as $m): ?>
-                    <div class="discipline-history-card">
-                        <div class="discipline-history-top">
-                            <div>
-                                <strong><?= htmlspecialchars(ucfirst($m['message_type'] ?? 'message')) ?></strong>
-                                <div class="owner-subtext">To <?= htmlspecialchars(trim(($m['first_name'] ?? '') . ' ' . ($m['last_name'] ?? ''))) ?> (User ID <?= (int)$m['user_id'] ?>)</div>
-                            </div>
-                            <span class="status-badge <?= ($m['message_type'] ?? 'message') === 'warning' ? 'status-badge--pending' : 'status-badge--active' ?>">
-                                <?= htmlspecialchars(ucfirst($m['message_type'] ?? 'message')) ?>
-                            </span>
-                        </div>
-                        <div class="question-meta-line">
-                            <span class="question-meta-label">Subject:</span>
-                            <span><?= htmlspecialchars($m['subject'] ?? '') ?></span>
-                        </div>
-                        <div class="question-meta-line"><?= htmlspecialchars($m['body'] ?? '') ?></div>
-                        <div class="owner-subtext"><?= htmlspecialchars($m['created_at'] ?? '') ?></div>
-                    </div>
-                <?php endforeach; ?>
-                <?php if (empty($recentAdminMessages)): ?>
-                    <div class="discipline-empty-state">
-                        <strong>No message history yet</strong>
-                        <span>Warnings and moderator messages will appear here once you send them.</span>
                     </div>
                 <?php endif; ?>
             </section>

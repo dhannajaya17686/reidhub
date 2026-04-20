@@ -43,8 +43,7 @@ class Forum_ForumAdminController extends Controller {
                 $dateTo ?: null
             ),
             'reports' => $forumAdminModel->getPendingReports(),
-            'active_suspensions' => $forumAdminModel->getActiveSuspensions(),
-            'recent_admin_messages' => $forumAdminModel->getRecentAdminMessages()
+            'active_suspensions' => $forumAdminModel->getActiveSuspensions()
         ], 'Forum Admin Dashboard - ReidHub');
     }
 
