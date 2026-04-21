@@ -1,0 +1,104 @@
+﻿# Edu Forum Task: Link Questions to University Modules
+
+This guide explains how to complete a custom two-part task for the Edu Forum:
+
+> **Task 1 (Simple CRUD):** Allow students to optionally link their forum questions to a specific university module.
+> **Task 2 (Business Logic):** Add format validation to ensure the module code strictly follows the university format (2 to 4 uppercase letters followed by exactly 3 digits, e.g., CS101, SE205).
+
+---
+
+## Task 1: Simple CRUD Operation
+
+### Step 1: Add The Column To The Database
+**File:** `sql/edu-hub/Questions-Table.sql`
+Run this SQL command in your MySQL database to add the new column:
+```sql
+ALTER TABLE forum_questions
+ADD COLUMN module_code VARCHAR(20) NULL;
+```
+
+### Step 2: Add The Input To The Ask Question Form
+**File:** `app/views/User/edu-forum/add-question-view.php`
+Find the form and replace your current "Course Module" HTML block with this clean, standardized input:
+```html
+<div class="form-group">
+  <label for="module-code" class="form-label">Course Module (Optional)</label>
+  <p class="form-description">
+    If your question is related to a specific course module, specify it here.
+  </p>
+  <input id="module-code" class="form-input" type="text" name="module_code" placeholder="e.g., CS101">
+</div>
+```
+
+### Step 3: Read The Field In The Controller
+**File:** `app/controllers/Forum/ForumUserController.php`
+Find the `createQuestion()` method. Update the `$data` array to capture the new input:
+```php
+$data = [
+    'title'       => trim($_POST['title']),
+    'category'    => trim($_POST['category']),
+    'content'     => trim($_POST['description']),
+    'module_code' => trim($_POST['module_code'] ?? ''), // <-- ADD THIS
+    'tags'        => trim($_POST['tags'] ?? '')
+];
+```
+
+### Step 4: Save The Field In The Model
+**File:** `app/models/ForumModel.php`
+Find the `createQuestion()` method. 
+
+**1. Update the SQL INSERT query:**
+```php
+$sql = "INSERT INTO forum_questions (user_id, title, content, category, module_code, tags) 
+        VALUES (:uid, :title, :content, :cat, :module_code, :tags)";
+```
+
+**2. Update the execute array to bind the value:**
+```php
+return $stmt->execute([
+    ':uid'         => $userId,
+    ':title'       => $data['title'],
+    ':content'     => $data['content'],
+    ':cat'         => $data['category'],
+    ':module_code' => $data['module_code'], // <-- ADD THIS
+    ':tags'        => $tags
+]);
+```
+
+### Step 5: Display It On The Forum Feed
+**File:** `app/views/User/edu-forum/all-questions-view.php`
+Find the `foreach ($questions as $q):` loop. Display the module code inside the `<div class="question-tags">` container:
+```php
+<?php if (!empty($q['module_code'])): ?>
+    <span class="question-tag" style="background-color: #e0f2fe; color: #0284c7; border-color: #bae6fd;">
+        📚 <?= htmlspecialchars($q['module_code']) ?>
+    </span>
+<?php endif; ?>
+```
+
+---
+
+## Task 2: Implement Business Logic (Format Validation)
+
+Now we add strict validation to ensure users don't type invalid module codes (like "hello world").
+
+### Step 1: Add Regex Validation in the Controller
+**File:** `app/controllers/Forum/ForumUserController.php`
+Inside `createQuestion()`, right after building the `$data` array, insert this validation logic:
+
+```php
+// TASK 2: Validate the Module Code format if the user provided one.
+// Format required: 2 to 4 uppercase letters followed by exactly 3 digits.
+if (!empty($data['module_code'])) {
+    if (!preg_match('/^[A-Z]{2,4}[0-9]{3}$/', $data['module_code'])) {
+        // Reject the submission and redirect back to the form with an error parameter.
+        header("Location: /dashboard/forum/add?error=invalid_module_format");
+        exit;
+    }
+}
+```
+
+### Step 2: Test The Business Logic
+1. Go to the "Ask a Question" page in your browser.
+2. Type "hello" into the Course Module field and submit. It should **fail**, refuse to save to the database, and redirect you with `?error=invalid_module_format` in the URL.
+3. Type a valid module code like `CS101` or `COMP202` and submit. It should **pass**, save to the database, and the new 📚 badge will appear on the forum feed!
