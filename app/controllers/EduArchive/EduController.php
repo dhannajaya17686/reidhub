@@ -25,14 +25,20 @@ class EduArchive_EduController extends Controller {
 
         $relativePath = str_replace('\\', '/', parse_url((string)$filePath, PHP_URL_PATH) ?: '');
         $relativePath = ltrim($relativePath, '/');
-        $storagePrefix = 'public/storage/edu-notes/';
+        
+        // Accommodate both old DB entries ('public/storage/...') and new ones ('storage/...')
+        if (str_starts_with($relativePath, 'public/')) {
+            $relativePath = substr($relativePath, 7); // Removes 'public/'
+        }
+
+        $storagePrefix = 'storage/edu-notes/';
 
         if (!str_starts_with($relativePath, $storagePrefix)) {
             return false;
         }
 
         $storageRoot = realpath(__DIR__ . '/../../../public/storage/edu-notes');
-        $targetPath = realpath(__DIR__ . '/../../../' . $relativePath);
+        $targetPath = realpath(__DIR__ . '/../../../public/' . $relativePath);
 
         if (!$storageRoot || !$targetPath || !is_file($targetPath)) {
             return false;
@@ -169,7 +175,7 @@ class EduArchive_EduController extends Controller {
                         header("Location: /dashboard/edu-archive/upload?error=file_upload_failed");
                         exit;
                     }
-                    $data['file_path'] = '/' . $path;
+                $data['file_path'] = '/storage/edu-notes/' . $filename;
                 } else {
                     header("Location: /dashboard/edu-archive/upload?error=invalid_file");
                     exit;
@@ -371,7 +377,7 @@ class EduArchive_EduController extends Controller {
                     header("Location: /dashboard/edu-archive/edit?id={$id}&error=file_upload_failed");
                     exit;
                 }
-                $data['file_path'] = '/' . $path;
+                $data['file_path'] = '/storage/edu-notes/' . $filename;
                 $uploadedFilePath = $data['file_path'];
             }
 
