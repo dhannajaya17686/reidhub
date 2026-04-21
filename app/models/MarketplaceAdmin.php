@@ -95,13 +95,13 @@ class MarketplaceAdmin extends Model
 
             // ==================== TOP PRODUCTS (by revenue) ====================
             $stmt = $this->db->prepare("
-                SELECT o.product_id, p.title,
+                SELECT o.product_id, p.title, p.images,
                        SUM(CASE WHEN o.status = 'delivered' THEN o.quantity ELSE 0 END) AS units,
                        SUM(CASE WHEN o.status = 'delivered' THEN o.quantity * o.unit_price ELSE 0 END) AS revenue
                 FROM {$this->table} o
                 INNER JOIN products p ON p.id = o.product_id
                 WHERE o.created_at BETWEEN ? AND ?
-                GROUP BY o.product_id, p.title
+                GROUP BY o.product_id, p.title, p.images
                 ORDER BY revenue DESC
                 LIMIT {$topN}
             ");
@@ -109,6 +109,12 @@ class MarketplaceAdmin extends Model
             $topProductRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             $topProducts = [
                 'labels' => array_map(fn($r) => $r['title'], $topProductRows),
+                'images' => array_map(function($r) {
+                    $images = json_decode((string)($r['images'] ?? '[]'), true);
+                    return (is_array($images) && !empty($images))
+                        ? (string)$images[0]
+                        : '/images/placeholders/product.png';
+                }, $topProductRows),
                 'units' => array_map(fn($r) => (int)$r['units'], $topProductRows),
                 'revenue' => array_map(fn($r) => (float)$r['revenue'], $topProductRows),
             ];
@@ -133,11 +139,14 @@ class MarketplaceAdmin extends Model
             $stmt = $this->db->prepare("
                 SELECT o.id, o.transaction_id, 
                        u.first_name, u.last_name,
+                       p.title AS product_title,
+                       p.images AS product_images,
                        o.quantity * o.unit_price AS amount,
                        o.status,
                        o.created_at
                 FROM {$this->table} o
                 INNER JOIN users u ON u.id = o.buyer_id
+                INNER JOIN products p ON p.id = o.product_id
                 WHERE o.created_at BETWEEN ? AND ?
                 ORDER BY o.created_at DESC
                 LIMIT {$topN}
@@ -145,10 +154,16 @@ class MarketplaceAdmin extends Model
             $stmt->execute([$from, $to]);
             $recentOrderRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             $recentOrders = array_map(function($r) {
+                $images = json_decode((string)($r['product_images'] ?? '[]'), true);
+                $firstImage = (is_array($images) && !empty($images))
+                    ? (string)$images[0]
+                    : '/images/placeholders/product.png';
                 return [
                     'id' => (int)$r['id'],
                     'transactionId' => (int)$r['transaction_id'],
                     'customerName' => trim(($r['first_name'] ?? '') . ' ' . ($r['last_name'] ?? '')) ?: 'Unknown',
+                    'productTitle' => (string)($r['product_title'] ?? 'Unknown Product'),
+                    'productImage' => $firstImage,
                     'amount' => (float)$r['amount'],
                     'status' => $r['status'],
                     'date' => $r['created_at'],
@@ -179,7 +194,7 @@ class MarketplaceAdmin extends Model
                 'kpis' => ['revenue' => 0, 'orders' => 0, 'units' => 0, 'customers' => 0, 'activeSellers' => 0],
                 'series' => ['labels' => [], 'orders' => [], 'revenue' => [], 'units' => []],
                 'status' => ['pending' => 0, 'yet_to_ship' => 0, 'processing' => 0, 'shipped' => 0, 'delivered' => 0, 'cancelled' => 0],
-                'topProducts' => ['labels' => [], 'units' => [], 'revenue' => []],
+                'topProducts' => ['labels' => [], 'images' => [], 'units' => [], 'revenue' => []],
                 'topCategories' => ['labels' => [], 'itemCount' => []],
                 'recentOrders' => [],
             ];

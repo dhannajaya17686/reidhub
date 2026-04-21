@@ -44,6 +44,7 @@ class AdminAnalytics {
       // Top selling products
       const topSellingProducts = (tp.labels || []).map((name, i) => ({
         name,
+        productImage: tp.images?.[i] || '/images/placeholders/product.png',
         units: Number(tp.units?.[i] || 0),
         revenue: Number(tp.revenue?.[i] || 0)
       }));
@@ -319,7 +320,7 @@ class AdminAnalytics {
         <td><span class="order-id">#ORD-${String(order.id).padStart(6, '0')}</span></td>
         <td>
           <div class="customer-info">
-            <img src="${this.getInitials(order.customerName)}" alt="${order.customerName}" class="customer-avatar">
+            <img src="${order.productImage || '/images/placeholders/product.png'}" alt="${order.productTitle || 'Product'}" class="customer-avatar" onerror="this.src='/images/placeholders/product.png'">
             <span>${order.customerName}</span>
           </div>
         </td>
@@ -346,7 +347,7 @@ class AdminAnalytics {
 
       row.innerHTML = `
         <div class="product-info">
-          <img src="https://via.placeholder.com/48x48/0466C8/ffffff?text=${initials}" alt="${product.name}" class="product-image">
+          <img src="${product.productImage || '/images/placeholders/product.png'}" alt="${product.name}" class="product-image" onerror="this.src='/images/placeholders/product.png'">
           <div class="product-details">
             <div class="product-name">${product.name}</div>
             <div class="product-category">Product</div>
