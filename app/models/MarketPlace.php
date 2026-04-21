@@ -68,10 +68,8 @@ class MarketPlace extends Model
     }
 
     /**
-     * Public listings by category (merchandise | second-hand)
-     * Optionally filter by condition_type (brand_new | used)
-     * Returns minimal fields needed for cards.
-     */
+     * Public listings by category (merchandise | second-hand)* Optionally filter by condition_type (brand_new | used)
+     * Returns minimal fields needed for cards */
     public function findPublicByCategory(string $category, ?string $condition = null): array
     {
         try {

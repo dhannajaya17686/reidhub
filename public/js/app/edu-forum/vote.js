@@ -254,3 +254,69 @@ class ForumInteractions {
 document.addEventListener('DOMContentLoaded', () => {
     new ForumInteractions();
 });
+
+
+<input type="number" id="discount-percentage" name="discount_percentage" min="0" max="80" step="0.01" value="0">
+<input type="number" id="final-price" class="form-input" readonly>
+<div class="form-error" id="discount-percentage-error"></div>
+
+const priceEl = document.getElementById('item-price');
+const discountEl = document.getElementById('discount-percentage');
+const finalEl = document.getElementById('final-price');
+
+function updateFinalPrice() {
+  const price = parseFloat(priceEl?.value || 0);
+  const discount = parseFloat(discountEl?.value || 0);
+
+  if (discount < 0 || discount > 80) {
+    this.showError('discount-percentage-error', 'Discount must be between 0 and 80');
+    return false;
+  }
+  document.getElementById('discount-percentage-error')?.classList.remove('show');
+  const finalPrice = Math.max(0, price - (price * discount / 100));
+  if (finalEl) finalEl.value = finalPrice.toFixed(2);
+  return true;
+}
+
+priceEl?.addEventListener('input', updateFinalPrice);
+discountEl?.addEventListener('input', updateFinalPrice);
+
+setupDiscounts() {
+  const discountPercentage = document.getElementById('discount-percentage');
+  const finalPrice = document.getElementById('final-price');
+  const itemPrice = document.getElementById('item-price');
+
+  if (!discountPercentage || !finalPrice || !itemPrice) return;
+
+  const updateFinalPrice = () => {
+    const price = parseFloat(itemPrice.value || '0');
+    let discount = parseFloat(discountPercentage.value || '0');
+
+    if (Number.isNaN(discount)) discount = 0;
+
+    if (discount < 0 || discount > 80) {
+      discountPercentage.setCustomValidity('Discount must be between 0 and 80');
+      return false;
+    }
+
+    discountPercentage.setCustomValidity('');
+    const finalValue = Math.max(0, price - (price * discount / 100));
+    finalPrice.value = finalValue.toFixed(2);
+    return true;
+  };
+
+  itemPrice.addEventListener('input', updateFinalPrice);
+  discountPercentage.addEventListener('input', updateFinalPrice);
+  updateFinalPrice(); // initialize on load
+}
+
+ALTER TABLE products
+  ADD COLUMN discount_percentage DECIMAL(5,2) NOT NULL DEFAULT 0.00 AFTER price;
+
+  <?php
+$discount = (float)($_POST['discount_percentage'] ?? 0);
+if ($discount < 0 || $discount > 80) {
+    http_response_code(422);
+    echo json_encode(['success' => false, 'message' => 'Discount must be between 0 and 80']);
+    return;
+}

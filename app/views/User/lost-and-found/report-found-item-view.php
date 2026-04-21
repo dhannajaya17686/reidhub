@@ -11,6 +11,7 @@
     </div>
   </div>
 
+
   <!-- Error/Success Messages -->
   <?php if (isset($_SESSION['error'])): ?>
     <div class="alert alert-error" role="alert">

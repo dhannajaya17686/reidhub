@@ -86,6 +86,7 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
+
 /**
  * Fetch wrapper with error handling
  */
