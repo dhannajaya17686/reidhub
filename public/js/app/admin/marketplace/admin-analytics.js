@@ -92,6 +92,12 @@ class AdminAnalytics {
     if (exportBtn) {
       exportBtn.addEventListener('click', () => this.exportAnalytics());
     }
+
+    // Export PDF
+    const exportPdfBtn = document.getElementById('export-pdf');
+    if (exportPdfBtn) {
+      exportPdfBtn.addEventListener('click', () => this.exportPDF());
+    }
   }
 
   initializeCharts() {
@@ -409,6 +415,251 @@ class AdminAnalytics {
     a.download = `admin-analytics-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async getBase64Image(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg'));
+      };
+      img.onerror = () => {
+        resolve(null);
+      };
+      img.src = url;
+    });
+  }
+
+  async exportPDF() {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      console.error('jsPDF library not loaded.');
+      return;
+    }
+    
+    // Show loading state on the button
+    const exportPdfBtn = document.getElementById('export-pdf');
+    const originalText = exportPdfBtn ? exportPdfBtn.innerHTML : '';
+    if (exportPdfBtn) {
+      exportPdfBtn.disabled = true;
+      exportPdfBtn.innerHTML = 'Generating...';
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.text('Marketplace Admin Analytics Report', 14, 22);
+
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()} | Range: ${this.range}`, 14, 30);
+
+    // Key Metrics
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text('Key Metrics', 14, 45);
+
+    const metricsData = [
+      ['Total Revenue', `Rs. ${Number(this.analyticsData.totalRevenue).toLocaleString()}`],
+      ['Total Orders', Number(this.analyticsData.totalOrders).toLocaleString()],
+      ['Active Sellers', Number(this.analyticsData.activeSellers).toLocaleString()],
+      ['Total Customers', Number(this.analyticsData.totalCustomers).toLocaleString()]
+    ];
+
+    doc.autoTable({
+      startY: 50,
+      head: [['Metric', 'Value']],
+      body: metricsData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 15;
+
+    // Top Selling Products
+    doc.text('Top Selling Products', 14, finalY);
+
+    const topProducts = this.analyticsData.topSellingProducts || [];
+    for (let p of topProducts) {
+      if (p.productImage) p.base64 = await this.getBase64Image(p.productImage);
+    }
+
+    const productsData = topProducts.map(p => [
+      { content: '', styles: { minCellHeight: 14 } },
+      p.name,
+      `${p.units} units`,
+      `Rs. ${Number(p.revenue).toLocaleString()}`
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 5,
+      head: [['Img', 'Product Name', 'Units Sold', 'Revenue']],
+      body: productsData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] },
+      columnStyles: { 0: { cellWidth: 15 } },
+      didDrawCell: (data) => {
+        if (data.column.index === 0 && data.cell.section === 'body') {
+          const item = topProducts[data.row.index];
+          if (item && item.base64) {
+            try { doc.addImage(item.base64, 'JPEG', data.cell.x + 2, data.cell.y + 2, 10, 10); } catch (e) {}
+          }
+        }
+      }
+    });
+
+    finalY = doc.lastAutoTable.finalY + 15;
+
+    // Recent Orders
+    if (finalY > 250) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.text('Recent Orders', 14, finalY);
+
+    const recentOrders = (this.analyticsData.recentOrders || []).slice(0, 15);
+    for (let o of recentOrders) {
+      if (o.productImage) o.base64 = await this.getBase64Image(o.productImage);
+    }
+
+    const ordersData = recentOrders.map(o => [
+      { content: '', styles: { minCellHeight: 14 } },
+      `#ORD-${String(o.id).padStart(6, '0')}`,
+      o.customerName,
+      `Rs. ${Number(o.amount).toLocaleString()}`,
+      this.formatStatus(o.status),
+      new Date(o.date).toLocaleDateString()
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 5,
+      head: [['Img', 'Order ID', 'Customer', 'Amount', 'Status', 'Date']],
+      body: ordersData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] },
+      columnStyles: { 0: { cellWidth: 15 } },
+      didDrawCell: (data) => {
+        if (data.column.index === 0 && data.cell.section === 'body') {
+          const item = recentOrders[data.row.index];
+          if (item && item.base64) {
+            try { doc.addImage(item.base64, 'JPEG', data.cell.x + 2, data.cell.y + 2, 10, 10); } catch (e) {}
+          }
+        }
+      }
+    });
+
+    finalY = doc.lastAutoTable.finalY + 15;
+
+    // Fetch Reported Items
+    let reportedItems = [];
+    try {
+      const res = await fetch('/dashboard/marketplace/admin/reported/data?status=all');
+      const data = await res.json();
+      if (data.success && data.items) {
+        reportedItems = data.items.slice(0, 15);
+      }
+    } catch (e) {
+      console.error('Failed to fetch reported items', e);
+    }
+
+    // Preload images for reported items
+    for (let item of reportedItems) {
+      if (item.product_image) {
+        item.base64 = await this.getBase64Image(item.product_image);
+      }
+    }
+
+    if (finalY > 250) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.setFontSize(14);
+    doc.text('Reported Items', 14, finalY);
+
+    const reportedData = reportedItems.map(r => [
+      { content: '', styles: { minCellHeight: 14 } }, // Placeholder for image
+      r.product_title,
+      r.reporter_name,
+      r.seller_name,
+      r.reason,
+      r.status
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 5,
+      head: [['Img', 'Product', 'Reported By', 'Seller', 'Reason', 'Status']],
+      body: reportedData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] },
+      columnStyles: {
+        0: { cellWidth: 15 }
+      },
+      didDrawCell: (data) => {
+        if (data.column.index === 0 && data.cell.section === 'body') {
+          const item = reportedItems[data.row.index];
+          if (item && item.base64) {
+            try {
+              doc.addImage(item.base64, 'JPEG', data.cell.x + 2, data.cell.y + 2, 10, 10);
+            } catch (e) {
+              console.error('Failed to add image to PDF', e);
+            }
+          }
+        }
+      }
+    });
+
+    finalY = doc.lastAutoTable.finalY + 15;
+
+    // Fetch Sellers List
+    let sellersList = [];
+    try {
+      const res = await fetch('/dashboard/marketplace/admin/sellers/data?state=all');
+      const data = await res.json();
+      if (data.success && data.items) {
+        sellersList = data.items.slice(0, 15);
+      }
+    } catch (e) {
+      console.error('Failed to fetch sellers data', e);
+    }
+
+    if (finalY > 250) {
+      doc.addPage();
+      finalY = 20;
+    }
+
+    doc.text('Sellers Moderation List', 14, finalY);
+
+    const sellersData = sellersList.map(s => [
+      s.seller_name,
+      s.seller_email,
+      s.total_reports.toString(),
+      s.warning_count.toString(),
+      s.is_banned ? 'Banned' : 'Active'
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 5,
+      head: [['Seller Name', 'Email', 'Total Reports', 'Warnings', 'Status']],
+      body: sellersData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] }
+    });
+
+    doc.save(`admin-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
+
+    // Restore button state
+    if (exportPdfBtn) {
+      exportPdfBtn.disabled = false;
+      exportPdfBtn.innerHTML = originalText;
+    }
   }
 }
 

@@ -208,7 +208,7 @@ class Order extends Model
 
             // Top products (by revenue)
             $stmt = $this->db->prepare("
-                SELECT o.product_id, p.title,
+                SELECT o.product_id, p.title, p.images,
                        SUM(o.quantity) AS units,
                        SUM(o.quantity * o.unit_price) AS revenue
                 FROM {$this->table} o
@@ -222,6 +222,10 @@ class Order extends Model
             $topRows = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
             $topProducts = [
                 'labels' => array_map(fn($r) => $r['title'], $topRows),
+                'images' => array_map(function($r) {
+                    $images = json_decode((string)($r['images'] ?? '[]'), true);
+                    return (is_array($images) && !empty($images)) ? (string)$images[0] : '/images/placeholders/product.png';
+                }, $topRows),
                 'units' => array_map(fn($r) => (int)$r['units'], $topRows),
                 'revenue' => array_map(fn($r) => (float)$r['revenue'], $topRows),
             ];
