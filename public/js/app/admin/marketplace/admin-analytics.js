@@ -319,7 +319,7 @@ class AdminAnalytics {
         <td><span class="order-id">#ORD-${String(order.id).padStart(6, '0')}</span></td>
         <td>
           <div class="customer-info">
-            <img src="https://via.placeholder.com/32x32/0466C8/ffffff?text=${this.getInitials(order.customerName)}" alt="${order.customerName}" class="customer-avatar">
+            <img src="${this.getInitials(order.customerName)}" alt="${order.customerName}" class="customer-avatar">
             <span>${order.customerName}</span>
           </div>
         </td>

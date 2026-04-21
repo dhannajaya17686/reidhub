@@ -19,7 +19,7 @@ $displayName = $u['first_name'] ?? $u['email'] ?? 'User';
 
                 <?php if (!$isAdmin): ?>
                 <!-- Search -->
-                <div class="header-search">
+                <!--<div class="header-search">
                     <label for="search" class="sr-only">Search questions and topics</label>
                     <input 
                         type="search" 
@@ -31,15 +31,17 @@ $displayName = $u['first_name'] ?? $u['email'] ?? 'User';
                     <svg class="search-icon" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
                     </svg>
-                </div>
+                </div>-->
 
                 <!-- User Actions -->
                 <div class="header-actions">
+                    <!--
                     <button class="notification-btn" aria-label="Notifications">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
                         </svg>
                     </button>
+                    -->
                     <a href="/dashboard/profile" class="user-avatar" aria-label="View my profile">
                         <?php if (!empty($u['profile_picture'])): ?>
                             <img src="<?php echo htmlspecialchars($u['profile_picture']); ?>?t=<?php echo time(); ?>" alt="Profile picture">

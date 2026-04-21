@@ -134,7 +134,7 @@
       <div class="data-card">
         <div class="data-header">
           <h3 class="data-title">Top Selling Items</h3>
-          <button class="btn btn--small btn--outline">View All</button>
+          <!--<button class="btn btn--small btn--outline">View All</button>-->
         </div>
         <div class="data-content">
           <div class="items-list">
@@ -184,7 +184,7 @@
       </div>
 
       <!-- Recent Messages -->
-      <div class="data-card">
+      <!--<div class="data-card">
         <div class="data-header">
           <h3 class="data-title">Recent Messages</h3>
           <button class="btn btn--small btn--outline">View All</button>
@@ -245,6 +245,7 @@
           </div>
         </div>
       </div>
+    -->
     </div>
   </section>
 

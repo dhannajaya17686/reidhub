@@ -59,7 +59,6 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
             </svg>
-            +18.5%
           </div>
         </div>
       </div>
@@ -79,7 +78,6 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
             </svg>
-            +12.3%
           </div>
         </div>
       </div>
@@ -99,7 +97,6 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <polyline points="23,6 13.5,15.5 8.5,10.5 1,18" stroke="currentColor" stroke-width="2" fill="none"/>
             </svg>
-            +8.7%
           </div>
         </div>
       </div>
@@ -158,7 +155,7 @@
       <div class="data-card">
         <div class="data-header">
           <h3 class="data-title">Recent Orders</h3>
-          <button class="btn btn--small btn--outline">View All</button>
+          <!--<button class="btn btn--small btn--outline">View All</button>-->
         </div>
         <div class="data-content">
           <div class="table-container">
@@ -219,7 +216,7 @@
       <div class="data-card">
         <div class="data-header">
           <h3 class="data-title">Top Products</h3>
-          <button class="btn btn--small btn--outline">View All</button>
+          <!--<button class="btn btn--small btn--outline">View All</button>-->
         </div>
         <div class="data-content">
           <div class="products-list">
