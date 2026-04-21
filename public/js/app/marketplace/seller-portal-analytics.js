@@ -41,6 +41,7 @@ class SellerAnalytics {
       // Build top selling items for the list and products chart
       const topSellingItems = (tp.labels || []).map((name, i) => ({
         name,
+        productImage: tp.images?.[i] || '/images/placeholders/product.png',
         sales: Number(tp.units?.[i] || 0),
         revenue: Number(tp.revenue?.[i] || 0),
         flag: '' // keep layout; no flag data from backend
@@ -73,6 +74,10 @@ class SellerAnalytics {
     // Export
     const exportBtn = document.getElementById('export-analytics');
     exportBtn?.addEventListener('click', () => this.exportAnalytics());
+
+    // Export PDF
+    const exportPdfBtn = document.getElementById('export-pdf');
+    exportPdfBtn?.addEventListener('click', () => this.exportPDF());
 
     // Refresh
     const refreshBtn = document.getElementById('refresh-data');
@@ -367,6 +372,103 @@ class SellerAnalytics {
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
     this.showNotification('Analytics data exported successfully', 'success');
+  }
+  async getBase64Image(url) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/jpeg'));
+      };
+      img.onerror = () => {
+        resolve(null);
+      };
+      img.src = url;
+    });
+  }
+
+  async exportPDF() {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      console.error('jsPDF library not loaded.');
+      return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.text('Seller Analytics Report', 14, 22);
+
+    doc.setFontSize(12);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()} | Range: ${this.range}`, 14, 30);
+
+    // Key Metrics
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    doc.text('Key Metrics', 14, 45);
+
+    const metricsData = [
+      ['Total Sales', `Rs. ${Number(this.analyticsData.totalSales).toLocaleString()}`],
+      ['Total Orders', Number(this.analyticsData.totalOrders).toLocaleString()],
+      ['Total Customers', Number(this.analyticsData.totalCustomers).toLocaleString()],
+      ['Average Order Value', `Rs. ${Number(this.analyticsData.averageOrderValue).toLocaleString()}`]
+    ];
+
+    doc.autoTable({
+      startY: 50,
+      head: [['Metric', 'Value']],
+      body: metricsData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] }
+    });
+
+    let finalY = doc.lastAutoTable.finalY + 15;
+
+    // Top Selling Items
+    doc.text('Top Selling Items', 14, finalY);
+
+    const topItems = this.analyticsData.topSellingItems || [];
+    for (let item of topItems) {
+      if (item.productImage) item.base64 = await this.getBase64Image(item.productImage);
+    }
+
+    const itemsData = topItems.map(p => [
+      { content: '', styles: { minCellHeight: 14 } },
+      p.name,
+      `${p.sales} units`,
+      `Rs. ${Number(p.revenue).toLocaleString()}`
+    ]);
+
+    doc.autoTable({
+      startY: finalY + 5,
+      head: [['Img', 'Product Name', 'Units Sold', 'Revenue']],
+      body: itemsData,
+      theme: 'grid',
+      headStyles: { fillColor: [4, 102, 200] },
+      columnStyles: { 0: { cellWidth: 15 } },
+      didDrawCell: (data) => {
+        if (data.column.index === 0 && data.cell.section === 'body') {
+          const item = topItems[data.row.index];
+          if (item && item.base64) {
+            try { doc.addImage(item.base64, 'JPEG', data.cell.x + 2, data.cell.y + 2, 10, 10); } catch (e) {}
+          }
+        }
+      }
+    });
+
+    doc.save(`seller-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
+    
+    // Restore button state
+    if (exportPdfBtn) {
+      exportPdfBtn.disabled = false;
+      exportPdfBtn.innerHTML = originalText;
+    }
   }
 
   async refreshAnalytics() {
